@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>VisualARQ Drawings Viewer</title>
+  <meta charset="utf-8" />
+</head>
+
+<body>
+  <p>VisualARQ Drawings Viewer</p>
+
+  <!--Add buttons to initiate auth sequence and sign out-->
+  <button id="authorize_button" style="display: none;">Authorize</button>
+  <button id="signout_button" style="display: none;">Sign Out</button>
+
+  <pre id="content" style="white-space: pre-wrap;"></pre>
+
+  <div id="itemsContainer"></div>
+
+  <div id="svgContainer"></div>
+
+  <button id="create_folder_btn">Test create folder</button>
+  <button id="list_files_btn">Test list files</button>
+  <button id="read_file_btn">Test read file content</button>
+  <button id="get_file_link_btn">Test get file link</button>
+
+  <form id="uploadFileForm">
+    <input name="file" type="file">
+    <button type="submit">Upload</button>
+  </form>
+
+  <div id="projectItems"></div>
+
+  <script src="auth.js"></script>
+  <script src="api.js"></script>
+  <script src="home.js"></script>
+  <script src="DOMutils.js"></script>
+</body>
+
+</html>
