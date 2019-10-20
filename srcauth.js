@@ -55,17 +55,11 @@ function initClient() {
  */
 function updateSigninStatus(isSignedIn) {
   if (isSignedIn) {
-    authorizeButton.style.display = 'none';
-    signoutButton.style.display = 'block';
     console.log('Authorized.');
-    // This function should be implemented on each page to specify the behaviour when the page loads and authentication is successful.
-    startPage();
+    startApp();
   } else {
-    authorizeButton.style.display = 'block';
-    signoutButton.style.display = 'none';
-    console.log('Signed out.');
-    // TODO: redirect to login page ?? or set as hidden all the content.
-    // Maybe a function unauthStartPage();  also implemented on each page differently.
+    console.log('Not authorized');
+    showLoginDialog();
   }
 }
 

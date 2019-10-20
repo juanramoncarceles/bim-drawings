@@ -1,0 +1,71 @@
+body {
+  margin: 0;
+}
+
+header {
+  background-color: #a1a1a1;
+}
+
+main {
+  position: relative;
+}
+
+#projectsList {
+  position: absolute;
+  background-color: #c6d2dd;
+}
+
+#projectsList > div:first-child {
+  display: flex;
+  padding-bottom: 1rem;
+  justify-content: space-between;
+}
+
+#projectsList > div:nth-child(2) {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.projectItem {
+  width: 30%;
+}
+
+.projectItem > img {
+  width: 100%;
+}
+
+#authorize_dialog {
+  justify-content: center;
+    align-items: center;
+  position: absolute;
+  background-color: #dee7e5;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+#authorize_dialog > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 300px;
+  height: 300px;
+  padding: 1rem;
+  background-color: #000;
+}
+
+#uploadProjectDialog {
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+#uploadProjectDialog > form {
+  padding: 1rem;
+  background-color: #c1ebe3;
+}

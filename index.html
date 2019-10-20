@@ -1,40 +1,64 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>VisualARQ Drawings Viewer</title>
-  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-  <p>VisualARQ Drawings Viewer</p>
+  <header style="display: none;">
+    <button id="projectsListBtn">Projects list</button>
+    <h2>VisualARQ viewer</h2>
+    <h3 id="project_title"></h3>
+    <button id="signout_button">Sign Out</button>
+  </header>
+  <main style="display: none;">
+    <div id='projectsList' style="display: none;">
+      <div>
+        <button id="add_new_proj_btn">Add new project</button>
+        <h4>PROJECTS</h4>
+        <span>X</span>
+      </div>
+      <div id="projects"></div>
+      <button>Load more projects</button>
+    </div>
+    <div id="currentProject"></div>
+    <div id="tempDrawingsBtns"></div>
+  </main>
 
-  <!--Add buttons to initiate auth sequence and sign out-->
-  <button id="authorize_button" style="display: none;">Authorize</button>
-  <button id="signout_button" style="display: none;">Sign Out</button>
+  <div id="authorize_dialog" style="display: none;">
+    <div>
+      <button id="authorize_button">Log in</button>
+      <button id="upload_project_btn">Upload project</button>
+      <button>View sample project</button>
+    </div>
+  </div>
 
-  <pre id="content" style="white-space: pre-wrap;"></pre>
+  <div id="uploadProjectDialog" style="display: none;">
+    <form id="uploadFileForm">
+      <span id="closeUploadForm">X</span>
+      <input name="file" type="file">
+      <button type="submit">Upload</button>
+    </form>
+  </div>
 
-  <div id="itemsContainer"></div>
+  <!-- <pre id="content" style="white-space: pre-wrap;"></pre>
+    <div id="itemsContainer"></div>
+    <div id="svgContainer"></div>
 
-  <div id="svgContainer"></div>
-
-  <button id="create_folder_btn">Test create folder</button>
-  <button id="list_files_btn">Test list files</button>
-  <button id="read_file_btn">Test read file content</button>
-  <button id="get_file_link_btn">Test get file link</button>
-
-  <form id="uploadFileForm">
-    <input name="file" type="file">
-    <button type="submit">Upload</button>
-  </form>
-
-  <div id="projectItems"></div>
+    <button id="create_folder_btn">Test create folder</button>
+    <button id="list_files_btn">Test list files</button>
+    <button id="read_file_btn">Test read file content</button>
+    <button id="get_file_link_btn">Test get file link</button> -->
 
   <script src="auth.js"></script>
   <script src="api.js"></script>
-  <script src="home.js"></script>
-  <script src="DOMutils.js"></script>
+  <script src="index.js"></script>
+  <!-- <script src="DOMutils.js"></script> -->
 </body>
 
 </html>
