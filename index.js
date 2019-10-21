@@ -10,6 +10,12 @@
 //   pre.appendChild(textContent);
 // }
 
+
+const currentProject = {
+  drawings: {},
+  elementsData: {}
+}
+
 /**
 * Get the URL parameters.
 * source: https://css-tricks.com/snippets/javascript/get-url-variables/
@@ -90,6 +96,9 @@ function startApp() {
 
 function createWorkspace(projectData) {
   cleanWorkspace();
+  // Reset the value of the currentProject variable, deletes the contents of the previous project.
+  currentProject.drawings = {};
+  currentProject.elementsData = {};
   // Set title
   document.getElementById('project_title').innerText = projectData.name;
   // Create buttons for the drawings
@@ -106,9 +115,21 @@ function createDrawignsBtns(drawings) {
   const drawingsButtons = document.getElementById('tempDrawingsBtns');
   drawings.forEach(drawing => {
     drawingBtn = document.createElement('button');
-    drawingBtn.innerText = drawing.name;
+    const drawingName = drawing.name.replace(/.svg$/, '');
+    drawingBtn.innerText = drawingName;
     drawingBtn.dataset.drawingId = drawing.id;
-    drawingBtn.addEventListener('click', () => getFileContent(drawing.id)); // Comprobar si esta ya en un objeto antes de irlo a buscar?
+    drawingBtn.addEventListener('click', () => {
+      if (currentProject.drawings[drawingName]) {
+        console.log(currentProject.drawings[drawingName]);
+      } else {
+        getFileContent(drawing.id).then(res => {
+          currentProject.drawings[drawingName] = res.body;
+          console.log('fetched');
+        }, err => {
+          console.log(err);
+        });
+      }
+    });
     drawingsButtons.appendChild(drawingBtn);
   });
 }
