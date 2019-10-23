@@ -12,6 +12,7 @@
 
 
 const currentProject = {
+  name: '',
   drawings: {},
   elementsData: {}
 }
@@ -52,6 +53,11 @@ document.getElementById('uploadFileForm').onsubmit = e => {
   createProject(file).then(res => {
     uploadProjectDialog.style.display = 'none';
     updateProjectsList(res);
+  }, err => {
+    uploadProjectDialog.style.display = 'none';
+    updateProjectsList(lastUploadedProject);
+    // Mostrar el proyecto cargado en la lista pero con un color diferente indicando que es offline?
+    console.error(err);
   });
 }
 
@@ -97,8 +103,16 @@ function startApp() {
 function createWorkspace(projectData) {
   cleanWorkspace();
   // Reset the value of the currentProject variable, deletes the contents of the previous project.
-  currentProject.drawings = {};
-  currentProject.elementsData = {};
+  if (projectData.id === 'temporal') {
+    // Le tendria que pasar tambien el nombre e id?
+    currentProject.name = lastUploadedProject.name;
+    currentProject.drawings = lastUploadedProject.drawings;
+    currentProject.elementsData = lastUploadedProject.elementsData;
+  } else {
+    currentProject.name = projectData.name;
+    currentProject.drawings = {};
+    currentProject.elementsData = {};
+  }
   // Set title
   document.getElementById('project_title').innerText = projectData.name;
   // Create buttons for the drawings
@@ -113,16 +127,19 @@ function cleanWorkspace() {
 // Temporary fucntion to test drawings
 function createDrawignsBtns(drawings) {
   const drawingsButtons = document.getElementById('tempDrawingsBtns');
-  drawings.forEach(drawing => {
+  for (const drawing in drawings) {
     drawingBtn = document.createElement('button');
-    const drawingName = drawing.name.replace(/.svg$/, '');
+    const drawingName = drawing; //.name.replace(/.svg$/, '');
     drawingBtn.innerText = drawingName;
-    drawingBtn.dataset.drawingId = drawing.id;
+    // Could be that there is no id yet if the project was uploaded and it is only local
+    if (drawings[drawing].id) {
+      drawingBtn.dataset.drawingId = drawings[drawing].id;
+    }
     drawingBtn.addEventListener('click', () => {
       if (currentProject.drawings[drawingName]) {
         console.log(currentProject.drawings[drawingName]);
       } else {
-        getFileContent(drawing.id).then(res => {
+        getFileContent(drawings[drawing].id).then(res => {
           currentProject.drawings[drawingName] = res.body;
           console.log('fetched');
         }, err => {
@@ -131,7 +148,7 @@ function createDrawignsBtns(drawings) {
       }
     });
     drawingsButtons.appendChild(drawingBtn);
-  });
+  }
 }
 
 
