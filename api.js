@@ -54,7 +54,9 @@ function getFileData(fileId, fields) {
     fields: fields
   });
   request.then(res => {
-    console.log(JSON.parse(res.body));
+    if (res.status === 200) {
+      console.log('File data fetched succesfully.');
+    }
   }, err => {
     console.error(err);
   });
@@ -110,7 +112,9 @@ function uploadFile(fileContent, fileMimeType, fileName, folderId) {
     body: form,
   });
   request.then(res => {
-    console.log(res);
+    if (res.ok === true && res.status === 200) {
+      console.log('Upload of ' + fileName + ' successful.');
+    }
   }, err => {
     console.error(err);
   });
@@ -174,24 +178,18 @@ async function createProject(file) {
   // Check if there is already a project with this name
   if (appData.projectsData === undefined || !appData.projectsData.find(proj => proj.name === fileContent.projectInfo.title)) {
     try {
-      createFolder(fileContent.projectInfo.title, appData.appMainFolderId)
-        .then(res => {
-          projectFolderId = JSON.parse(res.body).id;
-          console.log(projectFolderId);
-          lastUploadedProject.id = projectFolderId;
-          const projectFolderData = { id: projectFolderId, name: fileContent.projectInfo.title };
-          if (appData.projectsData === undefined) {
-            appData.projectsData = [projectFolderData];
-          } else if (!appData.projectsData.find(proj => proj.name === fileContent.projectInfo.title)) {
-            appData.projectsData.push(projectFolderData);
-          }
-        }, rej => {
-          console.log(rej.body);
-          lastUploadedProject.id = 'temporal';
-        });
-    } catch (err) { // Catches for example the error for no internet conection
+      const folderCreationPromise = await createFolder(fileContent.projectInfo.title, appData.appMainFolderId);
+      projectFolderId = JSON.parse(folderCreationPromise.body).id;
+      lastUploadedProject.id = projectFolderId;
+      const projectFolderData = { id: projectFolderId, name: fileContent.projectInfo.title };
+      if (appData.projectsData === undefined) {
+        appData.projectsData = [projectFolderData];
+      } else if (!appData.projectsData.find(proj => proj.name === fileContent.projectInfo.title)) {
+        appData.projectsData.push(projectFolderData);
+      }
+    } catch (err) {
+      console.log(err);
       lastUploadedProject.id = 'temporal';
-      console.log(err.body);
       errorMsg = JSON.parse(err.body).error.message;
     }
   } else if (appData.projectsData.find(proj => proj.name === fileContent.projectInfo.title)) { // Crear un archivo con todos lo nombres de proyectos en drive y pedirlo para comprovar
@@ -201,10 +199,12 @@ async function createProject(file) {
     console.error('Unknown error while attempting to create the project folder.');
   }
 
+
   // Create drawings subfolder only if there are drawings and projectFolderId was succesful
   if (projectFolderId && fileContent.drawings) {
     // Create drawgins subfolder
-    const drawingsFolderId = await createFolder('drawings', projectFolderId);
+    const drawingsFolderPromise = await createFolder('drawings', projectFolderId);
+    const drawingsFolderId = JSON.parse(drawingsFolderPromise.body).id;
     appData.projectsData[appData.projectsData.length - 1].drawingsFolderId = drawingsFolderId;
     // Upload drawings
     const drawingsPromises = [];
@@ -224,7 +224,8 @@ async function createProject(file) {
   // Create elementsData subfolder only if there is data and projectFolderId was succesful
   if (projectFolderId && fileContent.elementsData) {
     // Create elementsData subfolder
-    const elementsDataFolderId = await createFolder('elementsData', projectFolderId);
+    const elementsDataFolderPromise = await createFolder('elementsData', projectFolderId);
+    const elementsDataFolderId = JSON.parse(elementsDataFolderPromise.body).id;
     appData.projectsData[appData.projectsData.length - 1].elementsDataFolderId = elementsDataFolderId;
     // Upload elements data files
     const elementsDataPromises = [];
@@ -333,19 +334,25 @@ projectsContainer.addEventListener('click', e => {
   const projectItem = e.target.closest('[data-proj-id]');
   // TODO si se esta trabajando en un proyecto preguntar si se quiere guardar antes de que se cierre
   // si era un proyecto offline no syncronizado, lo cual se ve por su id 'temporal' provar a sincronizar de nuevo, sus contenidos estaran en current proj
-  fetchProject(projectItem.dataset.projId)
-    .then(res => {
-      console.log(res);
-      // Fetch successfull of the settings file, the ids of drawings and elementsData of the project
-      goToProject(res); // res --> {id: '', name: '', drawings: {'name': {'id'}, 'name': {'id'}}}   
-    }, err => {
-      console.log(err);
-      if (err.id === 'temporal') {
-        console.log('loading last uploaded project which is still offline / not syncronized');
-        // Fetch unsuccessfull still should be able to work if the requested project is the lastUploadedProject
-        goToProject(lastUploadedProject);
-      }
-    });
+  if (projectItem.dataset.projId === lastUploadedProject.id) {
+    if (lastUploadedProject.id === 'temporal') {
+      console.log('Show a message indicating that the project can be accessed but in viewer mode because it couldnt be saved, accept to proceed.');
+    }
+    goToProject(lastUploadedProject);
+  } else {
+    fetchProject(projectItem.dataset.projId)
+      .then(res => {
+        console.log(res);
+        // Fetch successfull of the settings file, the ids of drawings and elementsData of the project
+        goToProject(res); // res --> {id: '', name: '', drawings: {'name': {'id'}, 'name': {'id'}}}   
+      }, err => {
+        console.log(err);
+        // if (err.id === 'temporal') {
+        //   // Fetch unsuccessfull still should be able to work if the requested project is the lastUploadedProject
+        //   goToProject(lastUploadedProject);
+        // }
+      });
+  }
 });
 
 function goToProject(project) {
@@ -362,9 +369,11 @@ async function fetchProject(projectId) {
   // In case the projectsData entry is still empty this will be the first project 
   // This will happen when someone access a project directly ?
   if (appData.projectsData === undefined) {
-    const projectNameRes = await getFileData(projectId, 'name');
-    appData.projectsData = [{ id: projectId, name: JSON.parse(projectNameRes.body).name }];
-    projectIndex = 0;
+    const projectNameRes = await getFileData(projectId, 'name, trashed');
+    if (!JSON.parse(res.body).trashed) {
+      appData.projectsData = [{ id: projectId, name: JSON.parse(projectNameRes.body).name }];
+      projectIndex = 0;
+    }
   } else if (projectId !== 'temporal') {
     projectIndex = appData.projectsData.findIndex(proj => proj.id === projectId);
   }
@@ -373,8 +382,7 @@ async function fetchProject(projectId) {
   console.log('Loading project: ' + projectId);
 
   // If there is no data for projectSettings.json file fetch its contents.
-  if (projectIndex && !appData.projectsData[projectIndex].projSettings) {
-    console.log('h');
+  if (projectIndex >= 0 && !appData.projectsData[projectIndex].projSettings) {
     const projSettingsRes = await listFiles({ parentId: projectId, name: 'projectSettings.json' }); // Si esta offline aqui salta error
     const projSettingsData = projSettingsRes.result.files;
     if (projSettingsData && projSettingsData.length > 0) {
@@ -387,7 +395,7 @@ async function fetchProject(projectId) {
   }
 
   // If there is no data for drawings already then fetch the id of the drawings folder and the data of each one.
-  if (projectIndex && !appData.projectsData[projectIndex].drawings) {
+  if (projectIndex >= 0 && !appData.projectsData[projectIndex].drawings) {
     const drawingsFolderRes = await listFiles({ parentId: projectId, onlyFolder: true, name: 'drawings' });
     const drawingsFolderData = drawingsFolderRes.result.files;
     if (drawingsFolderData && drawingsFolderData.length > 0) {
@@ -403,7 +411,7 @@ async function fetchProject(projectId) {
   }
 
   // If there is no data for elements already then fetch the id of the elementsData folder and the data of each one.
-  if (projectIndex && !appData.projectsData[projectIndex].elementsData) {
+  if (projectIndex >= 0 && !appData.projectsData[projectIndex].elementsData) {
     const elementsDataFolderRes = await listFiles({ parentId: projectId, onlyFolder: true, name: 'elementsData' });
     const elementsDataFolderData = elementsDataFolderRes.result.files;
     if (elementsDataFolderData && elementsDataFolderData.length > 0) {
@@ -415,7 +423,7 @@ async function fetchProject(projectId) {
   }
 
   // If there is no data for images already then fetch the id of the images folder and the data of each one
-  if (projectIndex && !appData.projectsData[projectIndex].images) {
+  if (projectIndex >= 0 && !appData.projectsData[projectIndex].images) {
     const imagesFolderRes = await listFiles({ parentId: projectId, onlyFolder: true, name: 'images' });
     const imagesFolderData = imagesFolderRes.result.files;
     if (imagesFolderData && imagesFolderData.length > 0) {
@@ -426,10 +434,10 @@ async function fetchProject(projectId) {
     }
   }
 
-  if (projectIndex) {
+  if (projectIndex >= 0) {
     console.log('Project resources fetched succesfully.');
     return appData.projectsData[projectIndex];
   } else {
-    return Promise.reject({ message: new Error('Project resources could not be fetched.'), id: projectId });
+    return Promise.reject(new Error('Project resources could not be fetched.')); // { message: new Error('Project resources could not be fetched.'), id: projectId }
   }
 }

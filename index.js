@@ -12,6 +12,7 @@
 
 
 const currentProject = {
+  id: '',
   name: '',
   drawings: {},
   elementsData: {}
@@ -91,7 +92,7 @@ function startApp() {
 
   if (resourceId) {
     fetchProject(resourceId)
-      .then(res => createWorkspace(res));
+      .then(res => createWorkspace(res), rej => console.log('Project not found. Go to home?'));
   } else {
     document.getElementById('projectsList').style.display = 'unset';
     // usar window.location.replace("index.html"); o history.replaceState() para borrar cualquier otro parametro inutil ??
@@ -103,13 +104,12 @@ function startApp() {
 function createWorkspace(projectData) {
   cleanWorkspace();
   // Reset the value of the currentProject variable, deletes the contents of the previous project.
-  if (projectData.id === 'temporal') {
-    // Le tendria que pasar tambien el nombre e id?
-    currentProject.name = lastUploadedProject.name;
+  currentProject.name = projectData.name;
+  currentProject.id = projectData.id;
+  if (projectData.id === lastUploadedProject.id) {
     currentProject.drawings = lastUploadedProject.drawings;
     currentProject.elementsData = lastUploadedProject.elementsData;
   } else {
-    currentProject.name = projectData.name;
     currentProject.drawings = {};
     currentProject.elementsData = {};
   }
