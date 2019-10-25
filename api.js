@@ -330,8 +330,14 @@ function updateProjectsList(projData) {
 const projListContainer = document.getElementById('projectsList');
 const projectsContainer = document.getElementById('projects');
 
+let previousActiveItem;
+
 projectsContainer.addEventListener('click', e => {
   const projectItem = e.target.closest('[data-proj-id]');
+  if (projectItem.dataset.projId === currentProject.id) {
+    // Cerrar la lista de proyectos ?
+    return;
+  }
   // TODO si se esta trabajando en un proyecto preguntar si se quiere guardar antes de que se cierre
   // si era un proyecto offline no syncronizado, lo cual se ve por su id 'temporal' provar a sincronizar de nuevo, sus contenidos estaran en current proj
   if (projectItem.dataset.projId === lastUploadedProject.id) {
@@ -339,12 +345,22 @@ projectsContainer.addEventListener('click', e => {
       console.log('Show a message indicating that the project can be accessed but in viewer mode because it couldnt be saved, accept to proceed.');
     }
     goToProject(lastUploadedProject);
+    if (previousActiveItem) {
+      previousActiveItem.style.backgroundColor = 'unset';
+    }
+    projectItem.style.backgroundColor = 'green';
+    previousActiveItem = projectItem;
   } else {
     fetchProject(projectItem.dataset.projId)
       .then(res => {
         console.log(res);
         // Fetch successfull of the settings file, the ids of drawings and elementsData of the project
-        goToProject(res); // res --> {id: '', name: '', drawings: {'name': {'id'}, 'name': {'id'}}}   
+        goToProject(res); // res --> {id: '', name: '', drawings: {'name': {'id'}, 'name': {'id'}}}
+        if (previousActiveItem) {
+          previousActiveItem.style.backgroundColor = 'unset';
+        }
+        projectItem.style.backgroundColor = 'green';
+        previousActiveItem = projectItem;
       }, err => {
         console.log(err);
         // if (err.id === 'temporal') {
@@ -358,6 +374,7 @@ projectsContainer.addEventListener('click', e => {
 function goToProject(project) {
   createWorkspace(project);
   projListContainer.style.display = 'none';
+
   history.replaceState({ projectTitle: project.name }, project.name, "?id=" + project.id); // encodeURIComponent
 }
 

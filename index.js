@@ -84,7 +84,7 @@ function startApp() {
   // Hide the login dialog in case it was visible
   document.getElementById('authorize_dialog').style.display = 'none';
   // Show the app interface (header and main)
-  document.querySelector('header').style.display = 'block';
+  document.querySelector('header').style.display = 'flex';
   document.querySelector('main').style.display = 'block';
 
   // Get the URL params
@@ -94,10 +94,10 @@ function startApp() {
     fetchProject(resourceId)
       .then(res => createWorkspace(res), rej => console.log('Project not found. Go to home?'));
   } else {
-    document.getElementById('projectsList').style.display = 'unset';
+    document.getElementById('projectsList').style.display = 'block';
     // usar window.location.replace("index.html"); o history.replaceState() para borrar cualquier otro parametro inutil ??
     // TODO: Limit the number of projects to list
-    listProjectItems();
+    //listProjectItems();
   }
 }
 
@@ -151,10 +151,17 @@ function createDrawignsBtns(drawings) {
   }
 }
 
+document.getElementById('closeProjectsListBtn').addEventListener('click', () => {
+  document.getElementById('projectsList').style.display = 'none';
+});
+
 
 document.getElementById('projectsListBtn').addEventListener('click', () => {
   console.log('Show the projects list.');
-  document.getElementById('projectsList').style.display = 'unset';
+  if (currentProject.id) {
+    document.getElementById('closeProjectsListBtn').style.display = 'unset';
+  }
+  document.getElementById('projectsList').style.display = 'block';
   // Si solo hay uno voy a ver si hay mas ya que posiblemente sea porque se ha accedido directamente a ese proyecto.
   if (appData.projectsData.length <= 1 || appData.projectsData === undefined) {
     listProjectItems();

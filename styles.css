@@ -1,18 +1,66 @@
+:root {
+  --header-height: 2.5rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+h1, h2, h3, h4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+button {
+  border-style: none;
+  padding: 0;
+  cursor: pointer;
+  background-color: unset;
+}
+
 body {
   margin: 0;
+  font-family: sans-serif;
+}
+
+
+
+
+#signout_button {
+  
 }
 
 header {
-  background-color: #a1a1a1;
+  display: flex;
+  height: var(--header-height);
+  align-items: center;
+  color: #fff;
+  background-color: #4d598b; /* #6b6b6b; */
+}
+
+header > h1 {
+  font-size: 1rem;
+}
+
+header > button {
+  padding: 0.35rem;
+  border: 1px solid #6d759a;
+  color: inherit;
+}
+
+#project_title {
+  font-size: 1rem;
 }
 
 main {
   position: relative;
+  height: calc(100vh - var(--header-height));
 }
 
 #projectsList {
-  position: absolute;
-  background-color: #c6d2dd;
+  height: 100%;
+  padding: 1rem;
+  /* background-color: #c6d2dd; */
 }
 
 #projectsList > div:first-child {
@@ -24,6 +72,11 @@ main {
 #projectsList > div:nth-child(2) {
   display: flex;
   flex-wrap: wrap;
+}
+
+#add_new_proj_btn {
+  padding: 0.5rem;
+  border: 1px solid #cfcfcf;;
 }
 
 .projectItem {
