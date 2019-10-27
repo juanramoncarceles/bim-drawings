@@ -6,7 +6,7 @@
   box-sizing: border-box;
 }
 
-h1, h2, h3, h4 {
+h1, h2, h3, h4, p {
   margin-top: 0;
   margin-bottom: 0;
 }
@@ -20,7 +20,7 @@ button {
 
 body {
   margin: 0;
-  font-family: sans-serif;
+  font-family: 'Oswald', sans-serif;
 }
 
 
@@ -35,21 +35,42 @@ header {
   height: var(--header-height);
   align-items: center;
   color: #fff;
-  background-color: #4d598b; /* #6b6b6b; */
+  background-color: #f6f6f6;
+  border-bottom: 2px solid #2a8fb1;
+}
+
+header > img {
+  height: 1.5rem;
+  margin-left: 1rem;
+  margin-right: 2rem;
 }
 
 header > h1 {
-  font-size: 1rem;
+  position: absolute;
+  right: 100%;
 }
 
-header > button {
+/* header > button {
   padding: 0.35rem;
   border: 1px solid #6d759a;
   color: inherit;
+} */
+
+header > div:last-child {
+  flex-grow: 1;
+}
+
+header > div:last-child > button {
+  float: right;
 }
 
 #project_title {
-  font-size: 1rem;
+  font-size: 0;
+}
+
+#project_title > button {
+  padding: 0.2rem 0.4rem;
+  font-size: 1.1rem;
 }
 
 main {
@@ -57,55 +78,187 @@ main {
   height: calc(100vh - var(--header-height));
 }
 
+.buttonBase {
+  padding: 0.4rem;
+  border-width: 1px;
+  border-style: solid;
+  font-family: inherit;
+}
+
+.buttonBase.sides {
+  border-top: unset;
+  border-bottom: unset;
+}
+
+.buttonBase.light {
+  color: #373737;
+  border-color: #cfcfcf;
+}
+
+/* .buttonBase.middle {
+  border-color: #c2c1c1;
+} */
+
+.buttonBase.light:hover {
+  background-color: #ececec;
+}
+
+.buttonBase.disabled {
+  cursor: unset;
+  color: #bdbcbc;
+}
+
+.buttonBase.disabled:hover {
+  background-color: unset;
+}
+
 #projectsList {
   height: 100%;
-  padding: 1rem;
+  /* padding: 1rem; */
   /* background-color: #c6d2dd; */
 }
 
 #projectsList > div:first-child {
   display: flex;
-  padding-bottom: 1rem;
   justify-content: space-between;
+  padding: 1rem;
 }
 
-#projectsList > div:nth-child(2) {
+#projectsList > div:first-child > span {
+  width: 20%;
+}
+
+#projectsList > div:first-child > span:last-child {
+  text-align: right;
+}
+
+#projectsList > div:first-child > h4 {
+  font-weight: normal;
+  font-size: 1.6rem;
+}
+
+#projectsListBtn {
+
+}
+
+#closeProjectsListBtn {
+  width: 1.5rem;
+}
+
+#projects {
   display: flex;
   flex-wrap: wrap;
+  margin-left: 1rem;
+  
+  --items-h: 6; /* Read with JS */
+  --item-width: calc((100% / var(--items-h)) - 1rem);
+  --remaining-items: 2; /* Updated with JS */
 }
 
-#add_new_proj_btn {
-  padding: 0.5rem;
-  border: 1px solid #cfcfcf;;
+@media (max-width: 1000px) {
+  #projects {--items-h: 5;} /* Read with JS */
+}
+
+@media (max-width: 800px) {
+  #projects {--items-h: 4;}
+}
+
+@media (max-width: 600px) {
+  #projects {--items-h: 3;}
+}
+
+@media (max-width: 400px) {
+  #projects {--items-h: 2;}
+}
+
+@media (max-width: 280px) {
+  #projects {--items-h: 1;}
+}
+
+#projects::after {
+  content: "";
+  flex-grow: var(--remaining-items);
+  width: calc((var(--item-width) + 1rem) * var(--remaining-items));
 }
 
 .projectItem {
-  width: 30%;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  width: var(--item-width);
+  margin-bottom: 1rem;
+  margin-right: 1rem;
+  font-family: inherit;
+  box-shadow: 2px 2px 7px #b2b2b2;
+}
+
+.projectItem:hover {
+  box-shadow: 2px 2px 7px #6b6b6b;
 }
 
 .projectItem > img {
+  display: block;
   width: 100%;
+  flex-grow: 1;
+  object-fit: cover;
+}
+
+.projectItem > h4 {
+  padding: 0.6rem;
+  font-weight: normal;
+  align-self: stretch;
+}
+
+
+
+#loadMoreProjBtn {
+  display: block;
+  margin: auto;
 }
 
 #authorize_dialog {
   justify-content: center;
-    align-items: center;
+  align-items: center;
   position: absolute;
-  background-color: #dee7e5;
+  background-color: #fff;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
 }
 
-#authorize_dialog > div {
+#authorizeDialog {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  width: 300px;
-  height: 300px;
   padding: 1rem;
-  background-color: #000;
+}
+
+#authorizeDialog > img {
+  margin: 0 auto;
+}
+
+#authorizeDialog > h2 {
+  font-size: 1.6rem;
+  text-align: center;
+  font-weight: normal;
+  margin-bottom: 1.5rem;
+  margin-top: 1rem;
+}
+
+#authorizeDialog > div:last-child {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: end;
+}
+
+#authorizeDialog > div:last-child > button {
+  font-size: 1.2rem;
+}
+
+#authorizeDialog > div:last-child > button:nth-child(2) {
+  margin-top: 0.4rem;
+  margin-bottom: 0.4rem;
 }
 
 #uploadProjectDialog {
@@ -116,9 +269,41 @@ main {
   right: 0;
   bottom: 0;
   left: 0;
+  background-color: #d8d8d8d1;
 }
 
 #uploadProjectDialog > form {
   padding: 1rem;
-  background-color: #c1ebe3;
+  background-color: #fff;
+}
+
+#uploadProjectDialog > form > input {
+  font-family: inherit;
+}
+
+#uploadFileForm {
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+}
+
+#uploadFileForm > button:last-child {
+  margin-top: 0.5rem;
+}
+
+#uploadFileForm > button:first-child {
+  width: 1rem;
+    align-self: flex-end;
+}
+
+#uploadFileForm > label {
+  margin-top: 1rem;
+  text-align: center;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+#loadingFile {
+  padding: 1rem;
+  text-align: center;
 }

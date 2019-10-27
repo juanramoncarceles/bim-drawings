@@ -6,59 +6,106 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>VisualARQ Drawings Viewer</title>
+  <link href="https://fonts.googleapis.com/css?family=Oswald:200,400,500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-  <header style="display: none;">
-    <h1>VisualARQ viewer</h1>
-    <h2 id="project_title">Delete this after test</h2>
-    <button id="projectsListBtn">Projects list</button>
-    <button id="signout_button">Sign Out</button>
+  <header>
+    <!--style="display: none;"-->
+    <img src="assets/vadv-logo.png" alt="VisualARQ Drawigns Viewer Logo" title="VisualARQ Drawigns Viewer">
+    <h1>VisualARQ Drawings Viewer</h1>
+    <h2 id="project_title"><button id="projectsListBtn" class="buttonBase sides">test project title</button></h2>
+    <!-- <button id="projectsListBtn">Projects list</button> -->
+    <div>
+      <button id="signout_button" class="buttonBase sides">Sign Out</button>
+    </div>
   </header>
-  <main style="display: none;">
-    <div id='projectsList' style="display: none;">
+  <main>
+    <!--style="display: none;"-->
+    <div id='projectsList'>
+      <!--style="display: none;"-->
       <div>
-        <button id="add_new_proj_btn">Add new project</button>
+        <span>
+          <button id="add_new_proj_btn" class="buttonBase light">Add new project</button>
+        </span>
         <h4>PROJECTS</h4>
-        <button id="closeProjectsListBtn" style="display: none;">X</button>
+        <span>
+          <button id="closeProjectsListBtn" style="display: none;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 612 612">
+              <polygon points="612,36.004 576.521,0.603 306,270.608 35.478,0.603 0,36.004 270.522,306.011 0,575.997 35.478,611.397 306,341.411 576.521,611.397 612,575.997 341.459,306.011" />
+            </svg>
+          </button>
+          <!---->
+        </span>
       </div>
-      <div id="projects"></div>
-      <button>Load more projects</button>
+      <div id="projects">
+        <!-- Test project items -->
+        <!-- <button class="projectItem">
+          <img src="assets/img/testThumb.jpg">
+          <h4>Test project</h4>
+        </button>
+        <button class="projectItem">
+          <img src="assets/img/testThumb2.jpg">
+          <h4>Test project</h4>
+        </button>
+        <button class="projectItem">
+          <img src="assets/img/testThumb.jpg">
+          <h4>Test project</h4>
+        </button>
+        <button class="projectItem">
+          <img src="assets/img/testThumb2.jpg">
+          <h4>Test project</h4>
+        </button>
+        <button class="projectItem">
+          <img src="assets/img/testThumb.jpg">
+          <h4>Test project</h4>
+        </button>
+        <button class="projectItem">
+          <img src="assets/img/testThumb2.jpg">
+          <h4>Test project</h4>
+        </button> -->
+      </div>
+      <button id="loadMoreProjBtn" class="buttonBase disabled">Load more projects</button>
     </div>
     <div id="currentProject"></div>
     <div id="tempDrawingsBtns"></div>
   </main>
 
+  <div id="topDialogBase"></div>
+
   <div id="authorize_dialog" style="display: none;">
-    <div>
-      <button id="authorize_button">Log in</button>
-      <button id="upload_project_btn">Upload project</button>
-      <button>View sample project</button>
+    <div id="authorizeDialog">
+      <img src="assets/vadv-logo.png" alt="VisualARQ Drawigns Viewer Logo">
+      <h2>VisualARQ Drawigns Viewer</h2>
+      <div>
+        <button id="authorize_button" class="buttonBase light">Log in</button>
+        <button id="upload_project_btn" class="buttonBase light">Upload project</button>
+        <button class="buttonBase light">View sample project</button>
+      </div>
     </div>
   </div>
 
   <div id="uploadProjectDialog" style="display: none;">
     <form id="uploadFileForm">
-      <span id="closeUploadForm">X</span>
-      <input name="file" type="file">
-      <button type="submit">Upload</button>
+      <button id="closeUploadForm">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 612 612">
+          <polygon points="612,36.004 576.521,0.603 306,270.608 35.478,0.603 0,36.004 270.522,306.011 0,575.997 35.478,611.397 306,341.411 576.521,611.397 612,575.997 341.459,306.011" />
+        </svg>
+      </button>
+      <div id="loadingFile" style="display: none;">
+        <!-- <p>Uploading file.</p> -->
+        <img src="assets/loader.gif">
+      </div>
+      <input style="display: none;" name="file" type="file" id="fileInput" />
+      <label for="fileInput" class="buttonBase light">Choose a file</label>
+      <button type="submit" class="buttonBase light disabled">Upload</button>
     </form>
   </div>
-
-  <!-- <pre id="content" style="white-space: pre-wrap;"></pre>
-    <div id="itemsContainer"></div>
-    <div id="svgContainer"></div>
-
-    <button id="create_folder_btn">Test create folder</button>
-    <button id="list_files_btn">Test list files</button>
-    <button id="read_file_btn">Test read file content</button>
-    <button id="get_file_link_btn">Test get file link</button> -->
 
   <script src="auth.js"></script>
   <script src="api.js"></script>
   <script src="index.js"></script>
-  <!-- <script src="DOMutils.js"></script> -->
 </body>
 
 </html>

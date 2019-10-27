@@ -47,12 +47,27 @@ document.getElementById('closeUploadForm').addEventListener('click', () => {
   uploadProjectDialog.style.display = 'none';
 });
 
-document.getElementById('uploadFileForm').onsubmit = e => {
+
+const uploadFileForm = document.getElementById('uploadFileForm');
+const fileInput = document.getElementById('fileInput');
+const submitFileBtn = uploadFileForm.querySelector('button[type="submit"]');
+
+fileInput.addEventListener('change', e => {
+  e.target.nextElementSibling.innerHTML = e.target.files[0].name;
+  submitFileBtn.classList.remove('disabled');
+});
+
+uploadFileForm.onsubmit = e => {
   e.preventDefault();
+  document.getElementById('loadingFile').style.display = 'unset';
+  submitFileBtn.classList.add('disabled');
+  submitFileBtn.innerHTML = 'Uploading file.';
+  fileInput.nextElementSibling.style.display = 'none';
   const file = e.target.elements["file"].files[0];
-  // TODO Show some progress while creating the project
+  // TODO Show some real progress while creating the project
   createProject(file).then(res => {
     uploadProjectDialog.style.display = 'none';
+    // TODO Show message upload successful
     updateProjectsList(res);
   }, err => {
     uploadProjectDialog.style.display = 'none';
@@ -97,7 +112,7 @@ function startApp() {
     document.getElementById('projectsList').style.display = 'block';
     // usar window.location.replace("index.html"); o history.replaceState() para borrar cualquier otro parametro inutil ??
     // TODO: Limit the number of projects to list
-    //listProjectItems();
+    listProjectItems();
   }
 }
 
@@ -113,8 +128,8 @@ function createWorkspace(projectData) {
     currentProject.drawings = {};
     currentProject.elementsData = {};
   }
-  // Set title
-  document.getElementById('project_title').innerText = projectData.name;
+  // Set title, it will be on the button
+  document.getElementById('projectsListBtn').innerText = projectData.name;
   // Create buttons for the drawings
   createDrawignsBtns(projectData.drawings);
 }
@@ -182,3 +197,17 @@ function showLoginDialog() {
 }
 
 
+const projectsInner = document.getElementById('projects');
+
+
+// Adjust list last items
+
+window.onresize = calcRemainig;
+
+function calcRemainig() {
+  const itemsH = getComputedStyle(projectsInner).getPropertyValue('--items-h');
+  const itemsTotal = projectsInner.children.length;
+  projectsInner.style.setProperty('--remaining-items', itemsH - (itemsTotal % itemsH));
+}
+
+calcRemainig();
