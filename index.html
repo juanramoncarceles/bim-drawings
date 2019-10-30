@@ -15,16 +15,33 @@
     <!--style="display: none;"-->
     <img src="assets/vadv-logo.png" alt="VisualARQ Drawigns Viewer Logo" title="VisualARQ Drawigns Viewer">
     <h1>VisualARQ Drawings Viewer</h1>
-    <h2 id="project_title"><button id="projectsListBtn" class="buttonBase sides">test project title</button></h2>
+    <h2 id="project_title"><button id="projectsListBtn" class="buttonBase sides"></button></h2>
     <!-- <button id="projectsListBtn">Projects list</button> -->
-    <div>
-      <button id="signout_button" class="buttonBase sides">Sign Out</button>
+    <div class="toolbars-container">
+
     </div>
+    <button id="side-nav-toggle" class="buttonBase">
+      <img src="assets/img/crossIcon.svg">
+    </button>
+    <div id="side-nav-container">
+      <div class="side-nav-header">
+
+      </div>
+      <div class="side-nav-actions">
+        <button id="signout_button" class="buttonBase light">Sign Out</button>
+      </div>
+      <div class="side-nav-footer">
+        <p>VisualARQ Drawings Viewer</p>
+      </div>
+    </div>
+    <div class="side-nav-shade"></div>
   </header>
-  <main>
-    <!--style="display: none;"-->
-    <div id='projectsList'>
-      <!--style="display: none;"-->
+  <main style="display: none;">
+    <!---->
+    <div id="tempDrawingsBtns"></div>
+
+    <div id='projectsList' style="display: none;">
+      <!---->
       <div>
         <span>
           <button id="add_new_proj_btn" class="buttonBase light">Add new project</button>
@@ -68,11 +85,18 @@
       </div>
       <button id="loadMoreProjBtn" class="buttonBase disabled">Load more projects</button>
     </div>
-    <div id="currentProject"></div>
-    <div id="tempDrawingsBtns"></div>
+
+    <div id="currentDrawingContainer">
+    </div>
+    <div id="loading-message">
+      <div>
+        <p>Loading drawing</p>
+        <img src="assets/loader.gif">
+      </div>
+    </div>
   </main>
 
-  <div id="topDialogBase"></div>
+  <div id="modalDialogContainer" style="display: none;"></div>
 
   <div id="authorize_dialog" style="display: none;">
     <div id="authorizeDialog">
@@ -86,13 +110,18 @@
     </div>
   </div>
 
-  <div id="uploadProjectDialog" style="display: none;">
+  <div id="messageContainer" style="display: none;">
+    <button>
+      <img src="assets/img/crossIcon.svg">
+    </button>
+  </div>
+
+  <div id="modalDialogsStorage" style="display: none;">
+    <!--id="uploadProjectDialog"-->
     <form id="uploadFileForm">
-      <button id="closeUploadForm">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 612 612">
-          <polygon points="612,36.004 576.521,0.603 306,270.608 35.478,0.603 0,36.004 270.522,306.011 0,575.997 35.478,611.397 306,341.411 576.521,611.397 612,575.997 341.459,306.011" />
-        </svg>
-      </button>
+      <span id="closeUploadForm">
+        <img src="assets/img/crossIcon.svg">
+      </span>
       <div id="loadingFile" style="display: none;">
         <!-- <p>Uploading file.</p> -->
         <img src="assets/loader.gif">

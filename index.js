@@ -38,13 +38,28 @@ function getUrlParams(url) {
 
 const uploadProjectDialog = document.getElementById('uploadProjectDialog');
 
+const modalDialogContainer = document.getElementById('modalDialogContainer');
+const modalDialogsStorage = document.getElementById('modalDialogsStorage');
+
+function showModalDialog(dialog) {
+  modalDialogContainer.appendChild(dialog);
+  modalDialogContainer.style.display = 'flex';
+}
+
+function closeModalDialog(dialog) {
+  modalDialogContainer.style.display = 'none';
+  modalDialogsStorage.appendChild(dialog);
+}
+
 // Show the upload project form
 document.getElementById('add_new_proj_btn').addEventListener('click', () => {
-  uploadProjectDialog.style.display = 'flex';
+  showModalDialog(uploadFileForm);
+  modalDialogContainer.classList.add('grayTranslucent');
 });
 // Hide the upload project form
 document.getElementById('closeUploadForm').addEventListener('click', () => {
-  uploadProjectDialog.style.display = 'none';
+  closeModalDialog(uploadFileForm);
+  modalDialogContainer.classList.remove('grayTranslucent');
 });
 
 
@@ -53,24 +68,37 @@ const fileInput = document.getElementById('fileInput');
 const submitFileBtn = uploadFileForm.querySelector('button[type="submit"]');
 
 fileInput.addEventListener('change', e => {
-  e.target.nextElementSibling.innerHTML = e.target.files[0].name;
-  submitFileBtn.classList.remove('disabled');
+  console.log(fileInput.files);
+  if (fileInput.files.length > 0) {
+    fileInput.nextElementSibling.innerHTML = fileInput.files[0].name;
+    submitFileBtn.classList.remove('disabled');
+  } else {
+    fileInput.nextElementSibling.innerHTML = 'Choose a file';
+    submitFileBtn.classList.add('disabled');
+  }
 });
 
 uploadFileForm.onsubmit = e => {
   e.preventDefault();
+  // Set loading state on ui
   document.getElementById('loadingFile').style.display = 'unset';
   submitFileBtn.classList.add('disabled');
   submitFileBtn.innerHTML = 'Uploading file.';
   fileInput.nextElementSibling.style.display = 'none';
+
   const file = e.target.elements["file"].files[0];
   // TODO Show some real progress while creating the project
   createProject(file).then(res => {
-    uploadProjectDialog.style.display = 'none';
-    // TODO Show message upload successful
     updateProjectsList(res);
+    closeModalDialog(uploadFileForm);
+    showMessage('Project uploaded successfully.', 'success');
+    // Reset upload form ui
+    document.getElementById('loadingFile').style.display = 'none';
+    fileInput.nextElementSibling.innerHTML = 'Choose a file'
+    submitFileBtn.innerHTML = 'Upload';
+    fileInput.nextElementSibling.style.display = 'unset';
   }, err => {
-    uploadProjectDialog.style.display = 'none';
+    closeModalDialog(uploadFileForm);
     updateProjectsList(lastUploadedProject);
     // Mostrar el proyecto cargado en la lista pero con un color diferente indicando que es offline?
     console.error(err);
@@ -106,17 +134,23 @@ function startApp() {
   const resourceId = getUrlParams(window.location.href).id;
 
   if (resourceId) {
+    loadingMessage.classList.add('active');
     fetchProject(resourceId)
-      .then(res => createWorkspace(res), rej => console.log('Project not found. Go to home?'));
+      .then(res => {
+        createWorkspace(res);
+        loadingMessage.classList.remove('active');
+      }, rej => console.log('Project not found. Go to home?'));
   } else {
     document.getElementById('projectsList').style.display = 'block';
     // usar window.location.replace("index.html"); o history.replaceState() para borrar cualquier otro parametro inutil ??
     // TODO: Limit the number of projects to list
     listProjectItems();
+    loadingMessage.classList.add('active');
   }
 }
 
 function createWorkspace(projectData) {
+  console.log('a');
   cleanWorkspace();
   // Reset the value of the currentProject variable, deletes the contents of the previous project.
   currentProject.name = projectData.name;
@@ -142,21 +176,24 @@ function cleanWorkspace() {
 // Temporary fucntion to test drawings
 function createDrawignsBtns(drawings) {
   const drawingsButtons = document.getElementById('tempDrawingsBtns');
-  for (const drawing in drawings) {
+  for (const drawingName in drawings) {
     drawingBtn = document.createElement('button');
-    const drawingName = drawing; //.name.replace(/.svg$/, '');
+    //const drawingName = drawing;     //.name.replace(/.svg$/, '');
     drawingBtn.innerText = drawingName;
     // Could be that there is no id yet if the project was uploaded and it is only local
-    if (drawings[drawing].id) {
-      drawingBtn.dataset.drawingId = drawings[drawing].id;
+    if (drawings[drawingName].id) {
+      drawingBtn.dataset.drawingId = drawings[drawingName].id;
     }
     drawingBtn.addEventListener('click', () => {
       if (currentProject.drawings[drawingName]) {
-        console.log(currentProject.drawings[drawingName]);
+        setDrawing(drawingName);
       } else {
-        getFileContent(drawings[drawing].id).then(res => {
+        loadingMessage.classList.add('active');
+        getFileContent(drawings[drawingName].id).then(res => {
           currentProject.drawings[drawingName] = res.body;
-          console.log('fetched');
+          loadingMessage.classList.remove('active');
+          setDrawing(drawingName);
+          console.log('Drawing fetched.');
         }, err => {
           console.log(err);
         });
@@ -164,6 +201,17 @@ function createDrawignsBtns(drawings) {
     });
     drawingsButtons.appendChild(drawingBtn);
   }
+}
+
+const currentDrawingContainer = document.getElementById('currentDrawingContainer');
+
+const loadingMessage = document.getElementById('loading-message');
+
+function setDrawing(drawingName) {
+  // Set visible the loading icon
+  currentDrawingContainer.innerHTML = currentProject.drawings[drawingName];
+
+
 }
 
 document.getElementById('closeProjectsListBtn').addEventListener('click', () => {
@@ -180,6 +228,7 @@ document.getElementById('projectsListBtn').addEventListener('click', () => {
   // Si solo hay uno voy a ver si hay mas ya que posiblemente sea porque se ha accedido directamente a ese proyecto.
   if (appData.projectsData.length <= 1 || appData.projectsData === undefined) {
     listProjectItems();
+    loadingMessage.classList.add('active');
   }
 });
 
@@ -210,4 +259,26 @@ function calcRemainig() {
   projectsInner.style.setProperty('--remaining-items', itemsH - (itemsTotal % itemsH));
 }
 
-calcRemainig();
+
+
+const messageContainer = document.getElementById('messageContainer');
+
+function showMessage(message, type) {
+  messageContainer.style.display = 'flex';
+  const textContainer = document.createElement('p');
+  textContainer.innerHTML = message;
+  messageContainer.appendChild(textContainer);
+  if (type === 'success') {
+    messageContainer.classList.add('success');
+  }
+}
+
+messageContainer.querySelector('button').addEventListener('click', () => {
+  messageContainer.style.display = 'none';
+});
+
+
+
+document.getElementById('side-nav-toggle').addEventListener('click', () => {
+  document.getElementById('side-nav-container').classList.toggle('active');
+});

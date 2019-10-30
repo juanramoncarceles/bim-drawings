@@ -298,11 +298,18 @@ async function listProjectItems() {
   });
   console.assert(imgData.length > 0, 'There are no thumbnails.');
 
+  // TODO Deberia devolver una promesa y ponerlos fuera, ademas seria mas facil para quitar el loading
+
   // Create the project items
   appData.projectsData.forEach(proj => {
     const projectItem = createProjectItem(proj);
     projectsContainer.appendChild(projectItem);
   });
+
+  // Adjust the items
+  calcRemainig();
+
+  loadingMessage.classList.remove('active');
 }
 
 function createProjectItem(projData) {
@@ -316,15 +323,17 @@ function createProjectItem(projData) {
   if (projData.thumbId) {
     projItemContent = `<img src='https://drive.google.com/uc?id=${projData.thumbId}'>`;
   } else {
-    projItemContent = `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><circle r="50" cx="100" cy="100"></circle></svg>`;
+    projItemContent = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -50 350 210"><path d="M143,10.44H65.27V7a7,7,0,0,0-7-7H7A7,7,0,0,0,0,7V103a7,7,0,0,0,7,7H65V70.18H85V110h58a7,7,0,0,0,7-7V17.41A7,7,0,0,0,143,10.44ZM125,53.49H105v-20h20Z" style="fill:#e6e6e6"/></svg>`;
   }
   projItem.innerHTML = projItemContent.concat(`<h4>${projData.name}</h4>`);
   return projItem;
 }
 
+// Adds a new item to the list
 function updateProjectsList(projData) {
   const projectItem = createProjectItem(projData);
-  projectsContainer.appendChild(projectItem);
+  projectsContainer.prepend(projectItem);
+  calcRemainig();
 }
 
 const projListContainer = document.getElementById('projectsList');
@@ -351,6 +360,7 @@ projectsContainer.addEventListener('click', e => {
     projectItem.style.backgroundColor = 'green';
     previousActiveItem = projectItem;
   } else {
+    loadingMessage.classList.add('active');
     fetchProject(projectItem.dataset.projId)
       .then(res => {
         console.log(res);
@@ -361,6 +371,7 @@ projectsContainer.addEventListener('click', e => {
         }
         projectItem.style.backgroundColor = 'green';
         previousActiveItem = projectItem;
+        loadingMessage.classList.remove('active');
       }, err => {
         console.log(err);
         // if (err.id === 'temporal') {
@@ -387,9 +398,11 @@ async function fetchProject(projectId) {
   // This will happen when someone access a project directly ?
   if (appData.projectsData === undefined) {
     const projectNameRes = await getFileData(projectId, 'name, trashed');
-    if (!JSON.parse(res.body).trashed) {
+    console.log('b');
+    if (!JSON.parse(projectNameRes.body).trashed) {
       appData.projectsData = [{ id: projectId, name: JSON.parse(projectNameRes.body).name }];
       projectIndex = 0;
+      console.log('c');
     }
   } else if (projectId !== 'temporal') {
     projectIndex = appData.projectsData.findIndex(proj => proj.id === projectId);
