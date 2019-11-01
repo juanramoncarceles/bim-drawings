@@ -1,16 +1,4 @@
-// /**
-//  * Append a pre element to the body containing the given message
-//  * as its text node. Used to display the results of the API call.
-//  *
-//  * @param {string} message Text to be placed in pre element.
-//  */
-// function appendPre(message) {
-//   const pre = document.getElementById('content');
-//   const textContent = document.createTextNode(message + '\n');
-//   pre.appendChild(textContent);
-// }
-
-
+// Object that stores the data of the current project.
 const currentProject = {
   id: '',
   name: '',
@@ -20,7 +8,7 @@ const currentProject = {
 
 /**
 * Get the URL parameters.
-* source: https://css-tricks.com/snippets/javascript/get-url-variables/
+* Source: https://css-tricks.com/snippets/javascript/get-url-variables/
 * @param  {String} url The URL
 * @return {Object}     The URL parameters
 */
@@ -36,7 +24,10 @@ function getUrlParams(url) {
   return params;
 }
 
-const uploadProjectDialog = document.getElementById('uploadProjectDialog');
+
+/********************* MODAL DIALOGS *********************/
+
+// All modal dialogs are stored in a container and fetched when needed.
 
 const modalDialogContainer = document.getElementById('modalDialogContainer');
 const modalDialogsStorage = document.getElementById('modalDialogsStorage');
@@ -51,8 +42,29 @@ function closeModalDialog(dialog) {
   modalDialogsStorage.appendChild(dialog);
 }
 
+
+// Show the log in dialog
+
+const authorizeDialog = document.getElementById('authorizeDialog');
+
+function showLoginDialog() {
+  //document.getElementById('authorize_dialog').style.display = 'flex';
+  showModalDialog(authorizeDialog);
+  // Also hide or remove anything else (header and main)
+  document.querySelector('header').style.display = 'none';
+  document.querySelector('main').style.display = 'none';
+  projectsList.style.display = 'none';
+  // TODO Delete html nodes with data and variables with data
+  // Empty the projects list
+  const projectsItems = document.getElementById('projects');
+  while (projectsItems.firstChild && projectsItems.removeChild(projectsItems.firstChild));
+}
+
+/**** UPLOAD FILE FORM ****/
+/**************************/
+
 // Show the upload project form
-document.getElementById('add_new_proj_btn').addEventListener('click', () => {
+document.getElementById('newProjectBtn').addEventListener('click', () => {
   showModalDialog(uploadFileForm);
   modalDialogContainer.classList.add('grayTranslucent');
 });
@@ -61,6 +73,8 @@ document.getElementById('closeUploadForm').addEventListener('click', () => {
   closeModalDialog(uploadFileForm);
   modalDialogContainer.classList.remove('grayTranslucent');
 });
+
+
 
 
 const uploadFileForm = document.getElementById('uploadFileForm');
@@ -107,7 +121,10 @@ uploadFileForm.onsubmit = e => {
 
 
 
-
+/**
+ * Read the content of a file.
+ * @param {Blob} file 
+ */
 function readInputFile(file) {
   return new Promise((res, rej) => {
     const reader = new FileReader();
@@ -121,11 +138,44 @@ function readInputFile(file) {
   });
 }
 
+/************ MESSAGE CONTAINER ***************/
+/**********************************************/
+
+const messageContainer = document.getElementById('messageContainer');
+
+/**
+ * Disaplays feedback message.
+ * @param {String} message 
+ * @param {String} type Use keywords (success, warning, error) to determine the type of message.
+ */
+function showMessage(message, type) {
+  messageContainer.style.display = 'flex';
+  const textContainer = document.createElement('p');
+  textContainer.innerHTML = message;
+  messageContainer.appendChild(textContainer);
+  if (type === 'success') {
+    messageContainer.classList.add('success');
+  } else if (type === 'warning') {
+    messageContainer.classList.add('warning');
+  } else if (type === 'error') {
+    messageContainer.classList.add('error');
+  }
+}
+
+messageContainer.querySelector('button').addEventListener('click', () => {
+  messageContainer.style.display = 'none';
+});
+
+// FIRST FUNCTION THAT IS CALLED ON START
 
 
+/**
+ * Behaves differently depending if the url contains an id of a project or not.
+ */
 function startApp() {
   // Hide the login dialog in case it was visible
-  document.getElementById('authorize_dialog').style.display = 'none';
+  closeModalDialog(authorizeDialog);
+  //document.getElementById('authorize_dialog').style.display = 'none';
   // Show the app interface (header and main)
   document.querySelector('header').style.display = 'flex';
   document.querySelector('main').style.display = 'block';
@@ -134,23 +184,34 @@ function startApp() {
   const resourceId = getUrlParams(window.location.href).id;
 
   if (resourceId) {
-    loadingMessage.classList.add('active');
+    manageLoadingMsg(true, 'Loading project.');
     fetchProject(resourceId)
       .then(res => {
         createWorkspace(res);
-        loadingMessage.classList.remove('active');
+        projectsListBtn.style.display = 'unset';
+        manageLoadingMsg(false);
       }, rej => console.log('Project not found. Go to home?'));
   } else {
-    document.getElementById('projectsList').style.display = 'block';
-    // usar window.location.replace("index.html"); o history.replaceState() para borrar cualquier otro parametro inutil ??
+    projectsList.style.display = 'block';
+    // TODO usar window.location.replace("index.html"); o history.replaceState() para borrar cualquier otro parametro inutil ??
     // TODO: Limit the number of projects to list
     listProjectItems();
+    manageLoadingMsg(true, 'Loading projects.');
+  }
+}
+
+const loadingMessage = document.getElementById('loadingMessage');
+
+function manageLoadingMsg(visible, message) {
+  if (visible) {
+    loadingMessage.querySelector('p').innerHTML = message;
     loadingMessage.classList.add('active');
+  } else if (!visible) {
+    loadingMessage.classList.remove('active');
   }
 }
 
 function createWorkspace(projectData) {
-  console.log('a');
   cleanWorkspace();
   // Reset the value of the currentProject variable, deletes the contents of the previous project.
   currentProject.name = projectData.name;
@@ -163,7 +224,7 @@ function createWorkspace(projectData) {
     currentProject.elementsData = {};
   }
   // Set title, it will be on the button
-  document.getElementById('projectsListBtn').innerText = projectData.name;
+  projectsListBtn.innerText = projectData.name;
   // Create buttons for the drawings
   createDrawignsBtns(projectData.drawings);
 }
@@ -173,12 +234,12 @@ function cleanWorkspace() {
   while (drawingsBtns.firstChild && drawingsBtns.removeChild(drawingsBtns.firstChild));
 }
 
+
 // Temporary fucntion to test drawings
 function createDrawignsBtns(drawings) {
   const drawingsButtons = document.getElementById('tempDrawingsBtns');
   for (const drawingName in drawings) {
     drawingBtn = document.createElement('button');
-    //const drawingName = drawing;     //.name.replace(/.svg$/, '');
     drawingBtn.innerText = drawingName;
     // Could be that there is no id yet if the project was uploaded and it is only local
     if (drawings[drawingName].id) {
@@ -188,10 +249,11 @@ function createDrawignsBtns(drawings) {
       if (currentProject.drawings[drawingName]) {
         setDrawing(drawingName);
       } else {
-        loadingMessage.classList.add('active');
+        manageLoadingMsg(true, 'Loading drawing.');
         getFileContent(drawings[drawingName].id).then(res => {
           currentProject.drawings[drawingName] = res.body;
-          loadingMessage.classList.remove('active');
+
+          manageLoadingMsg(false);
           setDrawing(drawingName);
           console.log('Drawing fetched.');
         }, err => {
@@ -205,7 +267,6 @@ function createDrawignsBtns(drawings) {
 
 const currentDrawingContainer = document.getElementById('currentDrawingContainer');
 
-const loadingMessage = document.getElementById('loading-message');
 
 function setDrawing(drawingName) {
   // Set visible the loading icon
@@ -214,42 +275,34 @@ function setDrawing(drawingName) {
 
 }
 
-document.getElementById('closeProjectsListBtn').addEventListener('click', () => {
-  document.getElementById('projectsList').style.display = 'none';
+
+/***************** THE PROJECTS LIST *****************/
+
+const projectsList = document.getElementById('projectsList');
+const projectsListBtn = document.getElementById('projectsListBtn');
+const closeProjectsListBtn = document.getElementById('closeProjectsListBtn');
+
+closeProjectsListBtn.addEventListener('click', () => {
+  projectsList.style.display = 'none';
 });
 
 
-document.getElementById('projectsListBtn').addEventListener('click', () => {
+projectsListBtn.addEventListener('click', () => {
   console.log('Show the projects list.');
   if (currentProject.id) {
-    document.getElementById('closeProjectsListBtn').style.display = 'unset';
+    closeProjectsListBtn.style.display = 'unset';
   }
-  document.getElementById('projectsList').style.display = 'block';
+  projectsList.style.display = 'block';
   // Si solo hay uno voy a ver si hay mas ya que posiblemente sea porque se ha accedido directamente a ese proyecto.
   if (appData.projectsData.length <= 1 || appData.projectsData === undefined) {
     listProjectItems();
-    loadingMessage.classList.add('active');
+    manageLoadingMsg(true, 'Loading projects.');
   }
 });
 
-// Show the log in dialog
-function showLoginDialog() {
-  document.getElementById('authorize_dialog').style.display = 'flex';
-  // Also hide or remove anything else (header and main)
-  document.querySelector('header').style.display = 'none';
-  document.querySelector('main').style.display = 'none';
-  document.getElementById('projectsList').style.display = 'none';
-  // TODO Delete html nodes with data and variables with data
-  // Empty the projects list
-  const projectsItems = document.getElementById('projects');
-  while (projectsItems.firstChild && projectsItems.removeChild(projectsItems.firstChild));
-}
-
+// Adjust list last items
 
 const projectsInner = document.getElementById('projects');
-
-
-// Adjust list last items
 
 window.onresize = calcRemainig;
 
@@ -261,24 +314,14 @@ function calcRemainig() {
 
 
 
-const messageContainer = document.getElementById('messageContainer');
-
-function showMessage(message, type) {
-  messageContainer.style.display = 'flex';
-  const textContainer = document.createElement('p');
-  textContainer.innerHTML = message;
-  messageContainer.appendChild(textContainer);
-  if (type === 'success') {
-    messageContainer.classList.add('success');
-  }
-}
-
-messageContainer.querySelector('button').addEventListener('click', () => {
-  messageContainer.style.display = 'none';
-});
 
 
+/***************************** SIDE NAVE MENU ********************************/
+/*****************************************************************************/
 
-document.getElementById('side-nav-toggle').addEventListener('click', () => {
-  document.getElementById('side-nav-container').classList.toggle('active');
+const sideNavToggle = document.getElementById('sideNavToggle');
+
+sideNavToggle.addEventListener('click', () => {
+  document.getElementById('sideNavContainer').classList.toggle('active');
+  sideNavToggle.classList.toggle('active');
 });

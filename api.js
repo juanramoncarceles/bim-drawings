@@ -298,6 +298,7 @@ async function listProjectItems() {
   });
   console.assert(imgData.length > 0, 'There are no thumbnails.');
 
+
   // TODO Deberia devolver una promesa y ponerlos fuera, ademas seria mas facil para quitar el loading
 
   // Create the project items
@@ -309,15 +310,16 @@ async function listProjectItems() {
   // Adjust the items
   calcRemainig();
 
-  loadingMessage.classList.remove('active');
+  manageLoadingMsg(false);
 }
 
 function createProjectItem(projData) {
   const projItem = document.createElement('button');
   if (projData.id === 'temporal') { // Only for uploaded that have failed to store in back
-    projItem.style.backgroundColor = 'red';
+    projItem.classList.add('unsync');
   }
   projItem.dataset.projId = projData.id;
+  projItem.dataset.name = projData.name;
   projItem.classList.add('projectItem');
   let projItemContent;
   if (projData.thumbId) {
@@ -355,23 +357,25 @@ projectsContainer.addEventListener('click', e => {
     }
     goToProject(lastUploadedProject);
     if (previousActiveItem) {
-      previousActiveItem.style.backgroundColor = 'unset';
+      previousActiveItem.classList.remove('current');
     }
-    projectItem.style.backgroundColor = 'green';
+    projectItem.classList.add('current');
     previousActiveItem = projectItem;
   } else {
-    loadingMessage.classList.add('active');
+    manageLoadingMsg(true, `Loading project ${projectItem.dataset.name}`);
     fetchProject(projectItem.dataset.projId)
       .then(res => {
         console.log(res);
         // Fetch successfull of the settings file, the ids of drawings and elementsData of the project
         goToProject(res); // res --> {id: '', name: '', drawings: {'name': {'id'}, 'name': {'id'}}}
         if (previousActiveItem) {
-          previousActiveItem.style.backgroundColor = 'unset';
+          previousActiveItem.classList.remove('current');
         }
-        projectItem.style.backgroundColor = 'green';
+        projectItem.classList.add('current');
         previousActiveItem = projectItem;
-        loadingMessage.classList.remove('active');
+        console.log('a');
+        projectsListBtn.style.display = 'unset';
+        manageLoadingMsg(false);
       }, err => {
         console.log(err);
         // if (err.id === 'temporal') {

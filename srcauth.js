@@ -8,8 +8,8 @@ const DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/drive/v3/r
 // included, separated by spaces.
 const SCOPES = 'https://www.googleapis.com/auth/drive';
 
-const authorizeButton = document.getElementById('authorize_button');
-const signoutButton = document.getElementById('signout_button');
+const authorizeButton = document.getElementById('authorizeBtn');
+const signoutButton = document.getElementById('signoutBtn');
 
 /**
  *  On load, called to load the auth2 library and API client library.

@@ -2,7 +2,9 @@
   --header-height: 2.5rem;
 }
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -14,60 +16,22 @@ h1, h2, h3, h4, p {
 button {
   border-style: none;
   padding: 0;
-  cursor: pointer;
   background-color: unset;
 }
 
 body {
   margin: 0;
   overflow-x: hidden;
+  color: #545454;
   font-family: 'Oswald', sans-serif;
 }
 
 
-header {
-  display: flex;
-  height: var(--header-height);
-  align-items: center;
-  color: #fff;
-  background-color: #f6f6f6;
-  border-bottom: 2px solid #2a8fb1;
-}
-
-header > img {
-  height: 1.5rem;
-  margin-left: 1rem;
-  margin-right: 2rem;
-}
-
-header > h1 {
-  position: absolute;
-  right: 100%;
-}
-
-
-
-
-header > div:last-child > button {
-  float: right;
-}
-
-#project_title {
-  font-size: 0;
-}
-
-#project_title > button {
-  padding: 0.2rem 0.4rem;
-  font-size: 1.1rem;
-}
-
-main {
-  position: relative;
-  height: calc(100vh - var(--header-height));
-}
+/***************************** BUTTONS *****************************/
 
 .buttonBase {
   padding: 0.4rem;
+  cursor: pointer;
   border-width: 1px;
   border-style: solid;
   font-family: inherit;
@@ -83,10 +47,6 @@ main {
   border-color: #cfcfcf;
 }
 
-/* .buttonBase.middle {
-  border-color: #c2c1c1;
-} */
-
 .buttonBase.light:hover {
   background-color: #ececec;
 }
@@ -99,6 +59,59 @@ main {
 .buttonBase.disabled:hover {
   background-color: unset;
 }
+
+
+/*************************** HEADER ********************************/
+
+header {
+  /* display: flex;  este actualmente se sobreescribe desde js */
+  height: var(--header-height);
+  align-items: stretch;
+  background-color: #f6f6f6;
+  border-bottom: 2px solid #2a8fb1;
+}
+
+header > span:first-child {
+  width: 4rem;
+}
+
+header > span:first-child > img {
+  height: 100%;
+  padding: 0.3rem;
+  margin: auto;
+  display: block;
+}
+
+header > h1 {
+  position: absolute;
+  right: 100%;
+}
+
+#projectsListBtn {
+  font-size: 1rem;
+  font-weight: normal;
+}
+
+.toolbars-container {
+  flex-grow: 1;
+}
+
+/* TODO change name */
+#tempDrawingsBtns {
+  position: absolute;
+  top: 0;
+}
+
+
+/************************* MAIN CONTAINER **************************/
+
+main {
+  position: relative;
+  height: calc(100vh - var(--header-height));
+}
+
+
+/************************** PROJECTS LIST **************************/
 
 #projectsList {
   height: 100%;
@@ -126,7 +139,6 @@ main {
   font-size: 1.6rem;
 }
 
-
 #closeProjectsListBtn {
   width: 1.5rem;
 }
@@ -141,8 +153,9 @@ main {
   --remaining-items: 2; /* Updated with JS */
 }
 
+/* Values read with JS */
 @media (max-width: 1000px) {
-  #projects {--items-h: 5;} /* Read with JS */
+  #projects {--items-h: 5;}
 }
 
 @media (max-width: 800px) {
@@ -172,8 +185,17 @@ main {
   width: var(--item-width);
   margin-bottom: 1rem;
   margin-right: 1rem;
+  cursor: pointer;
   font-family: inherit;
   box-shadow: 2px 2px 7px #b2b2b2;
+}
+
+.projectItem.current {
+  background-color: #bad9e6;
+}
+
+.projectItem.unsync {
+  opacity: 0.5;
 }
 
 .projectItem:hover {
@@ -193,12 +215,13 @@ main {
   font-weight: normal;
 }
 
-
-
 #loadMoreProjBtn {
   display: block;
   margin: auto;
 }
+
+
+/********************** MODAL DIALOGS GENERICS *********************/
 
 #modalDialogContainer {
   justify-content: center;
@@ -218,6 +241,8 @@ main {
   background-color: #fff;
 }
 
+
+/*********************** AUTHORIZE DIALOG **************************/
 
 #authorizeDialog {
   display: flex;
@@ -254,11 +279,7 @@ main {
 }
 
 
-
-
-#uploadFileForm > input {
-  font-family: inherit;
-}
+/************************* UPLOAD FILE FORM ************************/
 
 #uploadFileForm {
   display: flex;
@@ -266,6 +287,17 @@ main {
   min-width: 200px;
   padding: 1rem;
   background-color: #fff;
+}
+
+#uploadFileForm > input {
+  font-family: inherit;
+}
+
+#uploadFileForm > label {
+  margin-top: 1rem;
+  text-align: center;
+  cursor: pointer;
+  font-size: 0.9rem;
 }
 
 #uploadFileForm > button:last-child {
@@ -277,18 +309,13 @@ main {
   align-self: flex-end;
 }
 
-#uploadFileForm > label {
-  margin-top: 1rem;
-  text-align: center;
-  cursor: pointer;
-  font-size: 0.9rem;
-}
-
 #loadingFile {
   padding: 1rem;
   text-align: center;
 }
 
+
+/************************ MESSAGE CONTAINER ************************/
 
 #messageContainer {
   position: absolute;
@@ -310,10 +337,13 @@ main {
 }
   
 #messageContainer.success {
-  background-color: #63ca62;
+  background-color: #aef5ad;
 }
 
-#side-nav-container {
+
+/************************ SIDENAV CONTAINER ************************/
+
+#sideNavContainer {
   display: flex;
   flex-direction: column;
   position: absolute;
@@ -324,12 +354,9 @@ main {
   z-index: 999;
   transform: translateX(314px);
   background-color: #fff;
-  color: #000;
 }
 
-
-
-#side-nav-container.active {
+#sideNavContainer.active {
   transform: translateX(0);
 }
 
@@ -339,24 +366,28 @@ main {
 
 .side-nav-actions {
   flex-grow: 1;
+  padding: 1rem;
 }
 
-#side-nav-toggle {
+.side-nav-actions > button {
+  width: 100%;
+}
+
+#sideNavToggle {
+  width: 1.2rem;
+  margin: 0.4rem;
   z-index: 1000;
-
   border-style: none;
+  background-image: url('assets/img/hamburgerIcon.svg');
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
-#side-nav-toggle > img {
-  width: 1rem;
-  display: block;
+#sideNavToggle.active {
+  background-image: url('assets/img/crossIcon.svg');
 }
 
-.toolbars-container {
-  flex-grow: 1;
-}
-
-#side-nav-container.active + .side-nav-shade {
+#sideNavContainer + .side-nav-shade {
   position: absolute;
   z-index: 10;
   background-color: #000;
@@ -368,20 +399,10 @@ main {
   transition: opacity .25s ease-out,left 0s linear .25s;
 }
 
-#side-nav-container.active + .side-nav-shade {
+#sideNavContainer.active + .side-nav-shade {
   opacity: 0.7;
   left: 0;
   transition: opacity .25s ease-out,left 0s linear;
-}
-
-
-
-.side-nav-actions {
-  padding: 1rem;
-}
-
-.side-nav-actions > button {
-  width: 100%;
 }
 
 .side-nav-footer {
@@ -389,17 +410,23 @@ main {
   font-weight: lighter;
 }
 
+
+/************************ DRAWING CONTAINER ************************/
+
 #currentDrawingContainer {
   height: 100%;
 }
 
 #currentDrawingContainer > svg {
+  display: block;
   height: 100%;
   margin: auto;
-  display: block;
 }
 
-#loading-message {
+
+/********************** LOADING MESSAGE GENERICS *******************/
+
+#loadingMessage {
   display: none;
   position: absolute;
   width: 100%;
@@ -412,11 +439,6 @@ main {
   background-color: #fffffff2;
 }
 
-#loading-message.active {
+#loadingMessage.active {
   display: flex;
-}
-
-#tempDrawingsBtns {
-  position: absolute;
-  top: 0;
 }

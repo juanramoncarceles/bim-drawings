@@ -11,24 +11,22 @@
 </head>
 
 <body>
-  <header>
-    <!--style="display: none;"-->
-    <img src="assets/vadv-logo.png" alt="VisualARQ Drawigns Viewer Logo" title="VisualARQ Drawigns Viewer">
+  <header style="display: none;">
+    <span>
+      <img src="assets/vadv-logo.png" alt="VisualARQ Drawigns Viewer Logo" title="VisualARQ Drawigns Viewer">
+    </span>
     <h1>VisualARQ Drawings Viewer</h1>
-    <h2 id="project_title"><button id="projectsListBtn" class="buttonBase sides"></button></h2>
-    <!-- <button id="projectsListBtn">Projects list</button> -->
+    <h2 id="projectsListBtn" class="buttonBase light sides" style="display: none;"></h2>
     <div class="toolbars-container">
 
     </div>
-    <button id="side-nav-toggle" class="buttonBase">
-      <img src="assets/img/crossIcon.svg">
-    </button>
-    <div id="side-nav-container">
+    <button id="sideNavToggle" class="buttonBase"></button>
+    <div id="sideNavContainer">
       <div class="side-nav-header">
 
       </div>
       <div class="side-nav-actions">
-        <button id="signout_button" class="buttonBase light">Sign Out</button>
+        <button id="signoutBtn" class="buttonBase light">Sign Out</button>
       </div>
       <div class="side-nav-footer">
         <p>VisualARQ Drawings Viewer</p>
@@ -36,15 +34,13 @@
     </div>
     <div class="side-nav-shade"></div>
   </header>
-  <main style="display: none;">
-    <!---->
-    <div id="tempDrawingsBtns"></div>
 
+  <main style="display: none;">
+    <div id="tempDrawingsBtns"></div>
     <div id='projectsList' style="display: none;">
-      <!---->
       <div>
         <span>
-          <button id="add_new_proj_btn" class="buttonBase light">Add new project</button>
+          <button id="newProjectBtn" class="buttonBase light">Add new project</button>
         </span>
         <h4>PROJECTS</h4>
         <span>
@@ -53,7 +49,6 @@
               <polygon points="612,36.004 576.521,0.603 306,270.608 35.478,0.603 0,36.004 270.522,306.011 0,575.997 35.478,611.397 306,341.411 576.521,611.397 612,575.997 341.459,306.011" />
             </svg>
           </button>
-          <!---->
         </span>
       </div>
       <div id="projects">
@@ -85,10 +80,8 @@
       </div>
       <button id="loadMoreProjBtn" class="buttonBase disabled">Load more projects</button>
     </div>
-
-    <div id="currentDrawingContainer">
-    </div>
-    <div id="loading-message">
+    <div id="currentDrawingContainer"></div>
+    <div id="loadingMessage">
       <div>
         <p>Loading drawing</p>
         <img src="assets/loader.gif">
@@ -98,18 +91,6 @@
 
   <div id="modalDialogContainer" style="display: none;"></div>
 
-  <div id="authorize_dialog" style="display: none;">
-    <div id="authorizeDialog">
-      <img src="assets/vadv-logo.png" alt="VisualARQ Drawigns Viewer Logo">
-      <h2>VisualARQ Drawigns Viewer</h2>
-      <div>
-        <button id="authorize_button" class="buttonBase light">Log in</button>
-        <button id="upload_project_btn" class="buttonBase light">Upload project</button>
-        <button class="buttonBase light">View sample project</button>
-      </div>
-    </div>
-  </div>
-
   <div id="messageContainer" style="display: none;">
     <button>
       <img src="assets/img/crossIcon.svg">
@@ -117,19 +98,26 @@
   </div>
 
   <div id="modalDialogsStorage" style="display: none;">
-    <!--id="uploadProjectDialog"-->
     <form id="uploadFileForm">
       <span id="closeUploadForm">
         <img src="assets/img/crossIcon.svg">
       </span>
       <div id="loadingFile" style="display: none;">
-        <!-- <p>Uploading file.</p> -->
         <img src="assets/loader.gif">
       </div>
       <input style="display: none;" name="file" type="file" id="fileInput" />
       <label for="fileInput" class="buttonBase light">Choose a file</label>
       <button type="submit" class="buttonBase light disabled">Upload</button>
     </form>
+    <div id="authorizeDialog">
+      <img src="assets/vadv-logo.png" alt="VisualARQ Drawigns Viewer Logo">
+      <h2>VisualARQ Drawigns Viewer</h2>
+      <div>
+        <button id="authorizeBtn" class="buttonBase light">Log in</button>
+        <!-- <button id="uploadProjectBtn" class="buttonBase light">Upload project</button> -->
+        <button class="buttonBase light">View sample project</button>
+      </div>
+    </div>
   </div>
 
   <script src="auth.js"></script>
