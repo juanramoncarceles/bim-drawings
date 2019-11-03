@@ -1,10 +1,31 @@
-// Object that stores the data of the current project.
-const currentProject = {
-  id: '',
-  name: '',
+/**************** GLOBAL OBJECTS TO STORE APP DATA *****************/
+
+// Global object to store application data while it is running.
+const appData = {
+  appMainFolderId: undefined,
+  projectsData: undefined,
+  appSettingsFolderId: undefined,
+  thumbsFolderId: undefined
+}
+
+// Global object to store all the contents of the last uploaded project.
+const lastUploadedProject = {
+  id: undefined,
+  name: undefined,
   drawings: {},
   elementsData: {}
 }
+
+// Global object that stores the data of the current project.
+const currentProject = {
+  id: undefined,
+  name: undefined,
+  drawings: {},
+  elementsData: {}
+}
+
+
+/*********************** GENERIC FUNCTIONS ***********************/
 
 /**
 * Get the URL parameters.
@@ -24,102 +45,13 @@ function getUrlParams(url) {
   return params;
 }
 
-
-/********************* MODAL DIALOGS *********************/
-
-// All modal dialogs are stored in a container and fetched when needed.
-
-const modalDialogContainer = document.getElementById('modalDialogContainer');
-const modalDialogsStorage = document.getElementById('modalDialogsStorage');
-
-function showModalDialog(dialog) {
-  modalDialogContainer.appendChild(dialog);
-  modalDialogContainer.style.display = 'flex';
+/**
+ * Removes all the childs of the HTML element.
+ * @param {HTMLElement} node 
+ */
+function emptyNode(node) {
+  while (node.firstChild && node.removeChild(node.firstChild));
 }
-
-function closeModalDialog(dialog) {
-  modalDialogContainer.style.display = 'none';
-  modalDialogsStorage.appendChild(dialog);
-}
-
-
-// Show the log in dialog
-
-const authorizeDialog = document.getElementById('authorizeDialog');
-
-function showLoginDialog() {
-  //document.getElementById('authorize_dialog').style.display = 'flex';
-  showModalDialog(authorizeDialog);
-  // Also hide or remove anything else (header and main)
-  document.querySelector('header').style.display = 'none';
-  document.querySelector('main').style.display = 'none';
-  projectsList.style.display = 'none';
-  // TODO Delete html nodes with data and variables with data
-  // Empty the projects list
-  const projectsItems = document.getElementById('projects');
-  while (projectsItems.firstChild && projectsItems.removeChild(projectsItems.firstChild));
-}
-
-/**** UPLOAD FILE FORM ****/
-/**************************/
-
-// Show the upload project form
-document.getElementById('newProjectBtn').addEventListener('click', () => {
-  showModalDialog(uploadFileForm);
-  modalDialogContainer.classList.add('grayTranslucent');
-});
-// Hide the upload project form
-document.getElementById('closeUploadForm').addEventListener('click', () => {
-  closeModalDialog(uploadFileForm);
-  modalDialogContainer.classList.remove('grayTranslucent');
-});
-
-
-
-
-const uploadFileForm = document.getElementById('uploadFileForm');
-const fileInput = document.getElementById('fileInput');
-const submitFileBtn = uploadFileForm.querySelector('button[type="submit"]');
-
-fileInput.addEventListener('change', e => {
-  console.log(fileInput.files);
-  if (fileInput.files.length > 0) {
-    fileInput.nextElementSibling.innerHTML = fileInput.files[0].name;
-    submitFileBtn.classList.remove('disabled');
-  } else {
-    fileInput.nextElementSibling.innerHTML = 'Choose a file';
-    submitFileBtn.classList.add('disabled');
-  }
-});
-
-uploadFileForm.onsubmit = e => {
-  e.preventDefault();
-  // Set loading state on ui
-  document.getElementById('loadingFile').style.display = 'unset';
-  submitFileBtn.classList.add('disabled');
-  submitFileBtn.innerHTML = 'Uploading file.';
-  fileInput.nextElementSibling.style.display = 'none';
-
-  const file = e.target.elements["file"].files[0];
-  // TODO Show some real progress while creating the project
-  createProject(file).then(res => {
-    updateProjectsList(res);
-    closeModalDialog(uploadFileForm);
-    showMessage('Project uploaded successfully.', 'success');
-    // Reset upload form ui
-    document.getElementById('loadingFile').style.display = 'none';
-    fileInput.nextElementSibling.innerHTML = 'Choose a file'
-    submitFileBtn.innerHTML = 'Upload';
-    fileInput.nextElementSibling.style.display = 'unset';
-  }, err => {
-    closeModalDialog(uploadFileForm);
-    updateProjectsList(lastUploadedProject);
-    // Mostrar el proyecto cargado en la lista pero con un color diferente indicando que es offline?
-    console.error(err);
-  });
-}
-
-
 
 /**
  * Read the content of a file.
@@ -138,27 +70,278 @@ function readInputFile(file) {
   });
 }
 
-/************ MESSAGE CONTAINER ***************/
-/**********************************************/
+
+/********************* MODAL DIALOGS MANAGEMENT ********************/
+
+// All modal dialogs are stored in a container and fetched when needed.
+
+const modalDialogContainer = document.getElementById('modalDialogContainer');
+const modalDialogsStorage = document.getElementById('modalDialogsStorage');
+
+/**
+ * Shows the modal dialog provided from the same document.
+ * @param {HTMLElement} dialog Reference to the outer HTML element of the dialog.
+ */
+function showModalDialog(dialog) {
+  modalDialogContainer.appendChild(dialog);
+  modalDialogContainer.style.display = 'flex';
+}
+
+/**
+ * Hides the modal dialog provided from the same document.
+ * @param {HTMLElement} dialog Reference to the outer HTML element of the dialog.
+ */
+function closeModalDialog(dialog) {
+  modalDialogContainer.style.display = 'none';
+  modalDialogsStorage.appendChild(dialog);
+}
+
+
+/************************ THE PROJECTS LIST ************************/
+
+const projectsListContainer = document.getElementById('projectsListContainer');
+const projectsList = document.getElementById('projectsList');
+const projectsListBtn = document.getElementById('projectsListBtn');
+const closeProjectsListBtn = document.getElementById('closeProjectsListBtn');
+
+/**
+ * Create an HTML element with the project data provided.
+ * @param {Object} projData Object with name, id and optional thumbId entries.
+ */
+function createProjectItem(projData) {
+  const projItem = document.createElement('button');
+  // Projects that have been uploaded but not send to the backend have an id of 'temporal'.
+  if (projData.id === 'temporal') {
+    projItem.classList.add('unsync');
+  }
+  projItem.dataset.projId = projData.id;
+  projItem.dataset.name = projData.name;
+  projItem.classList.add('projectItem');
+  let projItemContent;
+  if (projData.thumbId) {
+    projItemContent = `<img src='https://drive.google.com/uc?id=${projData.thumbId}'>`;
+  } else {
+    projItemContent = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -50 350 210"><path d="M143,10.44H65.27V7a7,7,0,0,0-7-7H7A7,7,0,0,0,0,7V103a7,7,0,0,0,7,7H65V70.18H85V110h58a7,7,0,0,0,7-7V17.41A7,7,0,0,0,143,10.44ZM125,53.49H105v-20h20Z" style="fill:#e6e6e6"/></svg>`;
+  }
+  projItem.innerHTML = projItemContent.concat(`<h4>${projData.name}</h4>`);
+  return projItem;
+}
+
+/**
+ * Receives an array of projects data and creates and appends the HTML items.
+ * @param {Array} projectsData The project objects with the name, id and optional thumbId entries.
+ */
+function createHTMLProjectsList(projectsData) {
+  projectsData.forEach(proj => {
+    const projectItem = createProjectItem(proj);
+    projectsList.appendChild(projectItem);
+  });
+  adjustItems();
+}
+
+/**
+ * Shows the list of projects container and fetches projects if required.
+ */
+function showProjectsList() {
+  console.log('Show the projects list.');
+  if (currentProject.id) {
+    closeProjectsListBtn.style.display = 'unset';
+  }
+  projectsListContainer.style.display = 'block';
+  // If there is no projectsData in the appData object or if there is only one fetch projects.
+  if (appData.projectsData === undefined || appData.projectsData.length <= 1) {
+    showViewportDialog('loader', 'Loading projects.');
+    listProjectItems().then(res => {
+      createHTMLProjectsList(res);
+      hideViewportMessage();
+    });
+  }
+}
+
+projectsListBtn.addEventListener('click', showProjectsList);
+
+closeProjectsListBtn.addEventListener('click', () => {
+  projectsListContainer.style.display = 'none';
+});
+
+/**
+ * Adjusts the position of project items in the container.
+ */
+function adjustItems() {
+  const itemsH = getComputedStyle(projectsList).getPropertyValue('--items-h');
+  const itemsTotal = projectsList.children.length;
+  projectsList.style.setProperty('--remaining-items', itemsH - (itemsTotal % itemsH));
+}
+
+window.onresize = adjustItems;
+
+let previousActiveItem;
+
+projectsList.addEventListener('click', e => {
+  const projectItem = e.target.closest('[data-proj-id]');
+  if (projectItem === null) {
+    return;
+  }
+  // If it is the current project close the list window.
+  if (projectItem.dataset.projId === currentProject.id) {
+    projectsListContainer.style.display = 'none';
+    return;
+  }
+  // TODO: If there have been changes in the project ask to save or discard them before closing it.
+  // TODO: If it was an offline project try to sync it before closing it. The id would be 'temporal' and the contents in currentProject
+  if (projectItem.dataset.projId === lastUploadedProject.id) {
+    if (lastUploadedProject.id === 'temporal') {
+      console.log('Show a message indicating that the project can be accessed but in viewer mode because it couldnt be saved.');
+    }
+    goToProject(lastUploadedProject);
+    if (previousActiveItem) {
+      previousActiveItem.classList.remove('current');
+    }
+    projectItem.classList.add('current');
+    previousActiveItem = projectItem;
+    projectsListBtn.style.display = 'unset';
+  } else {
+    showViewportDialog('loader', `Loading project ${projectItem.dataset.name}`);
+    fetchProject(projectItem.dataset.projId)
+      .then(res => {
+        goToProject(res);
+        if (previousActiveItem) {
+          previousActiveItem.classList.remove('current');
+        }
+        projectItem.classList.add('current');
+        previousActiveItem = projectItem;
+        projectsListBtn.style.display = 'unset';
+        hideViewportMessage();
+      }, err => {
+        console.log(err);
+      });
+  }
+});
+
+/**
+ * Sets the workspace with the provided project.
+ * @param {Object} project Data of the project. Id, name, drawings ids and elementsData files ids.
+ */
+function goToProject(project) {
+  createWorkspace(project);
+  projectsListContainer.style.display = 'none';
+  history.replaceState({ projectTitle: project.name }, project.name, "?id=" + project.id); // encodeURIComponent ?
+}
+
+/**
+ *  Adds a new HTML element item to the list of projects.
+ * @param {Object} projData Object with name, id and optional thumbId entries.
+ */
+function updateProjectsList(projData) {
+  const projectItem = createProjectItem(projData);
+  projectsList.prepend(projectItem);
+  adjustItems();
+}
+
+
+/************************** LOGIN DIALOG ***************************/
+
+const authorizeDialog = document.getElementById('authorizeDialog');
+
+/**
+ * Shows the login dialog and hides and clears anything else.
+ */
+function showLoginDialog() {
+  showModalDialog(authorizeDialog);
+  // Hide anything else.
+  document.querySelector('header').style.display = 'none';
+  document.querySelector('main').style.display = 'none';
+  projectsListContainer.style.display = 'none';
+  // TODO: Delete the contents of the global objects if any.
+  // appData.clear();
+  // currentProject.clear();
+  // lastUploadedProject.clear();
+  emptyNode(projectsList);
+  history.replaceState({ page: 'Sign in dialog' }, 'Sign in dialog', window.location.origin); // encodeURIComponent ?
+}
+
+
+/********************* UPLOAD FILE FORM DIALOG *********************/
+
+const uploadFileForm = document.getElementById('uploadFileForm');
+const fileInput = document.getElementById('fileInput');
+const submitFileBtn = uploadFileForm.querySelector('button[type="submit"]');
+
+// Show the upload project form.
+document.getElementById('newProjectBtn').addEventListener('click', () => {
+  showModalDialog(uploadFileForm);
+  modalDialogContainer.classList.add('grayTranslucent');
+});
+
+// Hide the upload project form.
+document.getElementById('closeUploadForm').addEventListener('click', () => {
+  closeModalDialog(uploadFileForm);
+  modalDialogContainer.classList.remove('grayTranslucent');
+});
+
+// Listen to file input changes.
+fileInput.addEventListener('change', () => {
+  if (fileInput.files.length > 0) {
+    fileInput.nextElementSibling.innerHTML = fileInput.files[0].name;
+    submitFileBtn.classList.remove('disabled');
+  } else {
+    fileInput.nextElementSibling.innerHTML = 'Choose a file';
+    submitFileBtn.classList.add('disabled');
+  }
+});
+
+uploadFileForm.onsubmit = e => {
+  e.preventDefault();
+  // Set loading state on UI.
+  document.getElementById('loadingFile').style.display = 'unset';
+  submitFileBtn.classList.add('disabled');
+  submitFileBtn.innerHTML = 'Uploading file.';
+  fileInput.nextElementSibling.style.display = 'none';
+  const file = e.target.elements["file"].files[0];
+  // TODO: Show some real progress while creating the project.
+  createProject(file).then(res => {
+    updateProjectsList(res);
+    closeModalDialog(uploadFileForm);
+    showMessage('Project uploaded successfully.', 'success');
+    // Reset upload form UI.
+    document.getElementById('loadingFile').style.display = 'none';
+    fileInput.nextElementSibling.innerHTML = 'Choose a file'
+    submitFileBtn.innerHTML = 'Upload';
+    fileInput.nextElementSibling.style.display = 'unset';
+  }, err => {
+    closeModalDialog(uploadFileForm);
+    updateProjectsList(lastUploadedProject);
+    console.error(err);
+  });
+}
+
+
+/************************ MESSAGE CONTAINER ************************/
+
+// It is a message that works as a feedback and that doesnt interrupt.
 
 const messageContainer = document.getElementById('messageContainer');
 
 /**
  * Disaplays feedback message.
  * @param {String} message 
- * @param {String} type Use keywords (success, warning, error) to determine the type of message.
+ * @param {String} type Use keywords 'success', 'warning' or 'error' to specify the type of message.
  */
 function showMessage(message, type) {
   messageContainer.style.display = 'flex';
   const textContainer = document.createElement('p');
   textContainer.innerHTML = message;
   messageContainer.appendChild(textContainer);
-  if (type === 'success') {
-    messageContainer.classList.add('success');
-  } else if (type === 'warning') {
-    messageContainer.classList.add('warning');
-  } else if (type === 'error') {
-    messageContainer.classList.add('error');
+  switch (type) {
+    case 'success':
+      messageContainer.classList.add('success');
+      break;
+    case 'warning':
+      messageContainer.classList.add('warning');
+      break;
+    case 'error':
+      messageContainer.classList.add('error');
+      break;
   }
 }
 
@@ -166,51 +349,54 @@ messageContainer.querySelector('button').addEventListener('click', () => {
   messageContainer.style.display = 'none';
 });
 
-// FIRST FUNCTION THAT IS CALLED ON START
 
+/************************ VIEWPORT MESSAGE ************************/
+
+// Message on the middle of the viewport that interrupts.
+
+const viewportMessage = document.getElementById('viewportMessage');
 
 /**
- * Behaves differently depending if the url contains an id of a project or not.
+ * Manages the creation of a message on the viewport.
+ * @param {String} type Values 'loader' or 'action'. If action an object with a function reference and a name should be provided.
+ * @param {String} message 
+ * @param {Object} action Object with name and function entries.
  */
-function startApp() {
-  // Hide the login dialog in case it was visible
-  closeModalDialog(authorizeDialog);
-  //document.getElementById('authorize_dialog').style.display = 'none';
-  // Show the app interface (header and main)
-  document.querySelector('header').style.display = 'flex';
-  document.querySelector('main').style.display = 'block';
-
-  // Get the URL params
-  const resourceId = getUrlParams(window.location.href).id;
-
-  if (resourceId) {
-    manageLoadingMsg(true, 'Loading project.');
-    fetchProject(resourceId)
-      .then(res => {
-        createWorkspace(res);
-        projectsListBtn.style.display = 'unset';
-        manageLoadingMsg(false);
-      }, rej => console.log('Project not found. Go to home?'));
-  } else {
-    projectsList.style.display = 'block';
-    // TODO usar window.location.replace("index.html"); o history.replaceState() para borrar cualquier otro parametro inutil ??
-    // TODO: Limit the number of projects to list
-    listProjectItems();
-    manageLoadingMsg(true, 'Loading projects.');
+function showViewportDialog(type, message, action) {
+  if (viewportMessage.querySelector('button')) {
+    viewportMessage.querySelector('button').onclick = null;
   }
+  emptyNode(viewportMessage);
+  // Create the new content.
+  const innerContainer = document.createElement('div');
+  if (type === 'loader') {
+    innerContainer.innerHTML = `<p>${message}</p><img src="assets/loader.gif">`;
+  } else if (type === 'action') {
+    innerContainer.innerHTML = `<p>${message}</p>`;
+    const button = document.createElement('button');
+    button.innerHTML = action.name;
+    button.classList.add('buttonBase', 'light');
+    button.onclick = action.function;
+    innerContainer.appendChild(button);
+  }
+  viewportMessage.appendChild(innerContainer);
+  viewportMessage.classList.add('active');
 }
 
-const loadingMessage = document.getElementById('loadingMessage');
-
-function manageLoadingMsg(visible, message) {
-  if (visible) {
-    loadingMessage.querySelector('p').innerHTML = message;
-    loadingMessage.classList.add('active');
-  } else if (!visible) {
-    loadingMessage.classList.remove('active');
-  }
+/**
+ * Hides the viewport message if visible.
+ */
+function hideViewportMessage() {
+  viewportMessage.classList.remove('active');
 }
 
+
+/********************** WORKSPACES MANAGEMENT **********************/
+
+/**
+ * Prepares the workspace by cleaning the previous one and setting the currentProject variable.
+ * @param {Object} projectData Object with id, name, drawings and elementsData of the project.
+ */
 function createWorkspace(projectData) {
   cleanWorkspace();
   // Reset the value of the currentProject variable, deletes the contents of the previous project.
@@ -223,25 +409,31 @@ function createWorkspace(projectData) {
     currentProject.drawings = {};
     currentProject.elementsData = {};
   }
-  // Set title, it will be on the button
+  // Set title of the project in the button to list the projects.
   projectsListBtn.innerText = projectData.name;
-  // Create buttons for the drawings
   createDrawignsBtns(projectData.drawings);
 }
 
+const currentDrawingContainer = document.getElementById('currentDrawingContainer');
+const drawingsBtns = document.getElementById('drawingsBtns');
+
+/**
+ * Cleans the workspace by emptying the drawing container and the list of drawings.
+ */
 function cleanWorkspace() {
-  const drawingsBtns = document.getElementById('tempDrawingsBtns');
-  while (drawingsBtns.firstChild && drawingsBtns.removeChild(drawingsBtns.firstChild));
+  emptyNode(drawingsBtns);
+  currentDrawingContainer.innerHTML = '';
 }
 
-
-// Temporary fucntion to test drawings
+/**
+ * Creates the buttons for the drawings to be displayed.
+ * @param {Object} drawings Object with the drawings, each entry has the name as key.
+ */
 function createDrawignsBtns(drawings) {
-  const drawingsButtons = document.getElementById('tempDrawingsBtns');
   for (const drawingName in drawings) {
     drawingBtn = document.createElement('button');
     drawingBtn.innerText = drawingName;
-    // Could be that there is no id yet if the project was uploaded and it is only local
+    // Could be that there is no id if the project was uploaded and it is only local.
     if (drawings[drawingName].id) {
       drawingBtn.dataset.drawingId = drawings[drawingName].id;
     }
@@ -249,11 +441,10 @@ function createDrawignsBtns(drawings) {
       if (currentProject.drawings[drawingName]) {
         setDrawing(drawingName);
       } else {
-        manageLoadingMsg(true, 'Loading drawing.');
+        showViewportDialog('loader', 'Loading drawing.');
         getFileContent(drawings[drawingName].id).then(res => {
           currentProject.drawings[drawingName] = res.body;
-
-          manageLoadingMsg(false);
+          hideViewportMessage();
           setDrawing(drawingName);
           console.log('Drawing fetched.');
         }, err => {
@@ -261,63 +452,20 @@ function createDrawignsBtns(drawings) {
         });
       }
     });
-    drawingsButtons.appendChild(drawingBtn);
+    drawingsBtns.appendChild(drawingBtn);
   }
 }
 
-const currentDrawingContainer = document.getElementById('currentDrawingContainer');
-
-
+/**
+ * Places the content of the svg drawing in the container.
+ * @param {String} drawingName 
+ */
 function setDrawing(drawingName) {
-  // Set visible the loading icon
   currentDrawingContainer.innerHTML = currentProject.drawings[drawingName];
-
-
 }
 
 
-/***************** THE PROJECTS LIST *****************/
-
-const projectsList = document.getElementById('projectsList');
-const projectsListBtn = document.getElementById('projectsListBtn');
-const closeProjectsListBtn = document.getElementById('closeProjectsListBtn');
-
-closeProjectsListBtn.addEventListener('click', () => {
-  projectsList.style.display = 'none';
-});
-
-
-projectsListBtn.addEventListener('click', () => {
-  console.log('Show the projects list.');
-  if (currentProject.id) {
-    closeProjectsListBtn.style.display = 'unset';
-  }
-  projectsList.style.display = 'block';
-  // Si solo hay uno voy a ver si hay mas ya que posiblemente sea porque se ha accedido directamente a ese proyecto.
-  if (appData.projectsData.length <= 1 || appData.projectsData === undefined) {
-    listProjectItems();
-    manageLoadingMsg(true, 'Loading projects.');
-  }
-});
-
-// Adjust list last items
-
-const projectsInner = document.getElementById('projects');
-
-window.onresize = calcRemainig;
-
-function calcRemainig() {
-  const itemsH = getComputedStyle(projectsInner).getPropertyValue('--items-h');
-  const itemsTotal = projectsInner.children.length;
-  projectsInner.style.setProperty('--remaining-items', itemsH - (itemsTotal % itemsH));
-}
-
-
-
-
-
-/***************************** SIDE NAVE MENU ********************************/
-/*****************************************************************************/
+/************************ SIDE NAVE MENU ***************************/
 
 const sideNavToggle = document.getElementById('sideNavToggle');
 
@@ -325,3 +473,50 @@ sideNavToggle.addEventListener('click', () => {
   document.getElementById('sideNavContainer').classList.toggle('active');
   sideNavToggle.classList.toggle('active');
 });
+
+
+/************************ START APPLICATION ************************/
+
+/**
+ * Function called at start and behaves differently depending if the url contains an id of a project or not.
+ */
+function startApp() {
+  // Hide the login dialog in case it was visible.
+  closeModalDialog(authorizeDialog);
+  // Show the app interface.
+  document.querySelector('header').style.display = 'flex';
+  document.querySelector('main').style.display = 'block';
+  // Get the URL params.
+  const resourceId = getUrlParams(window.location.href).id;
+  if (resourceId) {
+    showViewportDialog('loader', 'Loading project.');
+    fetchProject(resourceId)
+      .then(res => {
+        createWorkspace(res);
+        projectsListBtn.style.display = 'unset';
+        hideViewportMessage();
+      }, rej => {
+        console.log(JSON.parse(rej.body).error.code);
+        if (JSON.parse(rej.body).error.code === 404) {
+          showViewportDialog('action', JSON.parse(rej.body).error.message, {
+            name: 'View projects list', function: () => {
+              showProjectsList();
+              history.replaceState({ page: 'Home' }, 'Home', window.location.origin); // encodeURIComponent ?
+            }
+          });
+        } else {
+          console.log(rej.body);
+        }
+      });
+  } else {
+    // Delete anything that is not the origin, like any parameter different than id.
+    history.replaceState({ page: 'Home' }, 'Home', window.location.origin); // encodeURIComponent ?
+    projectsListContainer.style.display = 'block';
+    showViewportDialog('loader', 'Loading projects.');
+    // TODO: Limit the number of projects to list
+    listProjectItems().then(res => {
+      createHTMLProjectsList(res);
+      hideViewportMessage();
+    });
+  }
+}

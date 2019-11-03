@@ -97,7 +97,7 @@ header > h1 {
 }
 
 /* TODO change name */
-#tempDrawingsBtns {
+#drawingsBtns {
   position: absolute;
   top: 0;
 }
@@ -113,37 +113,37 @@ main {
 
 /************************** PROJECTS LIST **************************/
 
-#projectsList {
+#projectsListContainer {
   height: 100%;
   width: 100%;
   position: absolute;
   background-color: #fff;
 }
 
-#projectsList > div:first-child {
+#projectsListContainer > div:first-child {
   display: flex;
   justify-content: space-between;
   padding: 1rem;
 }
 
-#projectsList > div:first-child > span {
+#projectsListContainer > div:first-child > span {
   width: 20%;
 }
 
-#projectsList > div:first-child > span:last-child {
+#projectsListContainer > div:first-child > span:last-child {
   text-align: right;
 }
 
-#projectsList > div:first-child > h4 {
+#projectsListContainer > div:first-child > h4 {
   font-weight: normal;
   font-size: 1.6rem;
 }
 
 #closeProjectsListBtn {
-  width: 1.5rem;
+  width: 1.2rem;
 }
 
-#projects {
+#projectsList {
   display: flex;
   flex-wrap: wrap;
   margin-left: 1rem;
@@ -155,26 +155,26 @@ main {
 
 /* Values read with JS */
 @media (max-width: 1000px) {
-  #projects {--items-h: 5;}
+  #projectsList {--items-h: 5;}
 }
 
 @media (max-width: 800px) {
-  #projects {--items-h: 4;}
+  #projectsList {--items-h: 4;}
 }
 
 @media (max-width: 600px) {
-  #projects {--items-h: 3;}
+  #projectsList {--items-h: 3;}
 }
 
 @media (max-width: 400px) {
-  #projects {--items-h: 2;}
+  #projectsList {--items-h: 2;}
 }
 
 @media (max-width: 280px) {
-  #projects {--items-h: 1;}
+  #projectsList {--items-h: 1;}
 }
 
-#projects::after {
+#projectsList::after {
   content: "";
   flex-grow: var(--remaining-items);
   width: calc((var(--item-width) + 1rem) * var(--remaining-items));
@@ -374,7 +374,7 @@ main {
 }
 
 #sideNavToggle {
-  width: 1.2rem;
+  width: 24px;
   margin: 0.4rem;
   z-index: 1000;
   border-style: none;
@@ -420,13 +420,14 @@ main {
 #currentDrawingContainer > svg {
   display: block;
   height: 100%;
+  width: 100%;
   margin: auto;
 }
 
 
 /********************** LOADING MESSAGE GENERICS *******************/
 
-#loadingMessage {
+#viewportMessage {
   display: none;
   position: absolute;
   width: 100%;
@@ -439,6 +440,10 @@ main {
   background-color: #fffffff2;
 }
 
-#loadingMessage.active {
+#viewportMessage p {
+  padding-bottom: 1rem;
+}
+
+#viewportMessage.active {
   display: flex;
 }
