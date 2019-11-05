@@ -150,7 +150,7 @@ main {
   
   --items-h: 6; /* Read with JS */
   --item-width: calc((100% / var(--items-h)) - 1rem);
-  --remaining-items: 2; /* Updated with JS */
+  --remaining-items: unset; /* Any value it is ok, it will be updated with JS */
 }
 
 /* Values read with JS */
@@ -234,7 +234,7 @@ main {
 }
 
 #modalDialogContainer.grayTranslucent {
-  background-color: #d8d8d8d1;
+  background-color: rgba(216, 216, 216, 0.8);
 }
 
 #modalDialogContainer.lightOpaque {
@@ -251,7 +251,7 @@ main {
 }
 
 #authorizeDialog > img {
-  margin: 0 auto;
+  align-self: center;
 }
 
 #authorizeDialog > h2 {
@@ -437,7 +437,7 @@ main {
   align-items: center;
   text-align: center;
   font-weight: lighter;
-  background-color: #fffffff2;
+  background-color: rgba(255, 255, 255, 0.95);
 }
 
 #viewportMessage p {

@@ -170,6 +170,8 @@ closeProjectsListBtn.addEventListener('click', () => {
 function adjustItems() {
   const itemsH = getComputedStyle(projectsList).getPropertyValue('--items-h');
   const itemsTotal = projectsList.children.length;
+  // TODO: Wrong, if for example there are only 3 and itemsH is 3 the result is 3 and should be 0.
+  // Also if there is 3 items and fit 6 in total the result is 0 and should be 3.
   projectsList.style.setProperty('--remaining-items', itemsH - (itemsTotal % itemsH));
 }
 
@@ -225,7 +227,7 @@ projectsList.addEventListener('click', e => {
 function goToProject(project) {
   createWorkspace(project);
   projectsListContainer.style.display = 'none';
-  history.replaceState({ projectTitle: project.name }, project.name, "?id=" + project.id); // encodeURIComponent ?
+  history.replaceState({ projectTitle: project.name }, project.name, "?id=" + project.id); // encodeURIComponent ? use pushState() ?
 }
 
 /**
@@ -257,7 +259,7 @@ function showLoginDialog() {
   // currentProject.clear();
   // lastUploadedProject.clear();
   emptyNode(projectsList);
-  history.replaceState({ page: 'Sign in dialog' }, 'Sign in dialog', window.location.origin); // encodeURIComponent ?
+  history.replaceState({ page: 'Sign in dialog' }, 'Sign in dialog', location.href.replace(location.search, ''));
 }
 
 
@@ -501,7 +503,9 @@ function startApp() {
           showViewportDialog('action', JSON.parse(rej.body).error.message, {
             name: 'View projects list', function: () => {
               showProjectsList();
-              history.replaceState({ page: 'Home' }, 'Home', window.location.origin); // encodeURIComponent ?
+              if (location.search !== "") {
+                history.replaceState({ page: 'Projects list' }, 'Projects list', location.href.replace(location.search, ''));
+              }
             }
           });
         } else {
@@ -509,8 +513,10 @@ function startApp() {
         }
       });
   } else {
-    // Delete anything that is not the origin, like any parameter different than id.
-    history.replaceState({ page: 'Home' }, 'Home', window.location.origin); // encodeURIComponent ?
+    // Delete any invalid search parameter if any.
+    if (location.search !== "") {
+      history.replaceState({ page: 'Projects list' }, 'Projects list', location.href.replace(location.search, ''));
+    }
     projectsListContainer.style.display = 'block';
     showViewportDialog('loader', 'Loading projects.');
     // TODO: Limit the number of projects to list
