@@ -413,15 +413,19 @@ main {
 
 /************************ DRAWING CONTAINER ************************/
 
-#currentDrawingContainer {
+#drawingsContainer {
   height: 100%;
 }
 
-#currentDrawingContainer > svg {
+#drawingsContainer > div {
+  display: block;
+  height: 100%;
+}
+
+#drawingsContainer > div > svg {
   display: block;
   height: 100%;
   width: 100%;
-  margin: auto;
 }
 
 
@@ -446,4 +450,11 @@ main {
 
 #viewportMessage.active {
   display: flex;
+}
+
+
+/***************************** SVG STATES **************************/
+
+.selected {
+  fill: red;
 }

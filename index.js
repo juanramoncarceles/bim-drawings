@@ -170,9 +170,7 @@ closeProjectsListBtn.addEventListener('click', () => {
 function adjustItems() {
   const itemsH = getComputedStyle(projectsList).getPropertyValue('--items-h');
   const itemsTotal = projectsList.children.length;
-  // TODO: Wrong, if for example there are only 3 and itemsH is 3 the result is 3 and should be 0.
-  // Also if there is 3 items and fit 6 in total the result is 0 and should be 3.
-  projectsList.style.setProperty('--remaining-items', itemsH - (itemsTotal % itemsH));
+  projectsList.style.setProperty('--remaining-items', (Math.ceil(itemsTotal / itemsH) * itemsH) - itemsTotal);
 }
 
 window.onresize = adjustItems;
@@ -416,15 +414,18 @@ function createWorkspace(projectData) {
   createDrawignsBtns(projectData.drawings);
 }
 
-const currentDrawingContainer = document.getElementById('currentDrawingContainer');
+const drawingsContainer = document.getElementById('drawingsContainer');
 const drawingsBtns = document.getElementById('drawingsBtns');
 
 /**
  * Cleans the workspace by emptying the drawing container and the list of drawings.
+ * TODO: Remove possible event listeners before emptying containers ?
  */
 function cleanWorkspace() {
+  // TODO: remove the click eventListener of the buttons before deleting them or place just one eventListener in the drawingsBtns container
   emptyNode(drawingsBtns);
-  currentDrawingContainer.innerHTML = '';
+  // TODO: If in future version there are elements in the svg with event listeners those should be deleted
+  drawingsContainer.innerHTML = '';
 }
 
 /**
@@ -458,13 +459,66 @@ function createDrawignsBtns(drawings) {
   }
 }
 
+// TODO: These should be properties of the currentProject object
+const appendedDrawingsName = [];
+let selectedElementId;
+let currentDrawing; // Reference to the div container with the drawing
+
 /**
  * Places the content of the svg drawing in the container.
  * @param {String} drawingName 
  */
 function setDrawing(drawingName) {
-  currentDrawingContainer.innerHTML = currentProject.drawings[drawingName];
+  //drawingsContainer.innerHTML = currentProject.drawings[drawingName];
+
+  // If there is a visible drawing hide it.
+  if (currentDrawing && currentDrawing.dataset.name !== drawingName) {
+    if (selectedElementId && currentDrawing.querySelector('[data-id="' + selectedElementId + '"]')) {
+      currentDrawing.querySelector('[data-id="' + selectedElementId + '"]').classList.remove('selected');
+    }
+    currentDrawing.style.display = 'none';
+  } else if (currentDrawing && currentDrawing.dataset.name === drawingName) {
+    return;
+  }
+
+  // If it is not in the container already append it. It will be visible.
+  if (!appendedDrawingsName.includes(drawingName)) {
+    appendedDrawingsName.push(drawingName);
+    const container = document.createElement('div');
+    container.dataset.name = drawingName;
+    container.innerHTML = currentProject.drawings[drawingName];
+    drawingsContainer.append(container);
+    currentDrawing = container;
+  } else {
+    currentDrawing = drawingsContainer.querySelector('div[data-name="' + drawingName + '"]');
+    currentDrawing.style.display = 'unset';
+  }
+
+  if (selectedElementId && currentDrawing.querySelector('[data-id="' + selectedElementId + '"]')) {
+    currentDrawing.querySelector('[data-id="' + selectedElementId + '"]').classList.add('selected');
+  }
+
 }
+
+
+/************************* SELECT ELEMENTS *************************/
+
+drawingsContainer.addEventListener('click', e => {
+  const clickedElement = e.target.closest('[selectable]');
+  if (clickedElement) {
+    if (!selectedElementId) {
+      clickedElement.classList.add('selected');
+      selectedElementId = clickedElement.dataset.id;
+    } else if (clickedElement.dataset.id !== selectedElementId) {
+      currentDrawing.querySelector('[data-id="' + selectedElementId + '"]').classList.remove('selected');
+      clickedElement.classList.add('selected');
+      selectedElementId = clickedElement.dataset.id;
+    }
+  } else if (selectedElementId) {
+    currentDrawing.querySelector('[data-id="' + selectedElementId + '"]').classList.remove('selected');
+    selectedElementId = undefined;
+  }
+});
 
 
 /************************ SIDE NAVE MENU ***************************/
@@ -526,3 +580,7 @@ function startApp() {
     });
   }
 }
+
+
+
+
