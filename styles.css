@@ -98,7 +98,7 @@ header > h1 {
 
 /* TODO change name */
 #drawingsBtns {
-  position: absolute;
+  /* position: absolute; */
   top: 0;
 }
 
@@ -455,6 +455,8 @@ main {
 
 /***************************** SVG STATES **************************/
 
-.selected {
-  fill: red;
+.selected ellipse,
+.selected rect,
+.selected path {
+  fill: rgb(248, 191, 34);
 }

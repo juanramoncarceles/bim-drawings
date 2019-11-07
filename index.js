@@ -20,6 +20,7 @@ const lastUploadedProject = {
 const currentProject = {
   id: undefined,
   name: undefined,
+  index: undefined, // Index in the appData.projectsData array
   drawings: {},
   elementsData: {}
 }
@@ -402,6 +403,7 @@ function createWorkspace(projectData) {
   // Reset the value of the currentProject variable, deletes the contents of the previous project.
   currentProject.name = projectData.name;
   currentProject.id = projectData.id;
+  currentProject.index = appData.projectsData.findIndex(obj => obj.name === projectData.name);
   if (projectData.id === lastUploadedProject.id) {
     currentProject.drawings = lastUploadedProject.drawings;
     currentProject.elementsData = lastUploadedProject.elementsData;
@@ -440,7 +442,7 @@ function createDrawignsBtns(drawings) {
     if (drawings[drawingName].id) {
       drawingBtn.dataset.drawingId = drawings[drawingName].id;
     }
-    drawingBtn.addEventListener('click', () => {
+    drawingBtn.addEventListener('click', () => { // TODO: extract to a function to remove it or place one in the parent
       if (currentProject.drawings[drawingName]) {
         setDrawing(drawingName);
       } else {
@@ -508,17 +510,41 @@ drawingsContainer.addEventListener('click', e => {
   if (clickedElement) {
     if (!selectedElementId) {
       clickedElement.classList.add('selected');
+      showElementData(clickedElement.dataset.category, clickedElement.dataset.id);
       selectedElementId = clickedElement.dataset.id;
     } else if (clickedElement.dataset.id !== selectedElementId) {
-      currentDrawing.querySelector('[data-id="' + selectedElementId + '"]').classList.remove('selected');
+      if (currentDrawing.querySelector('[data-id="' + selectedElementId + '"]')) {
+        currentDrawing.querySelector('[data-id="' + selectedElementId + '"]').classList.remove('selected');
+      }
       clickedElement.classList.add('selected');
+      showElementData(clickedElement.dataset.category, clickedElement.dataset.id);
       selectedElementId = clickedElement.dataset.id;
     }
   } else if (selectedElementId) {
-    currentDrawing.querySelector('[data-id="' + selectedElementId + '"]').classList.remove('selected');
+    if (currentDrawing.querySelector('[data-id="' + selectedElementId + '"]')) {
+      currentDrawing.querySelector('[data-id="' + selectedElementId + '"]').classList.remove('selected');
+    }
     selectedElementId = undefined;
   }
 });
+
+
+function showElementData(category, id) {
+  if (currentProject.elementsData[category]) {
+    console.log(currentProject.elementsData[category].instances[id]);
+  } else {
+    // show a loader in the table ?
+    categoryData = appData.projectsData[currentProject.index].elementsData.find(obj => obj.name.replace('.json', '') === category);
+    getFileContent(categoryData.id).then(res => {
+      currentProject.elementsData[category] = JSON.parse(res.body);
+      // hide the possible loader ?
+      console.log(currentProject.elementsData[category].instances[id]);
+      console.log('Element data fetched.');
+    }, err => {
+      console.log(err);
+    });
+  }
+}
 
 
 /************************ SIDE NAVE MENU ***************************/

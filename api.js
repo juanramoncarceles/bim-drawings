@@ -40,7 +40,8 @@ function getFileContent(fileId) {
     alt: 'media'
   });
   request.then(res => {
-    console.log(res.body);
+    if (res.status === 200)
+      console.log('File fetched successfully.');
   }, err => {
     console.error(err.body);
   });
