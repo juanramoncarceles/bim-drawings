@@ -19,11 +19,54 @@
     </span>
     <h1>VisualARQ Drawings Viewer</h1>
     <h2 id="projectsListBtn" class="buttonBase light sides" style="display: none;"></h2>
-    <div id="drawingsBtns"></div>
-    <div class="toolbars-container">
-
+    <div id="drawingsBtns" class="dropdown-container">
+      <button class="buttonBase light sides">Pick a drawing</button>
+      <ul class="dropdown-content">
+        <!-- Test content -->
+        <!-- <li data-id="drawing2">Drawing 2</li>
+        <li data-id="drawing3">Super Drawing 3</li>
+        <li data-id="drawing4">Drawing 4</li>
+        <li data-id="drawing5">Drawing 5</li> -->
+      </ul>
     </div>
-    <button id="sideNavToggle" class="buttonBase"></button>
+    <div class="toolbars-container">
+      <div id="dropdown-container-1" class="dropdown-container">
+        <button class="icon-btn" id="tool-1">
+          <svg viewBox="0 0 32 32">
+            <rect width="32" height="32" fill="pink" /></svg>
+        </button>
+        <div class="dropdown-content vertical">
+          <button class="icon-btn" id="tool-2">
+            <svg viewBox="0 0 32 32">
+              <rect width="32" height="32" fill="blue" />
+            </svg>
+          </button>
+          <button class="icon-btn" id="tool-3">
+            <svg viewBox="0 0 32 32">
+              <rect width="32" height="32" fill="red" />
+            </svg>
+          </button>
+          <button class="icon-btn" id="tool-4">
+            <svg viewBox="0 0 32 32">
+              <rect width="32" height="32" fill="green" />
+            </svg>
+          </button><button class="icon-btn" id="tool-5">
+            <svg viewBox="0 0 32 32">
+              <rect width="32" height="32" fill="purple" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="global-nav-btns">
+      <button id="saveBtn" class="icon-btn disabled">
+        <svg viewBox="0 0 462 462" xmlns="http://www.w3.org/2000/svg">
+          <path d="m264 66h33v99h-33z" />
+          <path d="m457.166 103.834-99-99c-3.094-3.094-7.283-4.834-11.666-4.834h-330c-9.12 0-16.5 7.38-16.5 16.5v429c0 9.12 7.38 16.5 16.5 16.5h429c9.12 0 16.5-7.38 16.5-16.5v-330c0-4.383-1.741-8.572-4.834-11.666zm-325.166-70.834h198v165h-198zm297 396h-396v-396h66v181.5c0 9.12 7.38 16.5 16.5 16.5h231c9.12 0 16.5-7.38 16.5-16.5v-158.168l66 66z" />
+        </svg>
+      </button>
+      <button id="sideNavToggle"></button>
+    </div>
     <div id="sideNavContainer">
       <div class="side-nav-header">
 
@@ -37,6 +80,7 @@
     </div>
     <div class="side-nav-shade"></div>
   </header>
+
 
   <main style="display: none;">
 

@@ -13,6 +13,13 @@ h1, h2, h3, h4, p {
   margin-bottom: 0;
 }
 
+ul {
+  list-style-type: none;
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-left: 0;
+}
+
 button {
   border-style: none;
   padding: 0;
@@ -20,8 +27,10 @@ button {
 }
 
 body {
+  display: flex;
+  flex-direction: column;
   margin: 0;
-  overflow-x: hidden;
+  overflow: hidden;
   color: #545454;
   font-family: 'Oswald', sans-serif;
 }
@@ -60,12 +69,32 @@ body {
   background-color: unset;
 }
 
+/* Square buttons with one icon */
+.icon-btn {
+  padding: 0.4rem;
+  height: calc(var(--header-height) - 2px);
+  width: calc(var(--header-height) - 2px);
+  cursor: pointer;
+}
+
+.icon-btn > svg {
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+
+.icon-btn.disabled {
+  opacity: 0.3;
+  cursor: auto;
+}
+
 
 /*************************** HEADER ********************************/
 
 header {
   /* display: flex;  este actualmente se sobreescribe desde js */
   height: var(--header-height);
+  padding-right: 6rem;
   align-items: stretch;
   background-color: #f6f6f6;
   border-bottom: 2px solid #2a8fb1;
@@ -94,12 +123,95 @@ header > h1 {
 
 .toolbars-container {
   flex-grow: 1;
+  display: flex;
+  justify-content: flex-end;
 }
 
-/* TODO change name */
-#drawingsBtns {
-  /* position: absolute; */
+#drawingsBtns > button {
+  height: calc(var(--header-height) - 2px);
+  width: 100%;
+}
+
+#drawingsBtns > ul {
+  font-size: 0.9rem;
+  font-weight: lighter;
+  cursor: pointer;
+  background-color:#f6f6f6;
+  box-shadow: 0px 2px 5px #b6b6b6;
+}
+
+#drawingsBtns > ul > li {
+  padding: 0.4rem;
+}
+
+#drawingsBtns > ul > li:hover {
+  background-color: #dfdfdf;
+}
+
+/* Save and hamburger icon */
+.global-nav-btns {
+  display: flex;
+  position: absolute;
   top: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+@media (max-width: 500px) {
+  header {
+    order: 1;
+    border-top: 2px solid #2a8fb1;
+    border-bottom: unset;
+  }
+
+  header > span:first-child {
+    display: none;
+  }
+
+  .toolbars-container {
+    position: absolute;
+    right: 0;
+  }
+
+  #drawingsBtns > ul {
+    box-shadow: 0px -2px 7px #b6b6b6;
+  }
+}
+
+
+/**************************** DROPDOWNS ****************************/
+
+.dropdown-container {
+  z-index: 1;
+  position: relative;
+}
+
+.dropdown-container > .dropdown-content {
+  transition: 0.6s;
+  transform: translateY(-100%);
+  opacity: 0;
+  z-index: -1;
+  position: relative;
+}
+
+.dropdown-container > .dropdown-content.vertical {
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdown-container.open > .dropdown-content {
+  transform: translateY(0%);
+  opacity: 1;
+}
+
+@media (max-width: 500px) {
+  .dropdown-container > .dropdown-content {
+    transform: unset;
+  }
+
+  .dropdown-container.open > .dropdown-content {
+    transform: translateY(calc(-100% - 2.5rem + 2px))
+  }
 }
 
 
@@ -118,6 +230,12 @@ main {
   width: 100%;
   position: absolute;
   background-color: #fff;
+}
+
+@media (max-width: 500px) {
+  #projectsListContainer {
+    padding-top: 2.5rem;
+  }
 }
 
 #projectsListContainer > div:first-child {
@@ -375,8 +493,9 @@ main {
 
 #sideNavToggle {
   width: 24px;
+  height: 24px;
   margin: 0.4rem;
-  z-index: 1000;
+  cursor: pointer;
   border-style: none;
   background-image: url('assets/img/hamburgerIcon.svg');
   background-repeat: no-repeat;

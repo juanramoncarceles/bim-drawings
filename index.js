@@ -424,8 +424,8 @@ const drawingsBtns = document.getElementById('drawingsBtns');
  * TODO: Remove possible event listeners before emptying containers ?
  */
 function cleanWorkspace() {
-  // TODO: remove the click eventListener of the buttons before deleting them or place just one eventListener in the drawingsBtns container
-  emptyNode(drawingsBtns);
+  // TODO: change the name of the main button with the current drawing
+  emptyNode(drawingsBtns.querySelector('.dropdown-content'));
   // TODO: If in future version there are elements in the svg with event listeners those should be deleted
   drawingsContainer.innerHTML = '';
 }
@@ -435,30 +435,12 @@ function cleanWorkspace() {
  * @param {Object} drawings Object with the drawings, each entry has the name as key.
  */
 function createDrawignsBtns(drawings) {
+  let drawingsItems = [];
   for (const drawingName in drawings) {
-    drawingBtn = document.createElement('button');
-    drawingBtn.innerText = drawingName;
     // Could be that there is no id if the project was uploaded and it is only local.
-    if (drawings[drawingName].id) {
-      drawingBtn.dataset.drawingId = drawings[drawingName].id;
-    }
-    drawingBtn.addEventListener('click', () => { // TODO: extract to a function to remove it or place one in the parent
-      if (currentProject.drawings[drawingName]) {
-        setDrawing(drawingName);
-      } else {
-        showViewportDialog('loader', 'Loading drawing.');
-        getFileContent(drawings[drawingName].id).then(res => {
-          currentProject.drawings[drawingName] = res.body;
-          hideViewportMessage();
-          setDrawing(drawingName);
-          console.log('Drawing fetched.');
-        }, err => {
-          console.log(err);
-        });
-      }
-    });
-    drawingsBtns.appendChild(drawingBtn);
+    drawingsItems.push(`<li ${drawings[drawingName].id ? 'data-id=\"' + drawings[drawingName].id + '\"' : ''}>${drawingName}</li>`);
   }
+  drawingsBtns.querySelector('.dropdown-content').innerHTML = drawingsItems.join('');
 }
 
 // TODO: These should be properties of the currentProject object
@@ -610,3 +592,38 @@ function startApp() {
 
 
 
+
+/************************ to organize ************************/
+
+// TODO: When a project is loaded or when the app is loaded for each dropdown inside the toolbar add this events
+document.getElementById('tool-1').addEventListener('click', () => {
+  document.getElementById('dropdown-container-1').classList.add('open');
+});
+
+document.getElementById('dropdown-container-1').addEventListener('mouseleave', e => {
+  e.currentTarget.classList.remove('open');
+});
+
+
+
+// El unico event listener estara en el ul que sera fijo y se rellenara con li segun el proyecto
+drawingsBtns.children[0].addEventListener('click', () => {
+  drawingsBtns.classList.toggle('open');
+});
+
+drawingsBtns.querySelector('.dropdown-content').addEventListener('click', e => {
+  const drawingName = e.target.innerText;
+  if (currentProject.drawings[drawingName]) {
+    setDrawing(drawingName);
+  } else {
+    showViewportDialog('loader', 'Loading drawing.');
+    getFileContent(e.target.dataset.id).then(res => {
+      currentProject.drawings[drawingName] = res.body;
+      hideViewportMessage();
+      setDrawing(drawingName);
+      console.log('Drawing fetched.');
+    }, err => {
+      console.log(err);
+    });
+  }
+});
