@@ -140,6 +140,9 @@ function createHTMLProjectsList(projectsData) {
   adjustItems();
 }
 
+// Stores the active item in the projects list
+let previousActiveItem;
+
 /**
  * Shows the list of projects container and fetches projects if required.
  */
@@ -149,11 +152,21 @@ function showProjectsList() {
     closeProjectsListBtn.style.display = 'unset';
   }
   projectsListContainer.style.display = 'block';
+  // Hide the drawings and tools buttons
+  drawingsBtns.style.display = 'none';
+  toolbarsContainer.style.display = 'none';
   // If there is no projectsData in the appData object or if there is only one fetch projects.
   if (appData.projectsData === undefined || appData.projectsData.length <= 1) {
     showViewportDialog('loader', 'Loading projects.');
     listProjectItems().then(res => {
       createHTMLProjectsList(res);
+      // Set the current class in the current project
+      projectsList.childNodes.forEach(proj => {
+        if (proj.dataset && proj.dataset.projId === currentProject.id) {
+          proj.classList.add('current');
+          previousActiveItem = proj;
+        }
+      });
       hideViewportMessage();
     });
   }
@@ -163,6 +176,8 @@ projectsListBtn.addEventListener('click', showProjectsList);
 
 closeProjectsListBtn.addEventListener('click', () => {
   projectsListContainer.style.display = 'none';
+  drawingsBtns.style.display = 'unset';
+  toolbarsContainer.style.display = 'flex';
 });
 
 /**
@@ -176,8 +191,6 @@ function adjustItems() {
 
 window.onresize = adjustItems;
 
-let previousActiveItem;
-
 projectsList.addEventListener('click', e => {
   const projectItem = e.target.closest('[data-proj-id]');
   if (projectItem === null) {
@@ -185,7 +198,6 @@ projectsList.addEventListener('click', e => {
   }
   // If it is the current project close the list window.
   if (projectItem.dataset.projId === currentProject.id) {
-    projectsListContainer.style.display = 'none';
     return;
   }
   // TODO: If there have been changes in the project ask to save or discard them before closing it.
@@ -414,6 +426,10 @@ function createWorkspace(projectData) {
   // Set title of the project in the button to list the projects.
   projectsListBtn.innerText = projectData.name;
   createDrawignsBtns(projectData.drawings);
+  // Show drawings and tools buttons
+  drawingsBtns.children[0].innerText = 'Pick a drawing';
+  drawingsBtns.style.display = 'unset';
+  toolbarsContainer.style.display = 'flex';
 }
 
 const drawingsContainer = document.getElementById('drawingsContainer');
@@ -424,7 +440,6 @@ const drawingsBtns = document.getElementById('drawingsBtns');
  * TODO: Remove possible event listeners before emptying containers ?
  */
 function cleanWorkspace() {
-  // TODO: change the name of the main button with the current drawing
   emptyNode(drawingsBtns.querySelector('.dropdown-content'));
   // TODO: If in future version there are elements in the svg with event listeners those should be deleted
   drawingsContainer.innerHTML = '';
@@ -541,6 +556,8 @@ sideNavToggle.addEventListener('click', () => {
 
 /************************ START APPLICATION ************************/
 
+const toolbarsContainer = document.getElementById('toolbarsContainer');
+
 /**
  * Function called at start and behaves differently depending if the url contains an id of a project or not.
  */
@@ -611,8 +628,20 @@ drawingsBtns.children[0].addEventListener('click', () => {
   drawingsBtns.classList.toggle('open');
 });
 
+drawingsBtns.addEventListener('mouseleave', () => {
+  drawingsBtns.classList.remove('open');
+});
+
+let currentDrawingBtn;
+
 drawingsBtns.querySelector('.dropdown-content').addEventListener('click', e => {
-  const drawingName = e.target.innerText;
+  if (currentDrawingBtn) {
+    currentDrawingBtn.classList.remove('active');
+  }
+  currentDrawingBtn = e.target;
+  const drawingName = currentDrawingBtn.innerText;
+  drawingsBtns.children[0].innerText = drawingName;
+  currentDrawingBtn.classList.add('active');
   if (currentProject.drawings[drawingName]) {
     setDrawing(drawingName);
   } else {

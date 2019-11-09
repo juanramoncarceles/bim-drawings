@@ -19,34 +19,27 @@
     </span>
     <h1>VisualARQ Drawings Viewer</h1>
     <h2 id="projectsListBtn" class="buttonBase light sides" style="display: none;"></h2>
-    <div id="drawingsBtns" class="dropdown-container">
+    <div id="drawingsBtns" class="dropdown-container" style="display: none;">
       <button class="buttonBase light sides">Pick a drawing</button>
       <ul class="dropdown-content">
         <!-- Test content -->
-        <!-- <li data-id="drawing2">Drawing 2</li>
-        <li data-id="drawing3">Super Drawing 3</li>
-        <li data-id="drawing4">Drawing 4</li>
-        <li data-id="drawing5">Drawing 5</li> -->
+        <!-- <li data-id="drawing1">Drawing 1</li>
+        <li data-id="drawing2">Drawing 2</li> -->
       </ul>
     </div>
-    <div class="toolbars-container">
-      <div id="dropdown-container-1" class="dropdown-container">
+    <div id="toolbarsContainer" style="display: none;">
+      <div id="dropdown-container-1" class="dropdown-container responsive">
         <button class="icon-btn" id="tool-1">
-          <svg viewBox="0 0 32 32">
-            <rect width="32" height="32" fill="pink" /></svg>
+          <img src="assets/distIcon.svg">
         </button>
-        <div class="dropdown-content vertical">
+        <div class="dropdown-content">
           <button class="icon-btn" id="tool-2">
-            <svg viewBox="0 0 32 32">
-              <rect width="32" height="32" fill="blue" />
-            </svg>
+            <img src="assets/areaIcon.svg">
           </button>
           <button class="icon-btn" id="tool-3">
-            <svg viewBox="0 0 32 32">
-              <rect width="32" height="32" fill="red" />
-            </svg>
+            <img src="assets/angleIcon.svg">
           </button>
-          <button class="icon-btn" id="tool-4">
+          <!-- <button class="icon-btn" id="tool-4">
             <svg viewBox="0 0 32 32">
               <rect width="32" height="32" fill="green" />
             </svg>
@@ -54,7 +47,7 @@
             <svg viewBox="0 0 32 32">
               <rect width="32" height="32" fill="purple" />
             </svg>
-          </button>
+          </button> -->
         </div>
       </div>
     </div>
@@ -91,7 +84,7 @@
         </span>
         <h4>PROJECTS</h4>
         <span>
-          <button id="closeProjectsListBtn" style="display: none;">
+          <button id="closeProjectsListBtn" class="icon-btn" style="display: none;">
             <img src="assets/img/crossIcon.svg">
           </button>
         </span>
