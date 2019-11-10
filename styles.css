@@ -125,6 +125,11 @@ header > h1 {
   min-width: 10rem;
   font-size: 1rem;
   font-weight: normal;
+}
+
+#projectsListBtn > span {
+  display: inline-block;
+  width: 100%;
   text-align: center;
 }
 
@@ -137,14 +142,14 @@ header > h1 {
     border-left-style: none;
     background-repeat: no-repeat;
     background-position: center;
-    background-image: url(assets/projectsListIcon.svg);
+    background-image: url(assets/icons/projectsListIcon.svg);
     background-size: 24px;
   }
 }
 
 #toolbarsContainer {
   flex-grow: 1;
-  display: flex;
+  /* display: flex;  Set by JS at start of the app */
   justify-content: flex-end;
 }
 
@@ -225,13 +230,17 @@ header > h1 {
   transform: translateY(-100%);
   opacity: 0;
   z-index: -1;
-  position: relative;
+  position: absolute;
+  right: 0;
+  left: 0;
+  top: calc(var(--header-height) - 2px);
 }
 
 .dropdown-container.responsive > .dropdown-content {
   display: inline;
   opacity: unset;
   z-index: unset;
+  position: unset;
 }
 
 @media (max-width: 800px) {
@@ -239,6 +248,7 @@ header > h1 {
     display: flex;
     opacity: 0;
     z-index: -1;
+    position: absolute;
   }
 }
 
@@ -295,9 +305,13 @@ main {
   width: 20%;
 }
 
-#projectsListContainer > div:first-child > span:last-child {
-  text-align: right;
+
+#closeProjectsListBtn {
+  float: right;
 }
+/* #projectsListContainer > div:first-child > span:last-child {
+  text-align: right;
+} */
 
 #projectsListContainer > div:first-child > h4 {
   font-weight: normal;
@@ -544,13 +558,13 @@ main {
   margin: 0.4rem;
   cursor: pointer;
   border-style: none;
-  background-image: url('assets/img/hamburgerIcon.svg');
+  background-image: url('assets/icons/hamburgerIcon.svg');
   background-repeat: no-repeat;
   background-position: center;
 }
 
 #sideNavToggle.active {
-  background-image: url('assets/img/crossIcon.svg');
+  background-image: url('assets/icons/crossIcon.svg');
 }
 
 #sideNavContainer + .side-nav-shade {

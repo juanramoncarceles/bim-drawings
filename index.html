@@ -30,24 +30,18 @@
     <div id="toolbarsContainer" style="display: none;">
       <div id="dropdown-container-1" class="dropdown-container responsive">
         <button class="icon-btn" id="tool-1">
-          <img src="assets/distIcon.svg">
+          <img src="assets/icons/distIcon.svg">
         </button>
         <div class="dropdown-content">
           <button class="icon-btn" id="tool-2">
-            <img src="assets/areaIcon.svg">
+            <img src="assets/icons/areaIcon.svg">
           </button>
           <button class="icon-btn" id="tool-3">
-            <img src="assets/angleIcon.svg">
+            <img src="assets/icons/angleIcon.svg">
           </button>
-          <!-- <button class="icon-btn" id="tool-4">
-            <svg viewBox="0 0 32 32">
-              <rect width="32" height="32" fill="green" />
-            </svg>
-          </button><button class="icon-btn" id="tool-5">
-            <svg viewBox="0 0 32 32">
-              <rect width="32" height="32" fill="purple" />
-            </svg>
-          </button> -->
+          <button class="icon-btn" id="tool-4">
+            <img src="assets/icons/commentIcon.svg">
+          </button>
         </div>
       </div>
     </div>
@@ -85,37 +79,11 @@
         <h4>PROJECTS</h4>
         <span>
           <button id="closeProjectsListBtn" class="icon-btn" style="display: none;">
-            <img src="assets/img/crossIcon.svg">
+            <img src="assets/icons/crossIcon.svg">
           </button>
         </span>
       </div>
-      <div id="projectsList">
-        <!-- Test project items -->
-        <!-- <button class="projectItem">
-          <img src="assets/img/testThumb.jpg">
-          <h4>Test project</h4>
-        </button>
-        <button class="projectItem">
-          <img src="assets/img/testThumb2.jpg">
-          <h4>Test project</h4>
-        </button>
-        <button class="projectItem">
-          <img src="assets/img/testThumb.jpg">
-          <h4>Test project</h4>
-        </button>
-        <button class="projectItem">
-          <img src="assets/img/testThumb2.jpg">
-          <h4>Test project</h4>
-        </button>
-        <button class="projectItem">
-          <img src="assets/img/testThumb.jpg">
-          <h4>Test project</h4>
-        </button>
-        <button class="projectItem">
-          <img src="assets/img/testThumb2.jpg">
-          <h4>Test project</h4>
-        </button> -->
-      </div>
+      <div id="projectsList"></div>
       <button id="loadMoreProjBtn" class="buttonBase disabled">Load more projects</button>
     </div>
     <div id="drawingsContainer"></div>
@@ -126,14 +94,14 @@
 
   <div id="messageContainer" style="display: none;">
     <button>
-      <img src="assets/img/crossIcon.svg">
+      <img src="assets/icons/crossIcon.svg">
     </button>
   </div>
 
   <div id="modalDialogsStorage" style="display: none;">
     <form id="uploadFileForm">
       <span id="closeUploadForm">
-        <img src="assets/img/crossIcon.svg">
+        <img src="assets/icons/crossIcon.svg">
       </span>
       <div id="loadingFile" style="display: none;">
         <img src="assets/loader.gif">
@@ -147,8 +115,8 @@
       <h2>VisualARQ Drawings Viewer</h2>
       <div>
         <button id="authorizeBtn" class="buttonBase light">Log in</button>
-        <!-- <button id="uploadProjectBtn" class="buttonBase light">Upload project</button> -->
-        <button class="buttonBase light">View sample project</button>
+        <button id="uploadProjectBtn" class="buttonBase light disabled">Upload project</button>
+        <button class="buttonBase light disabled">View sample project</button>
       </div>
     </div>
   </div>

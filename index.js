@@ -157,7 +157,7 @@ function showProjectsList() {
   toolbarsContainer.style.display = 'none';
   // If there is no projectsData in the appData object or if there is only one fetch projects.
   if (appData.projectsData === undefined || appData.projectsData.length <= 1) {
-    showViewportDialog('loader', 'Loading projects.');
+    showViewportDialog('loader', 'Loading projects');
     listProjectItems().then(res => {
       createHTMLProjectsList(res);
       // Set the current class in the current project
@@ -308,7 +308,7 @@ uploadFileForm.onsubmit = e => {
   // Set loading state on UI.
   document.getElementById('loadingFile').style.display = 'unset';
   submitFileBtn.classList.add('disabled');
-  submitFileBtn.innerHTML = 'Uploading file.';
+  submitFileBtn.innerHTML = 'Uploading file';
   fileInput.nextElementSibling.style.display = 'none';
   const file = e.target.elements["file"].files[0];
   // TODO: Show some real progress while creating the project.
@@ -424,7 +424,7 @@ function createWorkspace(projectData) {
     currentProject.elementsData = {};
   }
   // Set title of the project in the button to list the projects.
-  projectsListBtn.innerText = projectData.name;
+  projectsListBtn.innerHTML = '<span>' + projectData.name + '</span>';
   createDrawignsBtns(projectData.drawings);
   // Show drawings and tools buttons
   drawingsBtns.children[0].innerText = 'Pick a drawing';
@@ -500,6 +500,36 @@ function setDrawing(drawingName) {
 }
 
 
+/********************** DRAWINGS BUTTONS LIST **********************/
+
+// One event listener in the container of the drawings buttons manages the clicked drawing.
+
+let currentDrawingBtn;
+
+drawingsBtns.querySelector('.dropdown-content').addEventListener('click', e => {
+  if (currentDrawingBtn) {
+    currentDrawingBtn.classList.remove('active');
+  }
+  currentDrawingBtn = e.target;
+  const drawingName = currentDrawingBtn.innerText;
+  drawingsBtns.children[0].innerText = drawingName;
+  currentDrawingBtn.classList.add('active');
+  if (currentProject.drawings[drawingName]) {
+    setDrawing(drawingName);
+  } else {
+    showViewportDialog('loader', 'Loading drawing');
+    getFileContent(e.target.dataset.id).then(res => {
+      currentProject.drawings[drawingName] = res.body;
+      hideViewportMessage();
+      setDrawing(drawingName);
+      console.log('Drawing fetched.');
+    }, err => {
+      console.log(err);
+    });
+  }
+});
+
+
 /************************* SELECT ELEMENTS *************************/
 
 drawingsContainer.addEventListener('click', e => {
@@ -536,11 +566,24 @@ function showElementData(category, id) {
       currentProject.elementsData[category] = JSON.parse(res.body);
       // hide the possible loader ?
       console.log(currentProject.elementsData[category].instances[id]);
-      console.log('Element data fetched.');
     }, err => {
       console.log(err);
     });
   }
+}
+
+
+/********************* DROPDOWNS FUNCTIONALITY *********************/
+
+const dropdowns = document.getElementsByClassName('dropdown-container');
+
+for (let i = 0; i < dropdowns.length; i++) {
+  dropdowns[i].children[0].addEventListener('click', () => {
+    dropdowns[i].classList.toggle('open');
+  });
+  dropdowns[i].addEventListener('mouseleave', e => {
+    e.currentTarget.classList.remove('open');
+  });
 }
 
 
@@ -570,7 +613,7 @@ function startApp() {
   // Get the URL params.
   const resourceId = getUrlParams(window.location.href).id;
   if (resourceId) {
-    showViewportDialog('loader', 'Loading project.');
+    showViewportDialog('loader', 'Loading project');
     fetchProject(resourceId)
       .then(res => {
         createWorkspace(res);
@@ -597,7 +640,7 @@ function startApp() {
       history.replaceState({ page: 'Projects list' }, 'Projects list', location.href.replace(location.search, ''));
     }
     projectsListContainer.style.display = 'block';
-    showViewportDialog('loader', 'Loading projects.');
+    showViewportDialog('loader', 'Loading projects');
     // TODO: Limit the number of projects to list
     listProjectItems().then(res => {
       createHTMLProjectsList(res);
@@ -605,54 +648,3 @@ function startApp() {
     });
   }
 }
-
-
-
-
-
-/************************ to organize ************************/
-
-// TODO: When a project is loaded or when the app is loaded for each dropdown inside the toolbar add this events
-document.getElementById('tool-1').addEventListener('click', () => {
-  document.getElementById('dropdown-container-1').classList.add('open');
-});
-
-document.getElementById('dropdown-container-1').addEventListener('mouseleave', e => {
-  e.currentTarget.classList.remove('open');
-});
-
-
-
-// El unico event listener estara en el ul que sera fijo y se rellenara con li segun el proyecto
-drawingsBtns.children[0].addEventListener('click', () => {
-  drawingsBtns.classList.toggle('open');
-});
-
-drawingsBtns.addEventListener('mouseleave', () => {
-  drawingsBtns.classList.remove('open');
-});
-
-let currentDrawingBtn;
-
-drawingsBtns.querySelector('.dropdown-content').addEventListener('click', e => {
-  if (currentDrawingBtn) {
-    currentDrawingBtn.classList.remove('active');
-  }
-  currentDrawingBtn = e.target;
-  const drawingName = currentDrawingBtn.innerText;
-  drawingsBtns.children[0].innerText = drawingName;
-  currentDrawingBtn.classList.add('active');
-  if (currentProject.drawings[drawingName]) {
-    setDrawing(drawingName);
-  } else {
-    showViewportDialog('loader', 'Loading drawing.');
-    getFileContent(e.target.dataset.id).then(res => {
-      currentProject.drawings[drawingName] = res.body;
-      hideViewportMessage();
-      setDrawing(drawingName);
-      console.log('Drawing fetched.');
-    }, err => {
-      console.log(err);
-    });
-  }
-});
