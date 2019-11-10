@@ -160,13 +160,16 @@ function showProjectsList() {
     showViewportDialog('loader', 'Loading projects');
     listProjectItems().then(res => {
       createHTMLProjectsList(res);
-      // Set the current class in the current project
+      // Set the current class in the current project.
       projectsList.childNodes.forEach(proj => {
         if (proj.dataset && proj.dataset.projId === currentProject.id) {
           proj.classList.add('current');
           previousActiveItem = proj;
         }
       });
+      hideViewportMessage();
+    }, rej => {
+      projectsList.innerHTML = '<p class="empty-msg">There are no projects. Upload one!</p>';
       hideViewportMessage();
     });
   }
@@ -247,6 +250,10 @@ function goToProject(project) {
  */
 function updateProjectsList(projData) {
   const projectItem = createProjectItem(projData);
+  // Remove the 'no projects yet' message if it is the first.
+  if (appData.projectsData.length <= 1) {
+    projectsList.querySelector('.empty-msg').remove();
+  }
   projectsList.prepend(projectItem);
   adjustItems();
 }
@@ -391,6 +398,8 @@ function showViewportDialog(type, message, action) {
     button.classList.add('buttonBase', 'light');
     button.onclick = action.function;
     innerContainer.appendChild(button);
+  } else if (type === 'message') {
+    innerContainer.innerHTML = '<p>' + message + '</p>';
   }
   viewportMessage.appendChild(innerContainer);
   viewportMessage.classList.add('active');
@@ -620,19 +629,16 @@ function startApp() {
         projectsListBtn.style.display = 'unset';
         hideViewportMessage();
       }, rej => {
-        console.log(JSON.parse(rej.body).error.code);
-        if (JSON.parse(rej.body).error.code === 404) {
-          showViewportDialog('action', JSON.parse(rej.body).error.message, {
-            name: 'View projects list', function: () => {
-              showProjectsList();
-              if (location.search !== "") {
-                history.replaceState({ page: 'Projects list' }, 'Projects list', location.href.replace(location.search, ''));
-              }
+        console.log(rej);
+        const errorMessage = rej.body === undefined ? rej : `Message: ${JSON.parse(rej.body).error.message} Code: ${JSON.parse(rej.body).error.code}`;
+        showViewportDialog('action', errorMessage, {
+          name: 'View projects list', function: () => {
+            showProjectsList();
+            if (location.search !== "") {
+              history.replaceState({ page: 'Projects list' }, 'Projects list', location.href.replace(location.search, ''));
             }
-          });
-        } else {
-          console.log(rej.body);
-        }
+          }
+        });
       });
   } else {
     // Delete any invalid search parameter if any.
@@ -644,6 +650,9 @@ function startApp() {
     // TODO: Limit the number of projects to list
     listProjectItems().then(res => {
       createHTMLProjectsList(res);
+      hideViewportMessage();
+    }, rej => {
+      projectsList.innerHTML = '<p class="empty-msg">There are no projects. Upload one!</p>';
       hideViewportMessage();
     });
   }

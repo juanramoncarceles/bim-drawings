@@ -355,6 +355,13 @@ main {
   width: calc((var(--item-width) + 1rem) * var(--remaining-items));
 }
 
+#projectsList > .empty-msg {
+  width: 100%;
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
 .projectItem {
   flex-grow: 1;
   width: var(--item-width);

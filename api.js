@@ -160,7 +160,8 @@ async function createProject(file) {
       appData.appMainFolderId = appMainFolderData[0].id;
     } else {
       // TODO: This should return a promise to know if something went wrong.
-      appData.appMainFolderId = await createFolder('VAviewerData');
+      const appMainFolderRes = await createFolder('VAviewerData');
+      appData.appMainFolderId = JSON.parse(appMainFolderRes.body).id;
       console.log('No appFolder found, one is going to be created.');
     }
   }
@@ -257,12 +258,25 @@ async function listProjectItems() {
       appData.appMainFolderId = appMainFolderData[0].id;
     } else {
       console.log('No appFolder found.');
+      return Promise.reject(new Error('No appFolder found.'));
     }
   }
 
   // Gets the project folders names and ids.
   const projectsFoldersRes = await listFiles({ parentId: appData.appMainFolderId, onlyFolder: true, excludeName: 'appSettings', trashed: false });
-  appData.projectsData = projectsFoldersRes.result.files;
+  let newProjects;
+  const projectsFoldersData = projectsFoldersRes.result.files;
+  if (projectsFoldersData && projectsFoldersData.length > 0) {
+    if (appData.projectsData === undefined) {
+      newProjects = projectsFoldersData;
+      appData.projectsData = newProjects;
+    } else if (Array.isArray(appData.projectsData)) {
+      newProjects = projectsFoldersRes.result.files.filter(newProj => appData.projectsData.find(proj => proj.id === newProj.id) === undefined);
+      newProjects.forEach(proj => {
+        appData.projectsData.push(proj);
+      });
+    }
+  }
   console.assert(appData.projectsData.length > 0, 'There are no project folders.');
 
   // Gets the id of the appSettings folder.
@@ -297,7 +311,7 @@ async function listProjectItems() {
   // TODO: Missing the management of an error while listing the projects.
 
   // If all the required data about the projects was fetched successfully it is returned.
-  return appData.projectsData;
+  return newProjects;
 }
 
 
@@ -380,7 +394,6 @@ async function fetchProject(projectId) {
     console.log('Project resources fetched succesfully.');
     return appData.projectsData[projectIndex];
   } else {
-    console.log(projectNameRes);
     return Promise.reject(new Error('Project resources could not be fetched.'));
   }
 }
