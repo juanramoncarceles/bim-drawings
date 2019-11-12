@@ -644,6 +644,8 @@ main {
 
 .selected ellipse,
 .selected rect,
+.selected polygon,
+.selected circle,
 .selected path {
   fill: rgb(248, 191, 34);
 }

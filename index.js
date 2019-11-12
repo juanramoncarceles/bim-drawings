@@ -322,7 +322,7 @@ uploadFileForm.onsubmit = e => {
   createProject(file).then(res => {
     updateProjectsList(res);
     closeModalDialog(uploadFileForm);
-    showMessage('Project uploaded successfully.', 'success');
+    showMessage('success', 'Project uploaded successfully.');
     // Reset upload form UI.
     document.getElementById('loadingFile').style.display = 'none';
     fileInput.nextElementSibling.innerHTML = 'Choose a file'
@@ -347,11 +347,9 @@ const messageContainer = document.getElementById('messageContainer');
  * @param {String} message 
  * @param {String} type Use keywords 'success', 'warning' or 'error' to specify the type of message.
  */
-function showMessage(message, type) {
+function showMessage(type, message) {
   messageContainer.style.display = 'flex';
-  const textContainer = document.createElement('p');
-  textContainer.innerHTML = message;
-  messageContainer.appendChild(textContainer);
+  messageContainer.querySelector('p').innerText = message;
   switch (type) {
     case 'success':
       messageContainer.classList.add('success');
@@ -569,15 +567,20 @@ function showElementData(category, id) {
   if (currentProject.elementsData[category]) {
     console.log(currentProject.elementsData[category].instances[id]);
   } else {
-    // show a loader in the table ?
     categoryData = appData.projectsData[currentProject.index].elementsData.find(obj => obj.name.replace('.json', '') === category);
-    getFileContent(categoryData.id).then(res => {
-      currentProject.elementsData[category] = JSON.parse(res.body);
-      // hide the possible loader ?
-      console.log(currentProject.elementsData[category].instances[id]);
-    }, err => {
-      console.log(err);
-    });
+    if (categoryData !== undefined) {
+      // show a loader in the table ?
+      getFileContent(categoryData.id).then(res => {
+        currentProject.elementsData[category] = JSON.parse(res.body);
+        // hide the possible loader ?
+        console.log(currentProject.elementsData[category].instances[id]);
+      }, err => {
+        // hide the possible loader ?
+        console.log(err);
+      });
+    } else {
+      console.log('There is no data for that element.');
+    }
   }
 }
 
