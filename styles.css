@@ -36,6 +36,14 @@ body {
 }
 
 
+/***************************** GENERAL *****************************/
+
+svg.svg-loader {
+  width: 130px;
+  height: 90px;
+}
+
+
 /***************************** BUTTONS *****************************/
 
 .buttonBase {
@@ -71,10 +79,13 @@ body {
 
 /* Square buttons with one icon */
 .icon-btn {
+  cursor: pointer;
+}
+
+header .icon-btn {
   padding: 0.4rem;
   height: calc(var(--header-height) - 2px);
   width: calc(var(--header-height) - 2px);
-  cursor: pointer;
 }
 
 .icon-btn:not(.disabled):hover {
@@ -90,6 +101,16 @@ body {
 .icon-btn.disabled {
   opacity: 0.1;
   cursor: auto;
+}
+
+.btn-bg-img {
+  background-repeat: no-repeat;
+  background-position-y: center;
+  background-position-x: 0.8rem;
+}
+
+.google-logo {
+  background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+c3VwZXIgZzwvdGl0bGU+PGcgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNOSAzLjQ4YzEuNjkgMCAyLjgzLjczIDMuNDggMS4zNGwyLjU0LTIuNDhDMTMuNDYuODkgMTEuNDMgMCA5IDAgNS40OCAwIDIuNDQgMi4wMi45NiA0Ljk2bDIuOTEgMi4yNkM0LjYgNS4wNSA2LjYyIDMuNDggOSAzLjQ4eiIgZmlsbD0iI0VBNDMzNSIvPjxwYXRoIGQ9Ik0xNy42NCA5LjJjMC0uNzQtLjA2LTEuMjgtLjE5LTEuODRIOXYzLjM0aDQuOTZjLS4xLjgzLS42NCAyLjA4LTEuODQgMi45MmwyLjg0IDIuMmMxLjctMS41NyAyLjY4LTMuODggMi42OC02LjYyeiIgZmlsbD0iIzQyODVGNCIvPjxwYXRoIGQ9Ik0zLjg4IDEwLjc4QTUuNTQgNS41NCAwIDAgMSAzLjU4IDljMC0uNjIuMTEtMS4yMi4yOS0xLjc4TC45NiA0Ljk2QTkuMDA4IDkuMDA4IDAgMCAwIDAgOWMwIDEuNDUuMzUgMi44Mi45NiA0LjA0bDIuOTItMi4yNnoiIGZpbGw9IiNGQkJDMDUiLz48cGF0aCBkPSJNOSAxOGMyLjQzIDAgNC40Ny0uOCA1Ljk2LTIuMThsLTIuODQtMi4yYy0uNzYuNTMtMS43OC45LTMuMTIuOS0yLjM4IDAtNC40LTEuNTctNS4xMi0zLjc0TC45NyAxMy4wNEMyLjQ1IDE1Ljk4IDUuNDggMTggOSAxOHoiIGZpbGw9IiMzNEE4NTMiLz48cGF0aCBmaWxsPSJub25lIiBkPSJNMCAwaDE4djE4SDB6Ii8+PC9nPjwvc3ZnPg==);
 }
 
 
@@ -305,13 +326,9 @@ main {
   width: 20%;
 }
 
-
 #closeProjectsListBtn {
   float: right;
 }
-/* #projectsListContainer > div:first-child > span:last-child {
-  text-align: right;
-} */
 
 #projectsListContainer > div:first-child > h4 {
   font-weight: normal;
@@ -491,7 +508,6 @@ main {
 }
 
 #closeUploadForm {
-  width: 1rem;
   align-self: flex-end;
 }
 
@@ -616,7 +632,7 @@ main {
 }
 
 
-/********************** LOADING MESSAGE GENERICS *******************/
+/************************* VIEWPORT MESSAGES ***********************/
 
 #viewportMessage {
   display: none;
@@ -631,12 +647,17 @@ main {
   background-color: rgba(255, 255, 255, 0.95);
 }
 
+#viewportMessage.active {
+  display: flex;
+}
+
 #viewportMessage p {
   padding-bottom: 1rem;
 }
 
-#viewportMessage.active {
+#viewportMessage .btns-container {
   display: flex;
+  justify-content: space-around;
 }
 
 
@@ -648,4 +669,24 @@ main {
 .selected circle,
 .selected path {
   fill: rgb(248, 191, 34);
+}
+
+
+/**************************** CONTEXT MENU *************************/
+
+#contextMenu {
+  width: 120px;
+  position: absolute;
+  padding-top: 0.5rem;
+  background-color: #fff;
+  box-shadow: 2px 2px 7px rgba(0, 0, 0, 0.2);
+}
+
+#contextMenu > ul > li {
+  padding: 0.6rem;
+  cursor: pointer;
+}
+
+#contextMenu > ul > li:hover {
+  background-color: rgba(0, 0, 0, 0.2);
 }

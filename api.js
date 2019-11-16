@@ -128,6 +128,23 @@ function uploadFile(fileContent, fileMimeType, fileName, folderId) {
 }
 
 
+/**
+ * Permanently delete a file, skipping the trash.
+ * @param {String} fileId ID of the file to delete.
+ */
+function deleteFile(fileId) {
+  let request = gapi.client.drive.files.delete({
+    'fileId': fileId
+  });
+  request.then(res => {
+    console.log(res);
+  }, rej => {
+    console.log(rej);
+  });
+  return request;
+}
+
+
 /*******************************************************************/
 /***************** APPLICATION SPECIFIC FUNCTIONS ******************/
 /*******************************************************************/

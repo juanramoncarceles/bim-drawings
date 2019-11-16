@@ -323,9 +323,10 @@ uploadFileForm.onsubmit = e => {
     updateProjectsList(res);
     closeModalDialog(uploadFileForm);
     showMessage('success', 'Project uploaded successfully.');
+    fileInput.value = '';
     // Reset upload form UI.
     document.getElementById('loadingFile').style.display = 'none';
-    fileInput.nextElementSibling.innerHTML = 'Choose a file'
+    fileInput.nextElementSibling.innerHTML = 'Choose a file';
     submitFileBtn.innerHTML = 'Upload';
     fileInput.nextElementSibling.style.display = 'unset';
   }, err => {
@@ -378,25 +379,30 @@ const viewportMessage = document.getElementById('viewportMessage');
  * Manages the creation of a message on the viewport.
  * @param {String} type Values 'loader' or 'action'. If action an object with a function reference and a name should be provided.
  * @param {String} message 
- * @param {Object} action Object with name and function entries.
+ * @param {Array} actions Array of objects with name and function entries.
  */
-function showViewportDialog(type, message, action) {
-  if (viewportMessage.querySelector('button')) {
-    viewportMessage.querySelector('button').onclick = null;
+function showViewportDialog(type, message, actions) {
+  if (viewportMessage.querySelector('.btns-container')) {
+    viewportMessage.querySelectorAll('.btns-container > button').forEach(btn => btn.onclick = null);
   }
   emptyNode(viewportMessage);
   // Create the new content.
   const innerContainer = document.createElement('div');
   if (type === 'loader') {
-    innerContainer.innerHTML = `<p>${message}</p><img src="assets/loader.gif">`;
+    innerContainer.innerHTML = `<p>${message}</p><svg class="svg-loader"><use href="#vaLoader"/></svg>`;
   } else if (type === 'action') {
     innerContainer.innerHTML = `<p>${message}</p>`;
-    const button = document.createElement('button');
-    button.innerHTML = action.name;
-    button.classList.add('buttonBase', 'light');
-    button.onclick = action.function;
-    innerContainer.appendChild(button);
-  } else if (type === 'message') {
+    const btnsContainer = document.createElement('div');
+    btnsContainer.classList.add('btns-container');
+    actions.forEach(action => {
+      const button = document.createElement('button');
+      button.innerHTML = action.name;
+      button.classList.add('buttonBase', 'light');
+      button.onclick = action.function;
+      btnsContainer.appendChild(button);
+    });
+    innerContainer.appendChild(btnsContainer);
+  } else if (type === 'message') { // Is this one useful? Maybe with a setTimeout?
     innerContainer.innerHTML = '<p>' + message + '</p>';
   }
   viewportMessage.appendChild(innerContainer);
@@ -609,6 +615,73 @@ sideNavToggle.addEventListener('click', () => {
 });
 
 
+/************************* CONTEXT MENU ****************************/
+
+const contextMenu = document.getElementById('contextMenu');
+let menuVisible = false;
+
+function toggleMenu(command) {
+  contextMenu.style.display = command === "show" ? "block" : "none";
+  menuVisible = !menuVisible;
+}
+
+function setPosition({ top, left }) {
+  contextMenu.style.left = `${left}px`;
+  contextMenu.style.top = `${top}px`;
+  toggleMenu("show");
+}
+
+window.addEventListener("click", () => {
+  if (menuVisible) toggleMenu("hide");
+});
+
+window.addEventListener("contextmenu", e => {
+  e.preventDefault();
+  if (e.target.closest('[data-proj-id]')) {
+    // Clean previous content of the context menu.
+    contextMenu.querySelector('ul').childNodes.forEach(btn => btn.onclick = null);
+    emptyNode(contextMenu.querySelector('ul'));
+    // Get the id of the project.
+    const projectItem = e.target.closest('[data-proj-id]');
+    // Create the context menu buttons.
+    const deleteBtn = document.createElement('li');
+    deleteBtn.innerText = 'Delete';
+    deleteBtn.onclick = () => {
+      showViewportDialog('action', `Are you sure you want to delete the ${projectItem.dataset.name} project?`, [
+        {
+          name: 'Delete',
+          function: () => {
+            showViewportDialog('loader', `Deleting ${projectItem.dataset.name} project.`);
+            deleteFile(projectItem.dataset.projId).then(res => {
+              projectItem.remove();
+              const index = appData.projectsData.findIndex(proj => proj.id === projectItem.dataset.projId);
+              appData.projectsData.splice(index, 1);
+              // TODO check also if it is in the value of currentProject or lastUploadedProject and delete it as well
+              hideViewportMessage();
+              showMessage('success', 'Project deleted successfully');
+            });
+          }
+        },
+        {
+          name: 'Cancel',
+          function: () => {
+            hideViewportMessage();
+          }
+        }
+      ]);
+    };
+    contextMenu.querySelector('ul').appendChild(deleteBtn);
+    const origin = {
+      left: e.pageX,
+      top: e.pageY
+    };
+    setPosition(origin);
+  } else {
+    if (menuVisible) toggleMenu("hide");
+  }
+});
+
+
 /************************ START APPLICATION ************************/
 
 const toolbarsContainer = document.getElementById('toolbarsContainer');
@@ -634,14 +707,17 @@ function startApp() {
       }, rej => {
         console.log(rej);
         const errorMessage = rej.body === undefined ? rej : `Message: ${JSON.parse(rej.body).error.message} Code: ${JSON.parse(rej.body).error.code}`;
-        showViewportDialog('action', errorMessage, {
-          name: 'View projects list', function: () => {
-            showProjectsList();
-            if (location.search !== "") {
-              history.replaceState({ page: 'Projects list' }, 'Projects list', location.href.replace(location.search, ''));
+        showViewportDialog('action', errorMessage, [
+          {
+            name: 'View projects list',
+            function: () => {
+              showProjectsList();
+              if (location.search !== "") {
+                history.replaceState({ page: 'Projects list' }, 'Projects list', location.href.replace(location.search, ''));
+              }
             }
           }
-        });
+        ]);
       });
   } else {
     // Delete any invalid search parameter if any.
