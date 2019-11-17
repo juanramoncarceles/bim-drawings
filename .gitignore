@@ -1,5 +1,4 @@
 node_modules
-dist
 .cache-loader
 .DS_Store
 Thumbs.db

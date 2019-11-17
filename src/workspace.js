@@ -1,25 +1,4 @@
-class App {
-  constructor() {
-    this.projectsListBtn = document.getElementById('projectsListBtn');
-    this.drawingsContainer = document.getElementById('drawingsContainer');
-    this.drawingsBtns = document.getElementById('drawingsBtns');
-    this.toolbarsContainer = document.getElementById('toolbarsContainer');
-  }
-
-  // Array of objects with data like name and id of the projects.
-  projectsData;
-
-  projectsListBtn;
-
-  drawingsContainer;
-
-  drawingsBtns;
-
-  toolbarsContainer;
-}
-
-
-class Workspace {
+export class Workspace {
   constructor(projectData) {
     this.projectName = projectData.name;
     this.projectId = projectData.id;

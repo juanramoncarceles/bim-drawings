@@ -163,7 +163,7 @@ header > h1 {
     border-left-style: none;
     background-repeat: no-repeat;
     background-position: center;
-    background-image: url(assets/icons/projectsListIcon.svg);
+    background-image: url(../assets/icons/projectsListIcon.svg);
     background-size: 24px;
   }
 }
@@ -581,13 +581,13 @@ main {
   margin: 0.4rem;
   cursor: pointer;
   border-style: none;
-  background-image: url('assets/icons/hamburgerIcon.svg');
+  background-image: url('../assets/icons/hamburgerIcon.svg');
   background-repeat: no-repeat;
   background-position: center;
 }
 
 #sideNavToggle.active {
-  background-image: url('assets/icons/crossIcon.svg');
+  background-image: url('../assets/icons/crossIcon.svg');
 }
 
 #sideNavContainer + .side-nav-shade {

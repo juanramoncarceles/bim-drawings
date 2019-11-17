@@ -1,6 +1,8 @@
 import { ApplicationData } from './appData';
 import { ProjectData } from './projectData';
-import API from './apinew';
+import { Application } from './app';
+import Generics from './generics';
+import API from './api';
 
 /************************** AUTHENTICATION *************************/
 
@@ -85,104 +87,24 @@ function handleSignoutClick(event) {
 }
 
 
+/*************** OBJECT WITH THE HTML ELEMENTS REFS ****************/
+
+const App = new Application();
+
 
 /**************** GLOBAL OBJECTS TO STORE APP DATA *****************/
 
-// Global object to store application data while it is running.
-// const appData = {
-//   appMainFolderId: undefined,
-//   projectsData: undefined,
-//   appSettingsFolderId: undefined,
-//   thumbsFolderId: undefined
-// }
-
 const AppData = new ApplicationData();
-
-// Global object to store all the contents of the last uploaded project.
-// const lastUploadedProject = {
-//   id: undefined,
-//   name: undefined,
-//   drawings: {},
-//   elementsData: {}
-// }
 
 const lastUploadedProject = new ProjectData();
 
-// Global object that stores the data of the current project.
-// const currentProject = {
-//   id: undefined,
-//   name: undefined,
-//   index: undefined, // Index in the appData.projectsData array
-//   drawings: {},
-//   elementsData: {}
-// }
-
 const currentProject = new ProjectData();
-
-
-
-/*********************** GENERIC FUNCTIONS ***********************/
-
-/**
-* Get the URL parameters.
-* Source: https://css-tricks.com/snippets/javascript/get-url-variables/
-* @param  {String} url The URL
-* @return {Object}     The URL parameters
-*/
-function getUrlParams(url) {
-  const params = {};
-  const parser = document.createElement('a');
-  parser.href = url;
-  const vars = parser.search.substring(1).split('&');
-  for (let i = 0; i < vars.length; i++) {
-    const pair = vars[i].split('=');
-    params[pair[0]] = decodeURIComponent(pair[1]);
-  }
-  return params;
-}
-
-/**
- * Removes all the childs of the HTML element.
- * @param {HTMLElement} node 
- */
-function emptyNode(node) {
-  while (node.firstChild && node.removeChild(node.firstChild));
-}
-
-
-
-
-/********************* MODAL DIALOGS MANAGEMENT ********************/
-
-// All modal dialogs are stored in a container and fetched when needed.
-
-const modalDialogContainer = document.getElementById('modalDialogContainer');
-const modalDialogsStorage = document.getElementById('modalDialogsStorage');
-
-/**
- * Shows the modal dialog provided from the same document.
- * @param {HTMLElement} dialog Reference to the outer HTML element of the dialog.
- */
-function showModalDialog(dialog) {
-  modalDialogContainer.appendChild(dialog);
-  modalDialogContainer.style.display = 'flex';
-}
-
-/**
- * Hides the modal dialog provided from the same document.
- * @param {HTMLElement} dialog Reference to the outer HTML element of the dialog.
- */
-function closeModalDialog(dialog) {
-  modalDialogContainer.style.display = 'none';
-  modalDialogsStorage.appendChild(dialog);
-}
 
 
 /************************ THE PROJECTS LIST ************************/
 
 const projectsListContainer = document.getElementById('projectsListContainer');
 const projectsList = document.getElementById('projectsList');
-const projectsListBtn = document.getElementById('projectsListBtn');
 const closeProjectsListBtn = document.getElementById('closeProjectsListBtn');
 
 /**
@@ -233,8 +155,8 @@ function showProjectsList() {
   }
   projectsListContainer.style.display = 'block';
   // Hide the drawings and tools buttons
-  drawingsBtns.style.display = 'none';
-  toolbarsContainer.style.display = 'none';
+  App.drawingsBtns.style.display = 'none';
+  App.toolbarsContainer.style.display = 'none';
   // If there is no projectsData in the appData object or if there is only one fetch projects.
   if (AppData.projectsData === undefined || AppData.projectsData.length <= 1) {
     showViewportDialog('loader', 'Loading projects');
@@ -255,12 +177,12 @@ function showProjectsList() {
   }
 }
 
-projectsListBtn.addEventListener('click', showProjectsList);
+App.projectsListBtn.addEventListener('click', showProjectsList);
 
 closeProjectsListBtn.addEventListener('click', () => {
   projectsListContainer.style.display = 'none';
-  drawingsBtns.style.display = 'unset';
-  toolbarsContainer.style.display = 'flex';
+  App.drawingsBtns.style.display = 'unset';
+  App.toolbarsContainer.style.display = 'flex';
 });
 
 /**
@@ -295,7 +217,7 @@ projectsList.addEventListener('click', e => {
     }
     projectItem.classList.add('current');
     previousActiveItem = projectItem;
-    projectsListBtn.style.display = 'unset';
+    App.projectsListBtn.style.display = 'unset';
   } else {
     showViewportDialog('loader', `Loading project ${projectItem.dataset.name}`);
     API.fetchProject(projectItem.dataset.projId, AppData)
@@ -306,7 +228,7 @@ projectsList.addEventListener('click', e => {
         }
         projectItem.classList.add('current');
         previousActiveItem = projectItem;
-        projectsListBtn.style.display = 'unset';
+        App.projectsListBtn.style.display = 'unset';
         hideViewportMessage();
       }, err => {
         console.log(err);
@@ -347,7 +269,7 @@ const authorizeDialog = document.getElementById('authorizeDialog');
  * Shows the login dialog and hides and clears anything else.
  */
 function showLoginDialog() {
-  showModalDialog(authorizeDialog);
+  App.showModalDialog(authorizeDialog);
   // Hide anything else.
   document.querySelector('header').style.display = 'none';
   document.querySelector('main').style.display = 'none';
@@ -356,7 +278,7 @@ function showLoginDialog() {
   // appData.clear();
   // currentProject.clear();
   // lastUploadedProject.clear();
-  emptyNode(projectsList);
+  Generics.emptyNode(projectsList);
   history.replaceState({ page: 'Sign in dialog' }, 'Sign in dialog', location.href.replace(location.search, ''));
 }
 
@@ -369,14 +291,14 @@ const submitFileBtn = uploadFileForm.querySelector('button[type="submit"]');
 
 // Show the upload project form.
 document.getElementById('newProjectBtn').addEventListener('click', () => {
-  showModalDialog(uploadFileForm);
-  modalDialogContainer.classList.add('grayTranslucent');
+  App.showModalDialog(uploadFileForm);
+  App.modalDialogContainer.classList.add('grayTranslucent');
 });
 
 // Hide the upload project form.
 document.getElementById('closeUploadForm').addEventListener('click', () => {
-  closeModalDialog(uploadFileForm);
-  modalDialogContainer.classList.remove('grayTranslucent');
+  App.closeModalDialog(uploadFileForm);
+  App.modalDialogContainer.classList.remove('grayTranslucent');
 });
 
 // Listen to file input changes.
@@ -401,7 +323,7 @@ uploadFileForm.onsubmit = e => {
   // TODO: Show some real progress while creating the project.
   API.createProject(file, AppData, lastUploadedProject).then(res => {
     updateProjectsList(res);
-    closeModalDialog(uploadFileForm);
+    App.closeModalDialog(uploadFileForm);
     showMessage('success', 'Project uploaded successfully.');
     fileInput.value = '';
     // Reset upload form UI.
@@ -410,7 +332,7 @@ uploadFileForm.onsubmit = e => {
     submitFileBtn.innerHTML = 'Upload';
     fileInput.nextElementSibling.style.display = 'unset';
   }, err => {
-    closeModalDialog(uploadFileForm);
+    App.closeModalDialog(uploadFileForm);
     updateProjectsList(lastUploadedProject);
     console.error(err);
   });
@@ -465,7 +387,7 @@ function showViewportDialog(type, message, actions) {
   if (viewportMessage.querySelector('.btns-container')) {
     viewportMessage.querySelectorAll('.btns-container > button').forEach(btn => btn.onclick = null);
   }
-  emptyNode(viewportMessage);
+  Generics.emptyNode(viewportMessage);
   // Create the new content.
   const innerContainer = document.createElement('div');
   if (type === 'loader') {
@@ -517,25 +439,23 @@ function createWorkspace(projectData) {
     currentProject.elementsData = {};
   }
   // Set title of the project in the button to list the projects.
-  projectsListBtn.innerHTML = '<span>' + projectData.name + '</span>';
+  App.projectsListBtn.innerHTML = '<span>' + projectData.name + '</span>';
   createDrawignsBtns(projectData.drawings);
   // Show drawings and tools buttons
-  drawingsBtns.children[0].innerText = 'Pick a drawing';
-  drawingsBtns.style.display = 'unset';
-  toolbarsContainer.style.display = 'flex';
+  App.drawingsBtns.children[0].innerText = 'Pick a drawing';
+  App.drawingsBtns.style.display = 'unset';
+  App.toolbarsContainer.style.display = 'flex';
 }
 
-const drawingsContainer = document.getElementById('drawingsContainer');
-const drawingsBtns = document.getElementById('drawingsBtns');
 
 /**
  * Cleans the workspace by emptying the drawing container and the list of drawings.
  * TODO: Remove possible event listeners before emptying containers ?
  */
 function cleanWorkspace() {
-  emptyNode(drawingsBtns.querySelector('.dropdown-content'));
+  Generics.emptyNode(App.drawingsBtns.querySelector('.dropdown-content'));
   // TODO: If in future version there are elements in the svg with event listeners those should be deleted
-  drawingsContainer.innerHTML = '';
+  App.drawingsContainer.innerHTML = '';
 }
 
 /**
@@ -548,7 +468,7 @@ function createDrawignsBtns(drawings) {
     // Could be that there is no id if the project was uploaded and it is only local.
     drawingsItems.push(`<li ${drawings[drawingName].id ? 'data-id=\"' + drawings[drawingName].id + '\"' : ''}>${drawingName}</li>`);
   }
-  drawingsBtns.querySelector('.dropdown-content').innerHTML = drawingsItems.join('');
+  App.drawingsBtns.querySelector('.dropdown-content').innerHTML = drawingsItems.join('');
 }
 
 // TODO: These should be properties of the currentProject object
@@ -561,7 +481,6 @@ let currentDrawing; // Reference to the div container with the drawing
  * @param {String} drawingName 
  */
 function setDrawing(drawingName) {
-  //drawingsContainer.innerHTML = currentProject.drawings[drawingName];
 
   // If there is a visible drawing hide it.
   if (currentDrawing && currentDrawing.dataset.name !== drawingName) {
@@ -579,10 +498,10 @@ function setDrawing(drawingName) {
     const container = document.createElement('div');
     container.dataset.name = drawingName;
     container.innerHTML = currentProject.drawings[drawingName];
-    drawingsContainer.append(container);
+    App.drawingsContainer.append(container);
     currentDrawing = container;
   } else {
-    currentDrawing = drawingsContainer.querySelector('div[data-name="' + drawingName + '"]');
+    currentDrawing = App.drawingsContainer.querySelector('div[data-name="' + drawingName + '"]');
     currentDrawing.style.display = 'unset';
   }
 
@@ -599,13 +518,13 @@ function setDrawing(drawingName) {
 
 let currentDrawingBtn;
 
-drawingsBtns.querySelector('.dropdown-content').addEventListener('click', e => {
+App.drawingsBtns.querySelector('.dropdown-content').addEventListener('click', e => {
   if (currentDrawingBtn) {
     currentDrawingBtn.classList.remove('active');
   }
   currentDrawingBtn = e.target;
   const drawingName = currentDrawingBtn.innerText;
-  drawingsBtns.children[0].innerText = drawingName;
+  App.drawingsBtns.children[0].innerText = drawingName;
   currentDrawingBtn.classList.add('active');
   if (currentProject.drawings[drawingName]) {
     setDrawing(drawingName);
@@ -625,7 +544,7 @@ drawingsBtns.querySelector('.dropdown-content').addEventListener('click', e => {
 
 /************************* SELECT ELEMENTS *************************/
 
-drawingsContainer.addEventListener('click', e => {
+App.drawingsContainer.addEventListener('click', e => {
   const clickedElement = e.target.closest('[selectable]');
   if (clickedElement) {
     if (!selectedElementId) {
@@ -720,7 +639,7 @@ window.addEventListener("contextmenu", e => {
   if (e.target.closest('[data-proj-id]')) {
     // Clean previous content of the context menu.
     contextMenu.querySelector('ul').childNodes.forEach(btn => btn.onclick = null);
-    emptyNode(contextMenu.querySelector('ul'));
+    Generics.emptyNode(contextMenu.querySelector('ul'));
     // Get the id of the project.
     const projectItem = e.target.closest('[data-proj-id]');
     // Create the context menu buttons.
@@ -764,26 +683,24 @@ window.addEventListener("contextmenu", e => {
 
 /************************ START APPLICATION ************************/
 
-const toolbarsContainer = document.getElementById('toolbarsContainer');
-
 /**
  * Function called at start and behaves differently depending if the url contains an id of a project or not.
  */
 function startApp() {
   // Hide the login dialog in case it was visible.
-  closeModalDialog(authorizeDialog);
+  App.closeModalDialog(authorizeDialog);
   // Show the app interface.
   document.querySelector('header').style.display = 'flex';
   document.querySelector('main').style.display = 'block';
   // Get the URL params.
-  const resourceId = getUrlParams(window.location.href).id;
+  const resourceId = Generics.getUrlParams(window.location.href).id;
   if (resourceId) {
     showViewportDialog('loader', 'Loading project');
     API.fetchProject(resourceId, AppData)
       .then(res => {
         createWorkspace(res);
         createHTMLProjectsList([res]);
-        projectsListBtn.style.display = 'unset';
+        App.projectsListBtn.style.display = 'unset';
         hideViewportMessage();
       }, rej => {
         console.log(rej);
