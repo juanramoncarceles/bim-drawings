@@ -96,7 +96,7 @@ function createFolder(title, parentId = 'drive') {
 /**
  * Upload a file to the specific folder.
  * @param {String} fileContent The content of the file as a string.
- * @param {String} fileMimeType The MIME Type of the file.
+ * @param {String} fileMimeType The MIME Type of the file. For example: 'application/json'
  * @param {String} fileName Name for the file.
  * @param {String} folderId Id of the parent folder.
  */
@@ -125,6 +125,57 @@ function uploadFile(fileContent, fileMimeType, fileName, folderId) {
     console.error(err);
   });
   return request;
+}
+
+
+/**
+ * Update the contents of a file.
+ * @param {String} fileContent The content of the file as a string.
+ * @param {String} fileMimeType The MIME Type of the file. For example: 'application/json'.
+ * @param {String} fileId ID of the file to update its content.
+ */
+function updateFileContent(fileContent, fileMimeType, fileId) {
+  const file = new Blob([fileContent], { type: fileMimeType });
+  const metadata = {
+    'mimeType': fileMimeType
+  };
+  const accessToken = gapi.auth.getToken().access_token; // Gapi is used for retrieving the access token.
+  const form = new FormData();
+  form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+  form.append('file', file);
+
+  let request = fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=multipart`, { // Otherwise try uploadType=media
+    method: 'PATCH',
+    headers: new Headers({ 'Authorization': 'Bearer ' + accessToken }),
+    body: form,
+  });
+  request.then(res => {
+    if (res.ok === true && res.status === 200) {
+      console.log('Update successful.');
+    }
+  }, err => {
+    console.error(err);
+  });
+  return request;
+}
+
+
+/**
+ * Rename a file.
+ * @param {String} fileId ID of the file to rename.
+ * @param {String} newTitle New title for the file.
+ */
+function renameFile(fileId, newTitle) {
+  var request = gapi.client.drive.files.update({
+    'fileId': fileId,
+    'name': newTitle,
+    'uploadType': 'media'
+  });
+  request.then(res => {
+    console.log(res);
+  }, rej => {
+    console.log(rej);
+  });
 }
 
 
