@@ -1,0 +1,25 @@
+{
+  "name": "visualarq-drawings-viewer",
+  "version": "1.0.0",
+  "description": "Viewer for drawings exported from VisualARQ in vad.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/juanramoncarceles/visualarq-drawings-viewer.git"
+  },
+  "keywords": [],
+  "author": "Ramon Carceles",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/juanramoncarceles/visualarq-drawings-viewer/issues"
+  },
+  "homepage": "https://github.com/juanramoncarceles/visualarq-drawings-viewer#readme",
+  "devDependencies": {
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
+  }
+}

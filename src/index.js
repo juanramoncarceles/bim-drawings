@@ -1,29 +1,124 @@
+import { ApplicationData } from './appData';
+import { ProjectData } from './projectData';
+import API from './apinew';
+
+/************************** AUTHENTICATION *************************/
+
+// Client ID and API key from the Developer Console
+const CLIENT_ID = '199844453643-0s921ir25l6rrventemkvr5te5aattej.apps.googleusercontent.com';
+const API_KEY = 'AIzaSyDgot_h8p7RzZunGoSDVlKxrpUNN97rPeg';
+
+// Array of API discovery doc URLs for APIs used by the quickstart
+const DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"];
+
+// Authorization scopes required by the API; multiple scopes can be
+// included, separated by spaces.
+const SCOPES = 'https://www.googleapis.com/auth/drive';
+
+const authorizeButton = document.getElementById('authorizeBtn');
+const signoutButton = document.getElementById('signoutBtn');
+
+/**
+ *  On load, called to load the auth2 library and API client library.
+ */
+(function () {
+  const script = document.createElement('script');
+  script.type = "text/javascript";
+  script.defer = true;
+  script.onload = () => handleClientLoad();
+  script.src = 'https://apis.google.com/js/api.js';
+  document.querySelector('body').appendChild(script);
+})();
+
+function handleClientLoad() {
+  gapi.load('client:auth2', initClient);
+}
+
+/**
+ *  Initializes the API client library and sets up sign-in state listeners.
+ */
+function initClient() {
+  gapi.client.init({
+    apiKey: API_KEY,
+    clientId: CLIENT_ID,
+    discoveryDocs: DISCOVERY_DOCS,
+    scope: SCOPES
+  }).then(function () {
+    // Listen for sign-in state changes.
+    gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
+
+    // Handle the initial sign-in state.
+    updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+    authorizeButton.onclick = handleAuthClick;
+    signoutButton.onclick = handleSignoutClick;
+  }, function (error) {
+    console.log(JSON.stringify(error, null, 2));
+  });
+}
+
+/**
+ *  Called when the signed in status changes, to update the UI
+ *  appropriately. After a sign-in, the API is called.
+ */
+function updateSigninStatus(isSignedIn) {
+  if (isSignedIn) {
+    console.log('Authorized.');
+    startApp();
+  } else {
+    console.log('Not authorized');
+    showLoginDialog();
+  }
+}
+
+/**
+ *  Sign in the user upon button click.
+ */
+function handleAuthClick(event) {
+  gapi.auth2.getAuthInstance().signIn();
+}
+
+/**
+ *  Sign out the user upon button click.
+ */
+function handleSignoutClick(event) {
+  gapi.auth2.getAuthInstance().signOut();
+}
+
+
+
 /**************** GLOBAL OBJECTS TO STORE APP DATA *****************/
 
 // Global object to store application data while it is running.
-const appData = {
-  appMainFolderId: undefined,
-  projectsData: undefined,
-  appSettingsFolderId: undefined,
-  thumbsFolderId: undefined
-}
+// const appData = {
+//   appMainFolderId: undefined,
+//   projectsData: undefined,
+//   appSettingsFolderId: undefined,
+//   thumbsFolderId: undefined
+// }
+
+const AppData = new ApplicationData();
 
 // Global object to store all the contents of the last uploaded project.
-const lastUploadedProject = {
-  id: undefined,
-  name: undefined,
-  drawings: {},
-  elementsData: {}
-}
+// const lastUploadedProject = {
+//   id: undefined,
+//   name: undefined,
+//   drawings: {},
+//   elementsData: {}
+// }
+
+const lastUploadedProject = new ProjectData();
 
 // Global object that stores the data of the current project.
-const currentProject = {
-  id: undefined,
-  name: undefined,
-  index: undefined, // Index in the appData.projectsData array
-  drawings: {},
-  elementsData: {}
-}
+// const currentProject = {
+//   id: undefined,
+//   name: undefined,
+//   index: undefined, // Index in the appData.projectsData array
+//   drawings: {},
+//   elementsData: {}
+// }
+
+const currentProject = new ProjectData();
+
 
 
 /*********************** GENERIC FUNCTIONS ***********************/
@@ -54,22 +149,7 @@ function emptyNode(node) {
   while (node.firstChild && node.removeChild(node.firstChild));
 }
 
-/**
- * Read the content of a file.
- * @param {Blob} file 
- */
-function readInputFile(file) {
-  return new Promise((res, rej) => {
-    const reader = new FileReader();
-    reader.readAsText(file, "UTF-8");
-    reader.onload = () => {
-      res(reader.result);
-    }
-    reader.onerror = () => {
-      console.log("Error reading the file.");
-    }
-  });
-}
+
 
 
 /********************* MODAL DIALOGS MANAGEMENT ********************/
@@ -156,9 +236,9 @@ function showProjectsList() {
   drawingsBtns.style.display = 'none';
   toolbarsContainer.style.display = 'none';
   // If there is no projectsData in the appData object or if there is only one fetch projects.
-  if (appData.projectsData === undefined || appData.projectsData.length <= 1) {
+  if (AppData.projectsData === undefined || AppData.projectsData.length <= 1) {
     showViewportDialog('loader', 'Loading projects');
-    listProjectItems().then(res => {
+    API.listProjectItems(AppData).then(res => {
       createHTMLProjectsList(res);
       // Set the current class in the current project.
       projectsList.childNodes.forEach(proj => {
@@ -218,7 +298,7 @@ projectsList.addEventListener('click', e => {
     projectsListBtn.style.display = 'unset';
   } else {
     showViewportDialog('loader', `Loading project ${projectItem.dataset.name}`);
-    fetchProject(projectItem.dataset.projId)
+    API.fetchProject(projectItem.dataset.projId, AppData)
       .then(res => {
         goToProject(res);
         if (previousActiveItem) {
@@ -251,7 +331,7 @@ function goToProject(project) {
 function updateProjectsList(projData) {
   const projectItem = createProjectItem(projData);
   // Remove the 'no projects yet' message if it is the first.
-  if (appData.projectsData.length <= 1) {
+  if (AppData.projectsData.length <= 1) {
     projectsList.querySelector('.empty-msg').remove();
   }
   projectsList.prepend(projectItem);
@@ -319,7 +399,7 @@ uploadFileForm.onsubmit = e => {
   fileInput.nextElementSibling.style.display = 'none';
   const file = e.target.elements["file"].files[0];
   // TODO: Show some real progress while creating the project.
-  createProject(file).then(res => {
+  API.createProject(file, AppData, lastUploadedProject).then(res => {
     updateProjectsList(res);
     closeModalDialog(uploadFileForm);
     showMessage('success', 'Project uploaded successfully.');
@@ -428,7 +508,7 @@ function createWorkspace(projectData) {
   // Reset the value of the currentProject variable, deletes the contents of the previous project.
   currentProject.name = projectData.name;
   currentProject.id = projectData.id;
-  currentProject.index = appData.projectsData.findIndex(obj => obj.name === projectData.name);
+  currentProject.index = AppData.projectsData.findIndex(obj => obj.name === projectData.name);
   if (projectData.id === lastUploadedProject.id) {
     currentProject.drawings = lastUploadedProject.drawings;
     currentProject.elementsData = lastUploadedProject.elementsData;
@@ -531,7 +611,7 @@ drawingsBtns.querySelector('.dropdown-content').addEventListener('click', e => {
     setDrawing(drawingName);
   } else {
     showViewportDialog('loader', 'Loading drawing');
-    getFileContent(e.target.dataset.id).then(res => {
+    API.getFileContent(e.target.dataset.id).then(res => {
       currentProject.drawings[drawingName] = res.body;
       hideViewportMessage();
       setDrawing(drawingName);
@@ -573,10 +653,10 @@ function showElementData(category, id) {
   if (currentProject.elementsData[category]) {
     console.log(currentProject.elementsData[category].instances[id]);
   } else {
-    categoryData = appData.projectsData[currentProject.index].elementsData.find(obj => obj.name.replace('.json', '') === category);
+    categoryData = AppData.projectsData[currentProject.index].elementsData.find(obj => obj.name.replace('.json', '') === category);
     if (categoryData !== undefined) {
       // show a loader in the table ?
-      getFileContent(categoryData.id).then(res => {
+      API.getFileContent(categoryData.id).then(res => {
         currentProject.elementsData[category] = JSON.parse(res.body);
         // hide the possible loader ?
         console.log(currentProject.elementsData[category].instances[id]);
@@ -652,10 +732,10 @@ window.addEventListener("contextmenu", e => {
           name: 'Delete',
           function: () => {
             showViewportDialog('loader', `Deleting ${projectItem.dataset.name} project.`);
-            deleteFile(projectItem.dataset.projId).then(res => {
+            API.deleteFile(projectItem.dataset.projId).then(res => {
               projectItem.remove();
-              const index = appData.projectsData.findIndex(proj => proj.id === projectItem.dataset.projId);
-              appData.projectsData.splice(index, 1);
+              const index = AppData.projectsData.findIndex(proj => proj.id === projectItem.dataset.projId);
+              AppData.projectsData.splice(index, 1);
               // TODO check also if it is in the value of currentProject or lastUploadedProject and delete it as well
               hideViewportMessage();
               showMessage('success', 'Project deleted successfully');
@@ -699,9 +779,10 @@ function startApp() {
   const resourceId = getUrlParams(window.location.href).id;
   if (resourceId) {
     showViewportDialog('loader', 'Loading project');
-    fetchProject(resourceId)
+    API.fetchProject(resourceId, AppData)
       .then(res => {
         createWorkspace(res);
+        createHTMLProjectsList([res]);
         projectsListBtn.style.display = 'unset';
         hideViewportMessage();
       }, rej => {
@@ -727,7 +808,7 @@ function startApp() {
     projectsListContainer.style.display = 'block';
     showViewportDialog('loader', 'Loading projects');
     // TODO: Limit the number of projects to list
-    listProjectItems().then(res => {
+    API.listProjectItems(AppData).then(res => {
       createHTMLProjectsList(res);
       hideViewportMessage();
     }, rej => {

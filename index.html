@@ -9,13 +9,13 @@
   <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
   <link href="https://fonts.googleapis.com/css?family=Oswald:200,400,500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="src/styles/styles.css">
 </head>
 
 <body>
   <header style="display: none;">
     <span>
-      <img src="assets/vadv-logo.png" alt="VisualARQ Drawings Viewer Logo" title="VisualARQ Drawings Viewer">
+      <img src="src/assets/vadv-logo.png" alt="VisualARQ Drawings Viewer Logo" title="VisualARQ Drawings Viewer">
     </span>
     <h1>VisualARQ Drawings Viewer</h1>
     <h2 id="projectsListBtn" class="buttonBase light sides" style="display: none;"></h2>
@@ -30,17 +30,17 @@
     <div id="toolbarsContainer" style="display: none;">
       <div id="dropdown-container-1" class="dropdown-container responsive">
         <button class="icon-btn" id="tool-1">
-          <img src="assets/icons/distIcon.svg">
+          <img src="src/assets/icons/distIcon.svg">
         </button>
         <div class="dropdown-content">
           <button class="icon-btn" id="tool-2">
-            <img src="assets/icons/areaIcon.svg">
+            <img src="src/assets/icons/areaIcon.svg">
           </button>
           <button class="icon-btn" id="tool-3">
-            <img src="assets/icons/angleIcon.svg">
+            <img src="src/assets/icons/angleIcon.svg">
           </button>
           <button class="icon-btn" id="tool-4">
-            <img src="assets/icons/commentIcon.svg">
+            <img src="src/assets/icons/commentIcon.svg">
           </button>
         </div>
       </div>
@@ -125,7 +125,7 @@
       <button type="submit" class="buttonBase light disabled">Upload</button>
     </form>
     <div id="authorizeDialog">
-      <img src="assets/vadv-logo.png" alt="VisualARQ Drawings Viewer Logo">
+      <img src="src/assets/vadv-logo.png" alt="VisualARQ Drawings Viewer Logo">
       <h2>VisualARQ Drawings Viewer</h2>
       <div>
         <button id="authorizeBtn" class="buttonBase light btn-bg-img google-logo">Log in with Google</button>
@@ -221,9 +221,7 @@
     </svg>
   </div>
 
-  <script src="auth.js"></script>
-  <script src="api.js"></script>
-  <script src="index.js"></script>
+  <script src="dist/main.js"></script>
 </body>
 
 </html>
