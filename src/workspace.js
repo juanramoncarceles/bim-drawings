@@ -1,40 +1,36 @@
+import Generics from './generics';
+
 export class Workspace {
-  constructor(projectData) {
+  constructor(projectData, App) {
     this.projectName = projectData.name;
     this.projectId = projectData.id;
-    this.projectIndex = App.projectData.findIndex(obj => obj.name === projectData.name);
-    if (projectData.id === lastUploadedProject.id) {
-      this.drawings = lastUploadedProject.drawings;
-      this.elementsData = lastUploadedProject.elementsData;
+    this.projectIndex = App.projectsData.findIndex(obj => obj.name === projectData.name);
+    if (projectData.id === App.lastUploadedProject.id) {
+      this.drawings = App.lastUploadedProject.drawings;
+      this.elementsData = App.lastUploadedProject.elementsData;
     } else {
       this.drawings = {};
       this.elementsData = {};
     }
     // Set title of the project in the button to list the projects.
     App.projectsListBtn.innerHTML = '<span>' + projectData.name + '</span>';
+    this.drawingsBtns = App.drawingsBtns;
+    this.drawingsContainer = App.drawingsContainer;
     this.createDrawingsBtns(projectData.drawings);
     // Show drawings and tools buttons.
-    App.drawingsBtns.children[0].innerText = 'Pick a drawing';
-    App.drawingsBtns.style.display = 'unset';
+    this.drawingsBtns.children[0].innerText = 'Pick a drawing';
+    this.drawingsBtns.style.display = 'unset';
     App.toolbarsContainer.style.display = 'flex';
   }
 
-  projectName;
-
-  projectId;
-
   // The div container with the svg drawing.
-  activeDrawing;
+  //activeDrawing;
 
-  activeTool;
+  //activeTool;
 
-  drawings;
+  //appendedDrawingsNames;
 
-  elementsData;
-
-  appendedDrawingsNames;
-
-  selectedElementId;
+  //selectedElementId;
 
   /**
   * Creates the buttons for the drawings to be displayed.
@@ -46,40 +42,7 @@ export class Workspace {
       // Could be that there is no id if the project was uploaded and it is only local.
       drawingsItems.push(`<li ${drawings[drawingName].id ? 'data-id=\"' + drawings[drawingName].id + '\"' : ''}>${drawingName}</li>`);
     }
-    App.drawingsBtns.querySelector('.dropdown-content').innerHTML = drawingsItems.join('');
-  }
-
-  /**
-  * Places the content of the svg drawing in the container.
-  * @param {String} drawingName 
-  */
-  setDrawing(drawingName) {
-    // If there is a visible drawing hide it.
-    if (this.activeDrawing && this.activeDrawing.dataset.name !== drawingName) {
-      if (this.selectedElementId && this.activeDrawing.querySelector('[data-id="' + this.selectedElementId + '"]')) {
-        this.activeDrawing.querySelector('[data-id="' + this.selectedElementId + '"]').classList.remove('selected');
-      }
-      this.activeDrawing.style.display = 'none';
-    } else if (this.activeDrawing && this.activeDrawing.dataset.name === drawingName) {
-      return;
-    }
-
-    // If it is not in the container already append it. It will be visible.
-    if (!this.appendedDrawingsNames.includes(drawingName)) {
-      this.appendedDrawingsNames.push(drawingName);
-      const container = document.createElement('div');
-      container.dataset.name = drawingName;
-      container.innerHTML = this.drawings[drawingName];
-      App.drawingsContainer.append(container);
-      this.activeDrawing = container;
-    } else {
-      this.activeDrawing = App.drawingsContainer.querySelector('div[data-name="' + drawingName + '"]');
-      this.activeDrawing.style.display = 'unset';
-    }
-
-    if (this.selectedElementId && this.activeDrawing.querySelector('[data-id="' + this.selectedElementId + '"]')) {
-      this.activeDrawing.querySelector('[data-id="' + this.selectedElementId + '"]').classList.add('selected');
-    }
+    this.drawingsBtns.querySelector('.dropdown-content').innerHTML = drawingsItems.join('');
   }
 
   /**
@@ -87,8 +50,8 @@ export class Workspace {
   * TODO: Remove possible event listeners before emptying containers ?
   */
   close() {
-    emptyNode(App.drawingsBtns.querySelector('.dropdown-content'));
+    Generics.emptyNode(this.drawingsBtns.querySelector('.dropdown-content'));
     // TODO: If in future version there are elements in the svg with event listeners those should be deleted
-    App.drawingsContainer.innerHTML = '';
+    this.drawingsContainer.innerHTML = '';
   }
 }
