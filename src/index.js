@@ -27,8 +27,8 @@ const signoutButton = document.getElementById('signoutBtn');
 
 
 /**
-*  On load, called to load the auth2 library and API client library.
-*/
+ *  On load, called to load the auth2 library and API client library.
+ */
 (function () {
   const script = document.createElement('script');
   script.type = "text/javascript";
@@ -45,8 +45,8 @@ function handleClientLoad() {
 
 
 /**
-*  Initializes the API client library and sets up sign-in state listeners.
-*/
+ *  Initializes the API client library and sets up sign-in state listeners.
+ */
 function initClient() {
   gapi.client.init({
     apiKey: API_KEY,
@@ -183,8 +183,8 @@ uploadFileForm.onsubmit = e => {
 
 /************************ MESSAGE CONTAINER ************************/
 /*
-* It is a message that works as a feedback and that doesnt interrupt.
-*/
+ * It is a message that works as a feedback and that doesnt interrupt.
+ */
 
 
 const messageContainer = document.getElementById('messageContainer');
@@ -215,51 +215,10 @@ messageContainer.querySelector('button').addEventListener('click', () => {
 });
 
 
-/********************** WORKSPACES MANAGEMENT **********************/
-
-
-// TODO: These should be properties of the currentProject object
-const appendedDrawingsName = [];
-let selectedElementId;
-let currentDrawing; // Reference to the div container with the drawing
-
-/**
- * Places the content of the svg drawing in the container.
- * @param {String} drawingName 
- */
-function setDrawing(drawingName) {
-  // If there is a visible drawing hide it.
-  if (currentDrawing && currentDrawing.dataset.name !== drawingName) {
-    if (selectedElementId && currentDrawing.querySelector('[data-id="' + selectedElementId + '"]')) {
-      currentDrawing.querySelector('[data-id="' + selectedElementId + '"]').classList.remove('selected');
-    }
-    currentDrawing.style.display = 'none';
-  } else if (currentDrawing && currentDrawing.dataset.name === drawingName) {
-    return;
-  }
-  // If it is not in the container already append it. It will be visible.
-  if (!appendedDrawingsName.includes(drawingName)) {
-    appendedDrawingsName.push(drawingName);
-    const container = document.createElement('div');
-    container.dataset.name = drawingName;
-    container.innerHTML = App.workspace.drawings[drawingName];
-    App.drawingsContainer.append(container);
-    currentDrawing = container;
-  } else {
-    currentDrawing = App.drawingsContainer.querySelector('div[data-name="' + drawingName + '"]');
-    currentDrawing.style.display = 'unset';
-  }
-  if (selectedElementId && currentDrawing.querySelector('[data-id="' + selectedElementId + '"]')) {
-    currentDrawing.querySelector('[data-id="' + selectedElementId + '"]').classList.add('selected');
-  }
-
-}
-
-
 /********************** DRAWINGS BUTTONS LIST **********************/
 /*
-* A single event listener in the container of the drawings buttons manages the clicked drawing.
-*/
+ * A single event listener in the container of the drawings buttons manages the clicked drawing.
+ */
 
 
 let currentDrawingBtn;
@@ -273,70 +232,19 @@ App.drawingsBtns.querySelector('.dropdown-content').addEventListener('click', e 
   App.drawingsBtns.children[0].innerText = drawingName;
   currentDrawingBtn.classList.add('active');
   if (App.workspace.drawings[drawingName]) {
-    setDrawing(drawingName);
+    App.workspace.setDrawing(drawingName);
   } else {
     App.showViewportDialog('loader', 'Loading drawing');
     API.getFileContent(e.target.dataset.id).then(res => {
       App.workspace.drawings[drawingName] = res.body;
       App.hideViewportMessage();
-      setDrawing(drawingName);
+      App.workspace.setDrawing(drawingName);
       console.log('Drawing fetched.');
     }, err => {
       console.log(err);
     });
   }
 });
-
-
-/************************* SELECT ELEMENTS *************************/
-
-App.drawingsContainer.addEventListener('click', e => {
-  const clickedElement = e.target.closest('[selectable]');
-  if (clickedElement) {
-    if (!selectedElementId) {
-      clickedElement.classList.add('selected');
-      showElementData(clickedElement.dataset.category, clickedElement.dataset.id);
-      selectedElementId = clickedElement.dataset.id;
-    } else if (clickedElement.dataset.id !== selectedElementId) {
-      if (currentDrawing.querySelector('[data-id="' + selectedElementId + '"]')) {
-        currentDrawing.querySelector('[data-id="' + selectedElementId + '"]').classList.remove('selected');
-      }
-      clickedElement.classList.add('selected');
-      showElementData(clickedElement.dataset.category, clickedElement.dataset.id);
-      selectedElementId = clickedElement.dataset.id;
-    }
-  } else if (selectedElementId) {
-    if (currentDrawing.querySelector('[data-id="' + selectedElementId + '"]')) {
-      currentDrawing.querySelector('[data-id="' + selectedElementId + '"]').classList.remove('selected');
-    }
-    selectedElementId = undefined;
-  }
-});
-
-
-/********************* ELEMENTS ASSOCIATED DATA ********************/
-
-
-function showElementData(category, id) {
-  if (App.workspace.elementsData[category]) {
-    console.log(App.workspace.elementsData[category].instances[id]);
-  } else {
-    const categoryData = App.projectsData[App.workspace.projectIndex].elementsData.find(obj => obj.name.replace('.json', '') === category);
-    if (categoryData !== undefined) {
-      // show a loader in the table ?
-      API.getFileContent(categoryData.id).then(res => {
-        App.workspace.elementsData[category] = JSON.parse(res.body);
-        // hide the possible loader ?
-        console.log(App.workspace.elementsData[category].instances[id]);
-      }, err => {
-        // hide the possible loader ?
-        console.log(err);
-      });
-    } else {
-      console.log('There is no data for that element.');
-    }
-  }
-}
 
 
 /********************* DROPDOWNS FUNCTIONALITY *********************/

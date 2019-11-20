@@ -76,11 +76,10 @@ export class Application {
 
   /************************ THE PROJECTS LIST ************************/
 
-
   /**
-  * Sets the workspace with the provided project.
-  * @param {Object} project Data of the project. Id, name, drawings ids and elementsData files ids.
-  */
+   * Sets the workspace with the provided project.
+   * @param {Object} project Data of the project. Id, name, drawings ids and elementsData files ids.
+   */
   goToProject(project) {
     if (this.workspace) {
       this.workspace.close();
@@ -90,10 +89,9 @@ export class Application {
     history.replaceState({ projectTitle: project.name }, project.name, "?id=" + project.id); // encodeURIComponent ? use pushState() ?
   }
 
-
   /**
-  * Shows the list of projects container and fetches projects if required.
-  */
+   * Shows the list of projects container and fetches projects if required.
+   */
   showProjectsList() {
     console.log('Show the projects list.');
     if (this.workspace !== undefined) {
@@ -125,11 +123,10 @@ export class Application {
     }
   }
 
-
   /**
-  * Create an HTML element with the project data provided.
-  * @param {Object} projData Object with name, id and optional thumbId entries.
-  */
+   * Create an HTML element with the project data provided.
+   * @param {Object} projData Object with name, id and optional thumbId entries.
+   */
   createProjectItem(projData) {
     const projItem = document.createElement('button');
     // Projects that have been uploaded but not send to the backend have an id of 'temporal'.
@@ -149,11 +146,10 @@ export class Application {
     return projItem;
   }
 
-
   /**
-  * Receives an array of projects data and creates and appends the HTML items.
-  * @param {Array} projectsData The project objects with the name, id and optional thumbId entries.
-  */
+   * Receives an array of projects data and creates and appends the HTML items.
+   * @param {Array} projectsData The project objects with the name, id and optional thumbId entries.
+   */
   createHTMLProjectsList(projectsData) {
     projectsData.forEach(proj => {
       const projectItem = this.createProjectItem(proj);
@@ -162,21 +158,19 @@ export class Application {
     this.adjustItems();
   }
 
-
   /**
-  * Adjusts the position of project items in the container.
-  */
+   * Adjusts the position of project items in the container.
+   */
   adjustItems() {
     const itemsH = getComputedStyle(this.projectsList).getPropertyValue('--items-h');
     const itemsTotal = this.projectsList.children.length;
     this.projectsList.style.setProperty('--remaining-items', (Math.ceil(itemsTotal / itemsH) * itemsH) - itemsTotal);
   }
 
-
   /**
-  *  Adds a new HTML element item to the list of projects.
-  * @param {Object} projData Object with name, id and optional thumbId entries.
-  */
+   *  Adds a new HTML element item to the list of projects.
+   * @param {Object} projData Object with name, id and optional thumbId entries.
+   */
   updateProjectsList(projData) {
     const projectItem = this.createProjectItem(projData);
     // Remove the 'no projects yet' message if it is the first.
@@ -190,9 +184,8 @@ export class Application {
 
   /*********************** VIEWPORT MESSAGES ***********************/
   /*
-  * A message on the middle of the viewport that interrupts.
-  */
-
+   * A message on the middle of the viewport that interrupts.
+   */
 
   /**
    * Manages the creation of a message on the viewport.
@@ -228,10 +221,9 @@ export class Application {
     this.viewportMessage.classList.add('active');
   }
 
-
   /**
-  * Hides the viewport message if visible.
-  */
+   * Hides the viewport message if visible.
+   */
   hideViewportMessage() {
     this.viewportMessage.classList.remove('active');
   }
@@ -239,24 +231,22 @@ export class Application {
 
   /********************* MODAL DIALOGS *********************/
   /*
-  * All modal dialogs are stored in a container and fetched when needed.
-  */
-
+   * All modal dialogs are stored in a container and fetched when needed.
+   */
 
   /**
-  * Shows the modal dialog provided from the same document.
-  * @param {HTMLElement} dialog Reference to the outer HTML element of the dialog.
-  */
+   * Shows the modal dialog provided from the same document.
+   * @param {HTMLElement} dialog Reference to the outer HTML element of the dialog.
+   */
   showModalDialog(dialog) {
     this.modalDialogContainer.appendChild(dialog);
     this.modalDialogContainer.style.display = 'flex';
   }
 
-
   /**
-  * Hides the modal dialog provided from the same document.
-  * @param {HTMLElement} dialog Reference to the outer HTML element of the dialog.
-  */
+   * Hides the modal dialog provided from the same document.
+   * @param {HTMLElement} dialog Reference to the outer HTML element of the dialog.
+   */
   closeModalDialog(dialog) {
     this.modalDialogContainer.style.display = 'none';
     this.modalDialogsStorage.appendChild(dialog);
@@ -265,10 +255,9 @@ export class Application {
 
   /********************* START THE APPLICATION *********************/
 
-
   /**
-  * Function called at start and behaves differently depending if the url contains an id of a project or not.
-  */
+   * Method called at start and behaves differently depending if the url contains an id of a project or not.
+   */
   start() {
     // Hide the login dialog in case it was visible.
     this.closeModalDialog(authorizeDialog);
