@@ -43,4 +43,20 @@ export default class {
     while (node.firstChild && node.removeChild(node.firstChild));
   }
 
+  /**
+   * Creates a fillet bounding box around the provided element.
+   * @param {SVGElement} element 
+   * @param {Number} offset Optional, with default 5.
+   * @param {Number} fillet Optional, with default 5.
+   */
+  static createBBox(element, offset = 5, fillet = 5) {
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    rect.setAttribute('x', element.getBBox().x - offset);
+    rect.setAttribute('y', element.getBBox().y - offset);
+    rect.setAttribute('width', element.getBBox().width + offset * 2);
+    rect.setAttribute('height', element.getBBox().height + offset * 2);
+    rect.setAttribute('rx', fillet);
+    rect.setAttribute('ry', fillet);
+    return rect;
+  }
 }

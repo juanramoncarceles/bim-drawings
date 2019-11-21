@@ -2,6 +2,7 @@ import API from './api';
 import { Workspace } from './workspace';
 import { ProjectData } from './projectData';
 import Generics from './generics';
+import { Comments } from './comments';
 
 export class Application {
   constructor() {
@@ -71,6 +72,8 @@ export class Application {
       }
     });
     window.onresize = this.adjustItems;
+    // This could be part of the workspace and maybe would make more sense
+    document.getElementById('tool-4').addEventListener('click', () => this.workspace.manageTools(Comments, 'commentsTool'));
   }
 
 
