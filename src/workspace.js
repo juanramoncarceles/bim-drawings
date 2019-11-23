@@ -1,5 +1,4 @@
 import Generics from './generics';
-import API from './api';
 
 export class Workspace {
   constructor(projectData, App) {
@@ -14,11 +13,9 @@ export class Workspace {
       this.elementsData = {};
     }
     this.activeTool;
-    // this.toolSettings
-    this.selectedElementId;
+    // this.toolSettings;
     this.appendedDrawingsNames = [];
-    // activeDrawing: The div container with the svg drawing.
-    this.activeDrawing;
+    this.activeDrawing; // The div container with the svg drawing.
     // Set title of the project in the button to list the projects.
     App.projectsListBtn.innerHTML = '<span>' + projectData.name + '</span>';
     this.drawingsBtns = App.drawingsBtns;
@@ -28,43 +25,13 @@ export class Workspace {
     this.drawingsBtns.children[0].innerText = 'Pick a drawing';
     this.drawingsBtns.style.display = 'unset';
     App.toolbarsContainer.style.display = 'flex';
-    this.manageSelection = this.manageSelection.bind(this);
-    this.drawingsContainer.addEventListener('click', this.manageSelection);
     this.projectsData = App.projectsData;
     this.commentForm = document.getElementById('commentForm');
     this.comments = [];
   }
 
 
-  /********************* SELECTION OF ELEMENTS *********************/
-
-  /**
-   * Manages the selection and deselection of the svg elemenets.
-   * TODO: separate the 'showElementData' method
-   * @param {MouseEvent} e The click event.
-   */
-  manageSelection(e) {
-    const clickedElement = e.target.closest('[selectable]');
-    if (clickedElement) {
-      if (!this.selectedElementId) {
-        clickedElement.classList.add('selected');
-        this.showElementData(clickedElement.dataset.category, clickedElement.dataset.id);
-        this.selectedElementId = clickedElement.dataset.id;
-      } else if (clickedElement.dataset.id !== this.selectedElementId) {
-        if (this.activeDrawing.querySelector('[data-id="' + this.selectedElementId + '"]')) {
-          this.activeDrawing.querySelector('[data-id="' + this.selectedElementId + '"]').classList.remove('selected');
-        }
-        clickedElement.classList.add('selected');
-        this.showElementData(clickedElement.dataset.category, clickedElement.dataset.id);
-        this.selectedElementId = clickedElement.dataset.id;
-      }
-    } else if (this.selectedElementId) {
-      if (this.activeDrawing.querySelector('[data-id="' + this.selectedElementId + '"]')) {
-        this.activeDrawing.querySelector('[data-id="' + this.selectedElementId + '"]').classList.remove('selected');
-      }
-      this.selectedElementId = undefined;
-    }
-  }
+  /*********************** TOOLS MANAGEMENT ************************/
 
   /**
    * Sets the selected tool as active and turns off the previous one if still active.
@@ -72,7 +39,10 @@ export class Workspace {
    * @param {String} name 
    */
   manageTools(Tool, name) { // TODO, add 'e' as param if needed
-    if (this.activeDrawing === undefined) return; // TODO: Show a message saying that a drawing must be active
+    if (this.activeDrawing === undefined) {
+      // TODO: Show a message saying that a drawing must be active.
+      return;
+    }
     if (this.activeTool === undefined) {
       this.activeTool = new Tool(name, this);
       // e.currentTarget.classList.add('active');
@@ -88,35 +58,6 @@ export class Workspace {
   }
 
 
-  /******************** ELEMENTS ASSOCIATED DATA *******************/
-
-  /**
-   * Shows the data associated with the selected element by fetching it if needed.
-   * @param {String} category 
-   * @param {String} id 
-   */
-  showElementData(category, id) {
-    if (this.elementsData[category]) {
-      console.log(this.elementsData[category].instances[id]);
-    } else {
-      const categoryData = this.projectsData[this.projectIndex].elementsData.find(obj => obj.name.replace('.json', '') === category);
-      if (categoryData !== undefined) {
-        // show a loader in the table ?
-        API.getFileContent(categoryData.id).then(res => {
-          this.elementsData[category] = JSON.parse(res.body);
-          // hide the possible loader ?
-          console.log(this.elementsData[category].instances[id]);
-        }, err => {
-          // hide the possible loader ?
-          console.log(err);
-        });
-      } else {
-        console.log('There is no data for that element.');
-      }
-    }
-  }
-
-
   /********************** DRAWINGS MANAGEMENT **********************/
 
   /**
@@ -124,10 +65,11 @@ export class Workspace {
    * @param {String} drawingName 
    */
   setDrawing(drawingName) {
+    // TODO: Set a default 'activeDrawing' with the 'elementsData' tool active by default? this.activeTool = new ElementsData('elementsDataTool', this);
     // If there is a visible drawing hide it.
     if (this.activeDrawing && this.activeDrawing.dataset.name !== drawingName) {
-      if (this.selectedElementId && this.activeDrawing.querySelector('[data-id="' + this.selectedElementId + '"]')) {
-        this.activeDrawing.querySelector('[data-id="' + this.selectedElementId + '"]').classList.remove('selected');
+      if (this.activeTool && this.activeTool.currentSelection && this.activeDrawing.querySelector('[data-id="' + this.activeTool.currentSelection.dataset.id + '"]')) {
+        this.activeTool.currentSelection.classList.remove('selected');
       }
       this.activeDrawing.style.display = 'none';
     } else if (this.activeDrawing && this.activeDrawing.dataset.name === drawingName) {
@@ -145,8 +87,11 @@ export class Workspace {
       this.activeDrawing = this.drawingsContainer.querySelector('div[data-name="' + drawingName + '"]');
       this.activeDrawing.style.display = 'unset';
     }
-    if (this.selectedElementId && this.activeDrawing.querySelector('[data-id="' + this.selectedElementId + '"]')) {
-      this.activeDrawing.querySelector('[data-id="' + this.selectedElementId + '"]').classList.add('selected');
+    // Update also the 'activeDrawing' in the 'activeTool'.
+    if (this.activeTool) { this.activeTool.activeDrawing = this.activeDrawing; }
+    if (this.activeTool && this.activeTool.currentSelection && this.activeDrawing.querySelector('[data-id="' + this.activeTool.currentSelection.dataset.id + '"]')) {
+      this.activeTool.currentSelection = this.activeDrawing.querySelector('[data-id="' + this.activeTool.currentSelection.dataset.id + '"]');
+      this.activeTool.currentSelection.classList.add('selected');
     }
   }
 
@@ -171,6 +116,5 @@ export class Workspace {
     Generics.emptyNode(this.drawingsBtns.querySelector('.dropdown-content'));
     // TODO: If in future version there are elements in the svg with event listeners those should be deleted
     this.drawingsContainer.innerHTML = '';
-    this.drawingsContainer.removeEventListener('click', this.manageSelection);
   }
 }
