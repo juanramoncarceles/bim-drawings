@@ -32,24 +32,38 @@ export class AddComment extends ElementSelection {
   }
 
 
+  /**
+   * Creates a ui comment for the element and adds it to the group of comments on the drawing.
+   * It doesnt append the comment svg element to the array of representations of the comment object.
+   * @param {SVGElement} element 
+   * @param {SVGGElement} commentsGroup
+   */
+  static createSvgComment(element, commentsGroup) {
+    const boundingBox = Generics.createBBox(element);
+    boundingBox.setAttribute('style', 'fill:none;stroke:#000;');
+    boundingBox.dataset.id = 'c-' + element.dataset.id;
+    commentsGroup.appendChild(boundingBox);
+    return boundingBox;
+  }
+
+
   addComment(e) {
     e.preventDefault();
-    // Creation of the boundingbox.
-    const boundingBox = Generics.createBBox(this.selection);
-    boundingBox.setAttribute('style', 'fill:none;stroke:#000;');
-    // If 'activeDrawing' doesnt have a group for comments create it and add the boundingbox. 
+    // If 'activeDrawing' doesnt have a group for comments create it.
+    let commentsGroup;
     if (this.activeDrawing.querySelector('g[comments]') !== null) {
-      this.activeDrawing.querySelector('g[comments]').appendChild(boundingBox);
+      commentsGroup = this.activeDrawing.querySelector('g[comments]');
     } else {
-      const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-      group.setAttribute('comments', '');
-      group.appendChild(boundingBox);
-      this.activeDrawing.querySelector('svg').appendChild(group);
+      commentsGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      commentsGroup.setAttribute('comments', '');
+      this.activeDrawing.querySelector('svg').appendChild(commentsGroup);
     }
+    const uiComment = this.constructor.createSvgComment(this.selection, commentsGroup);
     this.comments.push({
+      id: uiComment.dataset.id,
       elementId: this.selection.dataset.id,
       content: this.input.value,
-      uiComment: boundingBox
+      uiElements: [uiComment]
     });
     console.log(this.comments);
     this.input.value = '';

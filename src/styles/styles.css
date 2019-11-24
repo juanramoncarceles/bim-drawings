@@ -103,6 +103,10 @@ header .icon-btn {
   cursor: auto;
 }
 
+.btn-tool-enabled {
+  background-color: #9ee6fc;
+}
+
 .btn-bg-img {
   background-repeat: no-repeat;
   background-position-y: center;

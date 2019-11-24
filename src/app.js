@@ -74,8 +74,8 @@ export class Application {
     });
     window.onresize = this.adjustItems;
     // TODO: This would make more sense as part of the workspace ?
-    document.getElementById('tool-4').addEventListener('click', () => this.workspace.manageTools(AddComment, 'commentsTool'));
-    document.getElementById('tool-3').addEventListener('click', () => this.workspace.manageTools(ElementData, 'elementsDataTool'));
+    document.getElementById('tool-4').addEventListener('click', (e) => this.workspace.manageTools(e, AddComment, 'commentsTool'));
+    document.getElementById('tool-3').addEventListener('click', (e) => this.workspace.manageTools(e, ElementData, 'elementsDataTool'));
   }
 
 
