@@ -1,4 +1,5 @@
 import Generics from './generics';
+import { Drawing } from './drawing';
 
 export default class {
 
@@ -432,10 +433,9 @@ export default class {
       const drawingsFolderData = drawingsFolderRes.result.files;
       if (drawingsFolderData && drawingsFolderData.length > 0) {
         const drawingsRes = await this.listFiles({ parentId: drawingsFolderData[0].id });
-        AppData.projectsData[projectIndex].drawings = {};
-        // With this structure there cannot be two drawings with the same name.
+        AppData.projectsData[projectIndex].drawings = [];
         drawingsRes.result.files.forEach(drawing => {
-          AppData.projectsData[projectIndex].drawings[drawing.name.replace(/.svg$/, '')] = { id: drawing.id }
+          AppData.projectsData[projectIndex].drawings.push(new Drawing(drawing.name.replace(/.svg$/, ''), drawing.id));
         });
       } else {
         console.log('No drawings folder found.');

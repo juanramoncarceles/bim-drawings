@@ -50,15 +50,10 @@ export class AddComment extends ElementSelection {
   addComment(e) {
     e.preventDefault();
     // If 'activeDrawing' doesnt have a group for comments create it.
-    let commentsGroup;
-    if (this.activeDrawing.querySelector('g[comments]') !== null) {
-      commentsGroup = this.activeDrawing.querySelector('g[comments]');
-    } else {
-      commentsGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-      commentsGroup.setAttribute('comments', '');
-      this.activeDrawing.querySelector('svg').appendChild(commentsGroup);
+    if (this.activeDrawing.commentsGroup === undefined) {
+      this.activeDrawing.createCommentsGroup();
     }
-    const uiComment = this.constructor.createSvgComment(this.selection, commentsGroup);
+    const uiComment = this.constructor.createSvgComment(this.selection, this.activeDrawing.commentsGroup);
     this.comments.push({
       id: uiComment.dataset.id,
       elementId: this.selection.dataset.id,
