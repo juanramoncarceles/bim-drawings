@@ -1,12 +1,11 @@
 export class ElementSelection {
   constructor(name, workspace) {
     this.name = name;
-    this.activeDrawing = workspace.activeDrawing;
+    this.workspace = workspace;
     this.currentSelection;
     this.selection; // TODO: Rename as clickedElement ?
-    this.drawingsContainer = workspace.drawingsContainer;
     this.manageSelection = this.manageSelection.bind(this);
-    this.drawingsContainer.addEventListener('click', this.manageSelection);
+    this.workspace.drawingsContainer.addEventListener('click', this.manageSelection);
   }
 
 
@@ -24,14 +23,14 @@ export class ElementSelection {
         this.selection.classList.add('selected');
         this.currentSelection = this.selection;
       } else if (this.selection.dataset.id !== this.currentSelection.dataset.id) {
-        if (this.activeDrawing.querySelector('[data-id="' + this.currentSelection.dataset.id + '"]')) {
+        if (this.workspace.activeDrawing.querySelector('[data-id="' + this.currentSelection.dataset.id + '"]')) {
           this.currentSelection.classList.remove('selected');
         }
         this.selection.classList.add('selected');
         this.currentSelection = this.selection;
       }
     } else if (this.currentSelection !== undefined) {
-      if (this.activeDrawing.querySelector('[data-id="' + this.currentSelection.dataset.id + '"]')) {
+      if (this.workspace.activeDrawing.querySelector('[data-id="' + this.currentSelection.dataset.id + '"]')) {
         this.currentSelection.classList.remove('selected');
       }
       this.currentSelection = undefined;
@@ -48,7 +47,7 @@ export class ElementSelection {
 
 
   kill() {
-    this.drawingsContainer.removeEventListener('click', this.manageSelection);
+    this.workspace.drawingsContainer.removeEventListener('click', this.manageSelection);
     this.deselect();
   }
 }

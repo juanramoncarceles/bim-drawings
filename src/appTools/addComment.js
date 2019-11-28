@@ -7,13 +7,11 @@ export class AddComment extends ElementSelection {
     console.log('Comments tool activated!');
     this.boundingBox;
     this.waitingForComment = false;
-    this.commentForm = workspace.commentForm;
-    this.input = commentForm.elements["comment"];
-    this.comments = workspace.comments;
-    this.activeDrawing = workspace.activeDrawing; // this is already in super
+    this.input = this.workspace.commentForm.elements["comment"];
     this.addComment = this.addComment.bind(this);
-    this.commentForm.onsubmit = this.addComment;
+    this.workspace.commentForm.onsubmit = this.addComment;
   }
+
 
   /**
    * Extends the method of the super class to get the selected element.
@@ -25,7 +23,7 @@ export class AddComment extends ElementSelection {
       if (this.selection !== null) {
         console.log('Add comment to: ', this.selection);
         // Show the form to add the comment:
-        this.commentForm.style.display = 'unset';
+        this.workspace.commentForm.style.display = 'unset';
         this.waitingForComment = true;
       }
     }
@@ -50,20 +48,27 @@ export class AddComment extends ElementSelection {
   addComment(e) {
     e.preventDefault();
     // If 'activeDrawing' doesnt have a group for comments create it.
-    if (this.activeDrawing.commentsGroup === undefined) {
-      this.activeDrawing.createCommentsGroup();
+    if (this.workspace.activeDrawing.commentsGroup === undefined) {
+      this.workspace.activeDrawing.createCommentsGroup();
     }
-    const uiComment = this.constructor.createSvgComment(this.selection, this.activeDrawing.commentsGroup);
-    this.comments.push({
+    const uiComment = this.constructor.createSvgComment(this.selection, this.workspace.activeDrawing.commentsGroup);
+    this.workspace.comments.push({
       id: uiComment.dataset.id,
       elementId: this.selection.dataset.id,
       content: this.input.value,
       uiElements: [uiComment]
     });
-    console.log(this.comments);
+    console.log(this.workspace.comments);
     this.input.value = '';
-    this.commentForm.style.display = 'none';
+    this.workspace.commentForm.style.display = 'none';
     this.waitingForComment = false;
+    // Workspace properties to control changes on comments.
+    this.workspace.commentsChangesUnsaved = true;
+    this.workspace.drawings.forEach(drawing => {
+      if (drawing.id !== this.workspace.activeDrawing.id) {
+        drawing.commentsChanged = true;
+      }
+    });
     super.deselect();
   }
 
@@ -72,10 +77,10 @@ export class AddComment extends ElementSelection {
     super.kill();
     console.log('Comment tool killed!');
     if (this.waitingForComment) {
-      this.commentForm.style.display = 'none';
+      this.workspace.commentForm.style.display = 'none';
       this.input.value = '';
     }
     // Remove the tool event listener.
-    this.commentForm.onsubmit = null;
+    this.workspace.commentForm.onsubmit = null;
   }
 }

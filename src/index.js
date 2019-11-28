@@ -228,21 +228,22 @@ App.drawingsBtns.querySelector('.dropdown-content').addEventListener('click', e 
     currentDrawingBtn.classList.remove('active');
   }
   currentDrawingBtn = e.target;
-  const drawingName = currentDrawingBtn.innerText;
+  const drawingId = currentDrawingBtn.dataset.id;
   // Set the name of the drawing on the dropdown button.
-  App.drawingsBtns.children[0].innerText = drawingName;
+  App.drawingsBtns.children[0].innerText = currentDrawingBtn.innerText;
   currentDrawingBtn.classList.add('active');
-  if (App.workspace.drawings.find(d => d.name === drawingName).content !== undefined) {
-    // TODO: Use id instead of name
-    App.workspace.setDrawing(drawingName);
+
+  // Get the corresponding drawing object.
+  const requestedDrawing = App.workspace.drawings.find(d => d.id === drawingId);
+
+  // Check if the requested drawing has already the content.
+  if (requestedDrawing.content !== undefined) {
+    App.workspace.setDrawing(requestedDrawing);
   } else {
     App.showViewportDialog('loader', 'Loading drawing');
-    API.getFileContent(e.target.dataset.id).then(res => {
-
-      // manageDrawings();
-      App.workspace.drawings.find(d => d.id === e.target.dataset.id).setContent(res.body);
-      App.workspace.setDrawing(drawingName);
-
+    API.getFileContent(drawingId).then(res => {
+      requestedDrawing.setContent(res.body);
+      App.workspace.setDrawing(requestedDrawing);
       App.hideViewportMessage();
       console.log('Drawing fetched.');
     }, err => {

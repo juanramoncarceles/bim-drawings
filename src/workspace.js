@@ -16,7 +16,7 @@ export class Workspace {
     }
     this.activeTool;
     // this.toolSettings;
-    this.appendedDrawingsNames = [];
+    this.appendedDrawingsIds = [];
     this.activeDrawing; // The div container with the svg drawing.
     // Set title of the project in the button to list the projects.
     App.projectsListBtn.innerHTML = '<span>' + projectData.name + '</span>';
@@ -29,8 +29,11 @@ export class Workspace {
     App.toolbarsContainer.style.display = 'flex';
     this.projectsData = App.projectsData;
     this.commentForm = document.getElementById('commentForm');
+    this.commentsChangesUnsaved;
     this.comments = [];
   }
+
+  // TODO: Set a default 'activeDrawing' with the 'elementsData' tool active by default? this.activeTool = new ElementsData('elementsDataTool', this);
 
 
   /*********************** TOOLS MANAGEMENT ************************/
@@ -62,89 +65,89 @@ export class Workspace {
   }
 
 
-  // /**
-  //  * Creates all the comments for the drawing if the commented element exists.
-  //  * To be used when still there is no group for comments or if it is empty
-  //  * because it doesnt check if the element has already the comment.
-  //  * @param {*} drawing 
-  //  * @param {*} commentsGroup 
-  //  * @param {*} comments 
-  //  */
-  // createComments(drawing, commentsGroup, comments) { // Array of comment objects
-  //   comments.forEach(comment => {
-  //     if (drawing.querySelector('[data-id="' + comment.elementId + '"]') !== null) {
-  //       // Creation of the ui comment.
-  //       const element = drawing.querySelector('[data-id="' + comment.elementId + '"]');
-  //       const uiComment = AddComment.createSvgComment(element, commentsGroup);
-  //       comment.uiElements.push(uiComment);
-  //     }
-  //   });
-  // }
-
-
   /********************** DRAWINGS MANAGEMENT **********************/
 
   /**
-   * Manages the drawings visibility.
-   * @param {String} drawingName 
+   * Manages the drawings visibility. The provided drawing object
+   * should have the 'content' property already with value.
+   * @param {Object} drawing 
    */
-  setDrawing(drawingName) {
-    // TODO: Set a default 'activeDrawing' with the 'elementsData' tool active by default? this.activeTool = new ElementsData('elementsDataTool', this);
-    // If there is a visible drawing hide it.
-    if (this.activeDrawing && this.activeDrawing.name !== drawingName) {
-      // If in the drawing that is going to be hided there is an element selected remove the selection.
+  setDrawing(drawing) {
+    // If there is a previous visible drawing hide it.
+    if (this.activeDrawing && this.activeDrawing.name !== drawing.name) {
+      // If in the drawing to be hided there is a selection remove it.
       if (this.activeTool && this.activeTool.currentSelection && this.activeDrawing.content.querySelector('[data-id="' + this.activeTool.currentSelection.dataset.id + '"]')) {
         this.activeTool.currentSelection.classList.remove('selected');
       }
       this.activeDrawing.content.style.display = 'none';
-    } else if (this.activeDrawing && this.activeDrawing.name === drawingName) {
+    } else if (this.activeDrawing && this.activeDrawing.name === drawing.name) {
       return;
     }
 
-    // If it is not in the container already append it. It will be visible.
-    if (!this.appendedDrawingsNames.includes(drawingName)) {
-      this.appendedDrawingsNames.push(drawingName);
-      const drawing = this.drawings.find(d => d.name === drawingName);
-      drawing.placeInDOM(this.drawingsContainer, this.comments);
-      this.activeDrawing = drawing;
+    // Make it not visible until the end of the process. Use visibility
+    // because some browsers like Chrome cannot draw new svg elements if
+    // the canvas has 'display:none'.
+    drawing.content.style.visibility = 'hidden';
+
+    // If it is not in the DOM already append it.
+    // If it is already in the DOM then remove the 'display:none'.
+    if (!this.appendedDrawingsIds.includes(drawing.id)) {
+      this.appendedDrawingsIds.push(drawing.id);
+      this.drawingsContainer.append(drawing.content);
     } else {
-      this.activeDrawing = this.drawings.find(drawing => drawing.name === drawingName);
-      // Browers like Chrome doesnt calculate svg if it is display none, thats
-      // why I change it for visibility while I add the comments if any. 
-      this.activeDrawing.content.style.visibility = 'hidden';
-      this.activeDrawing.content.style.display = 'unset';
-      // If there are comments check if anyone is missing.
-      if (this.comments.length > 0) {
+      drawing.content.style.display = 'unset';
+    }
 
-        if (this.activeDrawing.commentsGroup !== undefined) {
-          // TODO: Set visibility
-          // For each comment check if it has a representation in the drawing and if not create it.
-          this.comments.forEach(comment => {
-            if (this.activeDrawing.commentsGroup.querySelector('[data-id="' + comment.id + '"]') === null) {
-              // Creation if the ui comment.
-              const element = this.activeDrawing.content.querySelector('[data-id="' + comment.elementId + '"]');
-              const uiComment = AddComment.createSvgComment(element, this.activeDrawing.commentsGroup);
-              comment.uiElements.push(uiComment);
+    // If the value of commentsChanged is undefined then there are still
+    // no comments in the project. If it is false then there are no changes.
+    if (drawing.commentsChanged) {
+      // Look for elements in the drawing that should have comment representation.
+      // If still there is no comments group yet check the drawing, otherwise check
+      // in the comments group. This way the comments group is added only if needed.
+      if (drawing.commentsGroup === undefined) {
+        let groupCreated = false;
+        this.comments.forEach(comment => {
+          if (drawing.content.querySelector('[data-id="' + comment.elementId + '"]') !== null) {
+            // Only if at least one element is found the comments group is created.
+            if (!groupCreated) {
+              drawing.createCommentsGroup();
+              // TODO: Set visibility of the group.
+              groupCreated = true;
             }
-          });
-        } else {
-          this.activeDrawing.createCommentsGroup();
-          // TODO: Set visibility
-          this.activeDrawing.createComments(this.comments);
-        }
-
+            const element = drawing.content.querySelector('[data-id="' + comment.elementId + '"]');
+            const uiComment = AddComment.createSvgComment(element, drawing.commentsGroup);
+            comment.uiElements.push(uiComment);
+          }
+        });
+      } else {
+        // Look for in the comments group, and add the missing ones.
+        // Only if the element is in the drawing and it doesnt have representation.
+        this.comments.forEach(comment => {
+          if (drawing.content.querySelector('[data-id="' + comment.elementId + '"]') !== null && drawing.commentsGroup.querySelector('[data-id="' + comment.id + '"]') === null) {
+            const element = drawing.content.querySelector('[data-id="' + comment.elementId + '"]');
+            const uiComment = AddComment.createSvgComment(element, drawing.commentsGroup);
+            comment.uiElements.push(uiComment);
+          }
+        });
+        // TODO: Set visibility of the group.
       }
-      this.activeDrawing.content.style.visibility = 'unset';
+      // Set the commentsChanged property to false to indicate that it is updated.
+      drawing.commentsChanged = false;
     }
 
     // Update the 'activeDrawing' in the 'activeTool'.
     if (this.activeTool) {
-      this.activeTool.activeDrawing = this.activeDrawing;
+      this.activeTool.activeDrawing = drawing;
     }
-    if (this.activeTool && this.activeTool.currentSelection && this.activeDrawing.content.querySelector('[data-id="' + this.activeTool.currentSelection.dataset.id + '"]')) {
-      this.activeTool.currentSelection = this.activeDrawing.content.querySelector('[data-id="' + this.activeTool.currentSelection.dataset.id + '"]');
+    if (this.activeTool && this.activeTool.currentSelection && drawing.content.querySelector('[data-id="' + this.activeTool.currentSelection.dataset.id + '"]')) {
+      this.activeTool.currentSelection = drawing.content.querySelector('[data-id="' + this.activeTool.currentSelection.dataset.id + '"]');
       this.activeTool.currentSelection.classList.add('selected');
     }
+
+    drawing.content.style.visibility = 'unset';
+
+    // Set the drawing as active.
+    this.activeDrawing = drawing;
   }
 
   /**
