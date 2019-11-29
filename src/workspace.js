@@ -22,6 +22,7 @@ export class Workspace {
     App.projectsListBtn.innerHTML = '<span>' + projectData.name + '</span>';
     this.drawingsBtns = App.drawingsBtns;
     this.drawingsContainer = App.drawingsContainer;
+    this.saveBtn = App.saveBtn;
     this.createDrawingsBtns(this.drawings);
     // Show drawings and tools buttons.
     this.drawingsBtns.children[0].innerText = 'Pick a drawing';
@@ -30,6 +31,7 @@ export class Workspace {
     this.projectsData = App.projectsData;
     this.commentForm = document.getElementById('commentForm');
     this.commentsChangesUnsaved;
+    this.commentsFileId;
     this.comments = [];
   }
 
@@ -62,6 +64,12 @@ export class Workspace {
       this.activeTool = undefined;
       e.currentTarget.classList.remove('btn-tool-enabled');
     }
+  }
+
+
+  unsavedData() {
+    this.commentsChangesUnsaved = true;
+    this.saveBtn.classList.add('enabled');
   }
 
 

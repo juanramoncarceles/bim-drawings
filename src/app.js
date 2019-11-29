@@ -26,6 +26,9 @@ export class Application {
     this.projectsListContainer = document.getElementById('projectsListContainer');
     this.projectsList = document.getElementById('projectsList');
     this.closeProjectsListBtn = document.getElementById('closeProjectsListBtn');
+    this.saveBtn = document.getElementById('saveBtn');
+    this.saveCommentsData = this.saveCommentsData.bind(this);
+    this.saveBtn.addEventListener('click', this.saveCommentsData);
     this.showProjectsList = this.showProjectsList.bind(this);
     this.projectsListBtn.addEventListener('click', this.showProjectsList);
     this.closeProjectsListBtn.addEventListener('click', () => {
@@ -76,6 +79,63 @@ export class Application {
     // TODO: This would make more sense as part of the workspace ?
     document.getElementById('tool-4').addEventListener('click', (e) => this.workspace.manageTools(e, AddComment, 'commentsTool'));
     document.getElementById('tool-3').addEventListener('click', (e) => this.workspace.manageTools(e, ElementData, 'elementsDataTool'));
+  }
+
+
+  /**
+   * Saves the comments data created using the comments array from the current workspace.
+   * It creates the file if it still doesnt exist or updates its contents if it exists.
+   */
+  async saveCommentsData() {
+    if (this.workspace.commentsChangesUnsaved) {
+      console.log('Saving data.');
+      // TODO: Show viewport waiting message.
+      let savingSuccessful;
+      // Collect the data to save in backend.
+      const dataToSave = [];
+      this.workspace.comments.forEach(comment => {
+        dataToSave.push({
+          elementId: comment.elementId,
+          content: comment.content
+        });
+      });
+      const jsonDataToSave = JSON.stringify(dataToSave);
+      // If there is id for the comments.json file.
+      if (!this.workspace.commentsFileId) {
+        // Create the file with the contents and get the id of it.
+        // TODO: The current uploadFile doesnt return the id of the created file.
+        // This makes it longer with a second request to get the id of it.
+        // There is no example on the Google Drive API documentation for browser.
+        const commentsFileCreationRes = await API.uploadFile(jsonDataToSave, 'application/json', 'comments.json', this.workspace.projectId);
+        if (commentsFileCreationRes.ok && commentsFileCreationRes.status === 200) {
+          const commentsFileRes = await API.listFiles({ name: 'comments.json', parentId: this.workspace.projectId, trashed: false });
+          const commentsFileData = commentsFileRes.result.files;
+          if (commentsFileData && commentsFileData.length === 1) {
+            this.workspace.commentsFileId = commentsFileData[0].id;
+            savingSuccessful = true;
+            console.log('comments.json created: ' + this.workspace.commentsFileId);
+          } else {
+            savingSuccessful = false;
+            // TODO: Delete existing created file/s with name 'comments.json', if there is no id then use the name.
+          }
+        }
+      } else {
+        // Update the existing comments.json file.
+        const commentsFileUpdateRes = await API.updateFileContent(jsonDataToSave, 'application/json', this.workspace.commentsFileId);
+        if (commentsFileUpdateRes.ok && commentsFileUpdateRes.status === 200) {
+          savingSuccessful = true;
+        }
+      }
+      // TODO: Remove viewport waiting message.
+      if (savingSuccessful) {
+        // TODO: Show message indicating success.
+        this.commentsChangesUnsaved = false;
+        this.saveBtn.classList.remove('enabled');
+      } else {
+        // TODO: message something went wrong.
+        console.log('Something went wrong trying to save. Retry again.');
+      }
+    }
   }
 
 

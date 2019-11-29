@@ -62,8 +62,8 @@ export class AddComment extends ElementSelection {
     this.input.value = '';
     this.workspace.commentForm.style.display = 'none';
     this.waitingForComment = false;
-    // Workspace properties to control changes on comments.
-    this.workspace.commentsChangesUnsaved = true;
+    // Workspace method to indicate that there are unsaved changes.
+    this.workspace.unsavedData();
     this.workspace.drawings.forEach(drawing => {
       if (drawing.id !== this.workspace.activeDrawing.id) {
         drawing.commentsChanged = true;

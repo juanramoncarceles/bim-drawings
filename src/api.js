@@ -120,7 +120,7 @@ export default class {
     let request = fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id', {
       method: 'POST',
       headers: new Headers({ 'Authorization': 'Bearer ' + accessToken }),
-      body: form,
+      body: form
     });
     request.then(res => {
       if (res.ok === true && res.status === 200) {
@@ -163,6 +163,41 @@ export default class {
     });
     return request;
   }
+
+
+  /**
+   * Version of upload file from documentation that doesnt work.
+   * @param {*} fileContent 
+   * @param {*} fileMimeType 
+   * @param {*} fileName 
+   * @param {*} folderId 
+   */
+  // static uploadFile2(fileContent, fileMimeType, fileName, folderId) {
+  //   const file = new Blob([fileContent], { type: fileMimeType });
+  //   const fileMetadata = {
+  //     'name': fileName,
+  //     'parents': [folderId]
+  //   };
+  //   const form = new FormData();
+  //   form.append('metadata', new Blob([JSON.stringify(fileMetadata)], { type: 'application/json' }));
+  //   form.append('file', file);
+  //   const media = {
+  //     mimeType: fileMimeType,
+  //     body: form
+  //   };
+  //   return gapi.client.drive.files.create({
+  //     resource: fileMetadata,
+  //     media: media,
+  //     fields: 'id'
+  //   }, (err, file) => {
+  //     if (err) {
+  //       // Handle error
+  //       console.error(err);
+  //     } else {
+  //       console.log('File Id: ', file.id);
+  //     }
+  //   });
+  // }
 
 
   /**
