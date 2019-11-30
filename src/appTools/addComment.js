@@ -1,5 +1,5 @@
-import Generics from '../generics';
 import { ElementSelection } from './elementSelection';
+import { Comment } from './../comment';
 
 export class AddComment extends ElementSelection {
   constructor(name, workspace) {
@@ -30,40 +30,21 @@ export class AddComment extends ElementSelection {
   }
 
 
-  /**
-   * Creates a ui comment for the element and adds it to the group of comments on the drawing.
-   * It doesnt append the comment svg element to the array of representations of the comment object.
-   * @param {SVGElement} element 
-   * @param {SVGGElement} commentsGroup
-   */
-  static createSvgComment(element, commentsGroup) {
-    const boundingBox = Generics.createBBox(element);
-    boundingBox.setAttribute('style', 'fill:none;stroke:#000;');
-    boundingBox.dataset.id = 'c-' + element.dataset.id;
-    commentsGroup.appendChild(boundingBox);
-    return boundingBox;
-  }
-
-
   addComment(e) {
     e.preventDefault();
     // If 'activeDrawing' doesnt have a group for comments create it.
     if (this.workspace.activeDrawing.commentsGroup === undefined) {
       this.workspace.activeDrawing.createCommentsGroup();
     }
-    const uiComment = this.constructor.createSvgComment(this.selection, this.workspace.activeDrawing.commentsGroup);
-    this.workspace.comments.push({
-      id: uiComment.dataset.id,
-      elementId: this.selection.dataset.id,
-      content: this.input.value,
-      uiElements: [uiComment]
-    });
+    const comment = new Comment(this.selection.dataset.id, this.input.value);
+    comment.createRepresentation(this.workspace.activeDrawing.commentsGroup, this.selection);
+    this.workspace.comments.push(comment);
     console.log(this.workspace.comments);
     this.input.value = '';
     this.workspace.commentForm.style.display = 'none';
     this.waitingForComment = false;
-    // Workspace method to indicate that there are unsaved changes.
-    this.workspace.unsavedData();
+    // Workspace method to indicate that there are unsaved changes on comments.
+    this.workspace.unsavedCommentsData();
     this.workspace.drawings.forEach(drawing => {
       if (drawing.id !== this.workspace.activeDrawing.id) {
         drawing.commentsChanged = true;
@@ -75,7 +56,7 @@ export class AddComment extends ElementSelection {
 
   kill() {
     super.kill();
-    console.log('Comment tool killed!');
+    console.log('Comment tool destroyed.');
     if (this.waitingForComment) {
       this.workspace.commentForm.style.display = 'none';
       this.input.value = '';

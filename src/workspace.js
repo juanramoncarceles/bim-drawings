@@ -1,5 +1,5 @@
 import Generics from './generics';
-import { AddComment } from './appTools/addComment';
+import { Comment } from './comment';
 
 export class Workspace {
   constructor(projectData, App) {
@@ -31,8 +31,15 @@ export class Workspace {
     this.projectsData = App.projectsData;
     this.commentForm = document.getElementById('commentForm');
     this.commentsChangesUnsaved;
-    this.commentsFileId;
+    if (projectData.commentsFileId) {
+      this.commentsFileId = projectData.commentsFileId;
+    }
     this.comments = [];
+    if (projectData.comments) {
+      // TODO: Create the comment objects each time a workspace is created or before on the AppData.projectsData object?
+      projectData.comments.forEach(comment => this.comments.push(new Comment(comment.elementId, comment.content)));
+      this.drawings.forEach(drawing => drawing.commentsChanged = true);
+    }
   }
 
   // TODO: Set a default 'activeDrawing' with the 'elementsData' tool active by default? this.activeTool = new ElementsData('elementsDataTool', this);
@@ -67,7 +74,7 @@ export class Workspace {
   }
 
 
-  unsavedData() {
+  unsavedCommentsData() {
     this.commentsChangesUnsaved = true;
     this.saveBtn.classList.add('enabled');
   }
@@ -123,8 +130,7 @@ export class Workspace {
               groupCreated = true;
             }
             const element = drawing.content.querySelector('[data-id="' + comment.elementId + '"]');
-            const uiComment = AddComment.createSvgComment(element, drawing.commentsGroup);
-            comment.uiElements.push(uiComment);
+            comment.createRepresentation(drawing.commentsGroup, element);
           }
         });
       } else {
@@ -133,8 +139,7 @@ export class Workspace {
         this.comments.forEach(comment => {
           if (drawing.content.querySelector('[data-id="' + comment.elementId + '"]') !== null && drawing.commentsGroup.querySelector('[data-id="' + comment.id + '"]') === null) {
             const element = drawing.content.querySelector('[data-id="' + comment.elementId + '"]');
-            const uiComment = AddComment.createSvgComment(element, drawing.commentsGroup);
-            comment.uiElements.push(uiComment);
+            comment.createRepresentation(drawing.commentsGroup, element);
           }
         });
         // TODO: Set visibility of the group.

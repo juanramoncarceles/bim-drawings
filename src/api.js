@@ -167,6 +167,7 @@ export default class {
 
   /**
    * Version of upload file from documentation that doesnt work.
+   * It just creates an untitled empty file in the drive root.
    * @param {*} fileContent 
    * @param {*} fileMimeType 
    * @param {*} fileName 
@@ -486,6 +487,20 @@ export default class {
         AppData.projectsData[projectIndex].elementsData = elementsDataRes.result.files;
       } else {
         console.log('No elementsData folder found.');
+      }
+    }
+
+    // If there is no data for comments in the appData yet fetch it.
+    if (projectIndex >= 0 && !AppData.projectsData[projectIndex].comments) {
+      // TODO: Could be that the id of the file is already in the projectsData and listFiles is no necessary?
+      const commentsRes = await this.listFiles({ parentId: projectId, name: 'comments.json', trashed: false });
+      const commentsData = commentsRes.result.files;
+      if (commentsData && commentsData.length > 0) {
+        AppData.projectsData[projectIndex].commentsFileId = commentsData[0].id;
+        const commentsContentRes = await this.getFileContent(commentsData[0].id);
+        AppData.projectsData[projectIndex].comments = JSON.parse(commentsContentRes.body);
+      } else {
+        console.log('No comments.json file found.');
       }
     }
 
