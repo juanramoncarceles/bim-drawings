@@ -39,45 +39,8 @@ export class Application {
       }
     });
     this.closeProjectsListBtn.addEventListener('click', this.closeProjectsList);
-    this.projectsList.addEventListener('click', e => {
-      const projectItem = e.target.closest('[data-proj-id]');
-      if (projectItem === null) {
-        return;
-      }
-      // If it is the current project close the list window.
-      if (this.workspace && this.workspace.projectId === projectItem.dataset.projId) {
-        return;
-      }
-      // TODO: If there have been changes in the project ask to save or discard them before closing it.
-      // TODO: If it was an offline project try to sync it before closing it. The id would be 'temporal' and the contents in currentProject
-      if (projectItem.dataset.projId === this.lastUploadedProject.id) {
-        if (this.lastUploadedProject.id === 'temporal') {
-          console.log('Show a message indicating that the project can be accessed but in viewer mode because it couldnt be saved.');
-        }
-        this.goToProject(this.lastUploadedProject);
-        if (this.previousActiveItem) {
-          this.previousActiveItem.classList.remove('current');
-        }
-        projectItem.classList.add('current');
-        this.previousActiveItem = projectItem;
-        this.projectsListBtn.style.display = 'unset';
-      } else {
-        this.showViewportDialog('loader', `Loading project ${projectItem.dataset.name}`);
-        API.fetchProject(projectItem.dataset.projId, this)
-          .then(res => {
-            this.goToProject(res);
-            if (this.previousActiveItem) {
-              this.previousActiveItem.classList.remove('current');
-            }
-            projectItem.classList.add('current');
-            this.previousActiveItem = projectItem;
-            this.projectsListBtn.style.display = 'unset';
-            this.hideViewportMessage();
-          }, err => {
-            console.log(err);
-          });
-      }
-    });
+    this.goToProject = this.goToProject.bind(this);
+    this.projectsList.addEventListener('click', this.goToProject);
     window.onresize = this.adjustItems;
     // TODO: This would make more sense as part of the workspace ?
     document.getElementById('tool-4').addEventListener('click', (e) => this.workspace.manageTools(e, AddComment, 'commentsTool'));
@@ -146,10 +109,54 @@ export class Application {
   /************************ THE PROJECTS LIST ************************/
 
   /**
-   * Sets the workspace with the provided project.
-   * @param {Object} project Data of the project. Id, name, drawings ids and elementsData files ids.
+   * Selects a project from the list and manages its resources before opening the project.
+   * @param {Event} e Click event.
    */
-  goToProject(project) {
+  goToProject(e) {
+    const projectItem = e.target.closest('[data-proj-id]');
+    if (projectItem === null) {
+      return;
+    }
+    // If it is the current project close the list window.
+    if (this.workspace && this.workspace.projectId === projectItem.dataset.projId) {
+      return;
+    }
+    // TODO: If there have been changes in the project ask to save or discard them before closing it.
+    // TODO: If it was an offline project try to sync it before closing it. The id would be 'temporal' and the contents in currentProject
+    if (projectItem.dataset.projId === this.lastUploadedProject.id) {
+      if (this.lastUploadedProject.id === 'temporal') {
+        console.log('Show a message indicating that the project can be accessed but in viewer mode because it couldnt be saved.');
+      }
+      this.openProject(this.lastUploadedProject);
+      if (this.previousActiveItem) {
+        this.previousActiveItem.classList.remove('current');
+      }
+      projectItem.classList.add('current');
+      this.previousActiveItem = projectItem;
+      this.projectsListBtn.style.display = 'unset';
+    } else {
+      this.showViewportDialog('loader', `Loading project ${projectItem.dataset.name}`);
+      API.fetchProject(projectItem.dataset.projId, this)
+        .then(res => {
+          this.openProject(res);
+          if (this.previousActiveItem) {
+            this.previousActiveItem.classList.remove('current');
+          }
+          projectItem.classList.add('current');
+          this.previousActiveItem = projectItem;
+          this.projectsListBtn.style.display = 'unset';
+          this.hideViewportMessage();
+        }, err => {
+          console.log(err);
+        });
+    }
+  }
+
+  /**
+   * Creates a workspace with the provided project.
+   * @param {Object} project Data of the project: id, name, drawings ids and elementsData files ids.
+   */
+  openProject(project) {
     if (this.workspace) {
       this.workspace.close();
     }
@@ -339,7 +346,7 @@ export class Application {
   /**
    * Starts the app, if a project id is provided it will start from that projec view.
    * If no project id is provided it will start from the projects list view.
-   * @param projectId Optional projectId to start.
+   * @param {String} projectId Optional projectId to start.
    */
   start(projectId) {
     // Hide the login dialog in case it was visible.
