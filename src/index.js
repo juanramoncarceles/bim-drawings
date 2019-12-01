@@ -137,105 +137,10 @@ function showLoginDialog() {
 }
 
 
-/********************* UPLOAD FILE FORM DIALOG *********************/
-
-
-const uploadFileForm = document.getElementById('uploadFileForm');
-const fileInput = document.getElementById('fileInput');
-const submitFileBtn = uploadFileForm.querySelector('button[type="submit"]');
-
-// Show the upload project form.
-document.getElementById('newProjectBtn').addEventListener('click', () => {
-  App.showModalDialog(uploadFileForm);
-  App.modalDialogContainer.classList.add('grayTranslucent');
-});
-
-
-// Hide the upload project form.
-document.getElementById('closeUploadForm').addEventListener('click', () => {
-  App.closeModalDialog(uploadFileForm);
-  App.modalDialogContainer.classList.remove('grayTranslucent');
-});
-
-
-// Listen to file input changes.
-fileInput.addEventListener('change', () => {
-  if (fileInput.files.length > 0) {
-    fileInput.nextElementSibling.innerHTML = fileInput.files[0].name;
-    submitFileBtn.classList.remove('disabled');
-  } else {
-    fileInput.nextElementSibling.innerHTML = 'Choose a file';
-    submitFileBtn.classList.add('disabled');
-  }
-});
-
-
-uploadFileForm.onsubmit = e => {
-  e.preventDefault();
-  // Set loading state on UI.
-  document.getElementById('loadingFile').style.display = 'unset';
-  submitFileBtn.classList.add('disabled');
-  submitFileBtn.innerHTML = 'Uploading file';
-  fileInput.nextElementSibling.style.display = 'none';
-  const file = e.target.elements["file"].files[0];
-  // TODO: Show some real progress while creating the project.
-  API.createProject(file, App, App.lastUploadedProject).then(res => {
-    App.updateProjectsList(res);
-    App.closeModalDialog(uploadFileForm);
-    showMessage('success', 'Project uploaded successfully.');
-    fileInput.value = '';
-    // Reset upload form UI.
-    document.getElementById('loadingFile').style.display = 'none';
-    fileInput.nextElementSibling.innerHTML = 'Choose a file';
-    submitFileBtn.innerHTML = 'Upload';
-    fileInput.nextElementSibling.style.display = 'unset';
-  }, err => {
-    App.closeModalDialog(uploadFileForm);
-    App.updateProjectsList(App.lastUploadedProject);
-    console.error(err);
-  });
-}
-
-
-/************************ MESSAGE CONTAINER ************************/
-/*
- * It is a message that works as a feedback and that doesnt interrupt.
- */
-
-
-const messageContainer = document.getElementById('messageContainer');
-
-/**
- * Disaplays feedback message.
- * @param {String} message 
- * @param {String} type Use keywords 'success', 'warning' or 'error' to specify the type of message.
- */
-function showMessage(type, message) {
-  messageContainer.style.display = 'flex';
-  messageContainer.querySelector('p').innerText = message;
-  switch (type) {
-    case 'success':
-      messageContainer.classList.add('success');
-      break;
-    case 'warning':
-      messageContainer.classList.add('warning');
-      break;
-    case 'error':
-      messageContainer.classList.add('error');
-      break;
-  }
-}
-
-messageContainer.querySelector('button').addEventListener('click', () => {
-  messageContainer.style.display = 'none';
-});
-
-
 /********************** DRAWINGS BUTTONS LIST **********************/
 /*
  * A single event listener in the container of the drawings buttons manages the clicked drawing.
  */
-
 
 let currentDrawingBtn;
 
@@ -336,7 +241,7 @@ window.addEventListener("contextmenu", e => {
               App.projectsData.splice(index, 1);
               // TODO check also if it is in the value of currentProject or lastUploadedProject and delete it as well
               App.hideViewportMessage();
-              showMessage('success', 'Project deleted successfully');
+              App.showMessage('success', 'Project deleted successfully');
             });
           }
         },

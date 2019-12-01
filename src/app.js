@@ -41,7 +41,64 @@ export class Application {
     this.closeProjectsListBtn.addEventListener('click', this.closeProjectsList);
     this.goToProject = this.goToProject.bind(this);
     this.projectsList.addEventListener('click', this.goToProject);
+    /********************* Upload project form *********************/
+    this.uploadFileForm = document.getElementById('uploadFileForm');
+    this.fileInput = document.getElementById('fileInput');
+    this.submitFileBtn = this.uploadFileForm.querySelector('button[type="submit"]');
+    // Show the upload project form.
+    document.getElementById('newProjectBtn').addEventListener('click', () => {
+      this.showModalDialog(this.uploadFileForm);
+      this.modalDialogContainer.classList.add('grayTranslucent');
+    });
+    // Hide the upload project form.
+    document.getElementById('closeUploadForm').addEventListener('click', () => {
+      this.closeModalDialog(this.uploadFileForm);
+      this.modalDialogContainer.classList.remove('grayTranslucent');
+    });
+    // Listen to file input changes.
+    this.fileInput.addEventListener('change', () => {
+      if (this.fileInput.files.length > 0) {
+        this.fileInput.nextElementSibling.innerHTML = this.fileInput.files[0].name;
+        this.submitFileBtn.classList.remove('disabled');
+      } else {
+        this.fileInput.nextElementSibling.innerHTML = 'Choose a file';
+        this.submitFileBtn.classList.add('disabled');
+      }
+    });
+    // Submit file logic.
+    this.uploadFileForm.onsubmit = e => {
+      e.preventDefault();
+      // Set loading state on UI.
+      document.getElementById('loadingFile').style.display = 'unset';
+      this.submitFileBtn.classList.add('disabled');
+      this.submitFileBtn.innerHTML = 'Uploading file';
+      this.fileInput.nextElementSibling.style.display = 'none';
+      const file = e.target.elements["file"].files[0];
+      // TODO: Show some real progress while creating the project.
+      API.createProject(file, this, this.lastUploadedProject).then(res => {
+        this.updateProjectsList(res);
+        this.closeModalDialog(this.uploadFileForm);
+        this.showMessage('success', 'Project uploaded successfully.');
+        this.fileInput.value = '';
+        // Reset upload form UI.
+        document.getElementById('loadingFile').style.display = 'none';
+        this.fileInput.nextElementSibling.innerHTML = 'Choose a file';
+        this.submitFileBtn.innerHTML = 'Upload';
+        this.fileInput.nextElementSibling.style.display = 'unset';
+      }, err => {
+        this.closeModalDialog(this.uploadFileForm);
+        this.updateProjectsList(this.lastUploadedProject);
+        console.error(err);
+      });
+    }
+    /********************** Message container **********************/
+    this.messageContainer = document.getElementById('messageContainer');
+    this.messageContainer.querySelector('button').addEventListener('click', () => {
+      this.messageContainer.style.display = 'none';
+    });
+    /*************** Projects list items distribution **************/
     window.onresize = this.adjustItems;
+    /**************** Tools buttons event listeners ****************/
     // TODO: This would make more sense as part of the workspace ?
     document.getElementById('tool-4').addEventListener('click', (e) => this.workspace.manageTools(e, AddComment, 'commentsTool'));
     document.getElementById('tool-3').addEventListener('click', (e) => this.workspace.manageTools(e, ElementData, 'elementsDataTool'));
@@ -267,6 +324,33 @@ export class Application {
     }
     this.projectsList.prepend(projectItem);
     this.adjustItems();
+  }
+
+
+  /*********************** MESSAGE CONTAINER ***********************/
+  /*
+   * A message that works as a feedback and that doesnt interrupt.
+   */
+
+  /**
+  * Disaplays feedback message.
+  * @param {String} message 
+  * @param {String} type Use keywords 'success', 'warning' or 'error' to specify the type of message.
+  */
+  showMessage(type, message) {
+    this.messageContainer.style.display = 'flex';
+    this.messageContainer.querySelector('p').innerText = message;
+    switch (type) {
+      case 'success':
+        this.messageContainer.classList.add('success');
+        break;
+      case 'warning':
+        this.messageContainer.classList.add('warning');
+        break;
+      case 'error':
+        this.messageContainer.classList.add('error');
+        break;
+    }
   }
 
 
