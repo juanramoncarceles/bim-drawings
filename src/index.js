@@ -8,6 +8,19 @@ import API from './api';
 const App = new Application();
 
 
+/******************* VIEW SAMPLE PROJECT OPTION ********************/
+
+const sampleProjectBtn = document.getElementById('sampleProjectBtn');
+
+sampleProjectBtn.onclick = () => {
+  document.getElementById('projectsListBtn').removeEventListener('click', App.showProjectsList);
+  App.saveBtn.style.visibility = 'hidden';
+  App.projectsListBtn.classList.add('locked');
+  // TODO: Change the Sign Out button for the Log In button on the side menu.
+  App.start('1D4ESY97zKvJoZ1BWeLWYq8GxhQNWsXpg');
+}
+
+
 /************************** AUTHENTICATION *************************/
 
 
@@ -74,7 +87,10 @@ function initClient() {
 function updateSigninStatus(isSignedIn) {
   if (isSignedIn) {
     console.log('Authorized.');
-    App.start();
+    // Get the URL params.
+    const projectId = Generics.getUrlParams(window.location.href).id;
+    // If a project id is provided to start() method the app will start from the project view.
+    App.start(projectId);
   } else {
     console.log('Not authorized');
     showLoginDialog();

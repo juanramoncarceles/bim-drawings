@@ -73,7 +73,16 @@ svg.svg-loader {
   color: #bdbcbc;
 }
 
+/* Locked is similar to disabled but it doesnt change color of content.*/
+.buttonBase.locked {
+  cursor: unset;
+}
+
 .buttonBase.disabled:hover {
+  background-color: unset;
+}
+
+.buttonBase.locked:hover {
   background-color: unset;
 }
 

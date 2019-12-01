@@ -321,19 +321,20 @@ export class Application {
   /********************* START THE APPLICATION *********************/
 
   /**
-   * Method called at start and behaves differently depending if the url contains an id of a project or not.
+   * Starts the app, if a project id is provided it will start from that projec view.
+   * If no project id is provided it will start from the projects list view.
+   * @param projectId Optional projectId to start.
    */
-  start() {
+  start(projectId) {
     // Hide the login dialog in case it was visible.
     this.closeModalDialog(authorizeDialog);
     // Show the app interface.
     document.querySelector('header').style.display = 'flex';
     document.querySelector('main').style.display = 'block';
-    // Get the URL params.
-    const resourceId = Generics.getUrlParams(window.location.href).id;
-    if (resourceId) {
+    // Start options depending if there is a projectId.
+    if (projectId) {
       this.showViewportDialog('loader', 'Loading project');
-      API.fetchProject(resourceId, this)
+      API.fetchProject(projectId, this)
         .then(res => {
           this.workspace = new Workspace(res, this);
           this.createHTMLProjectsList([res]);
