@@ -8,10 +8,11 @@ import { ElementData } from './appTools/elementData';
 export class Application {
   constructor() {
     this.appMainFolderId = undefined;
-    // projectsData: Array of objects with data like name and id of the projects.
+    // projectsData: Array of objects with data like 'name' and 'id' of the projects.
     this.projectsData = undefined;
     this.appSettingsFolderId = undefined;
     this.thumbsFolderId = undefined;
+    // The current workspace object will be referenced here.
     this.workspace = undefined;
     this.lastUploadedProject = new ProjectData();
     // Stores the active item in the projects list.
@@ -29,13 +30,15 @@ export class Application {
     this.saveBtn = document.getElementById('saveBtn');
     this.saveCommentsData = this.saveCommentsData.bind(this);
     this.saveBtn.addEventListener('click', this.saveCommentsData);
-    this.showProjectsList = this.showProjectsList.bind(this);
-    this.projectsListBtn.addEventListener('click', this.showProjectsList);
-    this.closeProjectsListBtn.addEventListener('click', () => {
-      this.projectsListContainer.style.display = 'none';
-      this.drawingsBtns.style.display = 'unset';
-      this.toolbarsContainer.style.display = 'flex';
+    this.closeProjectsList = this.closeProjectsList.bind(this);
+    this.projectsListBtn.addEventListener('click', () => {
+      if (this.projectsListBtn.dataset.open === 'true') {
+        this.closeProjectsList();
+      } else if (this.projectsListBtn.dataset.open === 'false') {
+        this.openProjectsList();
+      }
     });
+    this.closeProjectsListBtn.addEventListener('click', this.closeProjectsList);
     this.projectsList.addEventListener('click', e => {
       const projectItem = e.target.closest('[data-proj-id]');
       if (projectItem === null) {
@@ -87,8 +90,7 @@ export class Application {
    * It creates the file if it still doesnt exist or updates its contents if it exists.
    */
   async saveCommentsData() {
-    if (this.workspace.commentsChangesUnsaved) {
-      console.log('Saving data.');
+    if (this.workspace && this.workspace.commentsChangesUnsaved) {
       // TODO: Show viewport waiting message.
       let savingSuccessful;
       // Collect the data to save in backend.
@@ -131,6 +133,8 @@ export class Application {
         // TODO: Show message indicating success.
         this.commentsChangesUnsaved = false;
         this.saveBtn.classList.remove('enabled');
+        this.saveBtn.classList.add('disabled');
+        console.log('Data saved successfully.');
       } else {
         // TODO: message something went wrong.
         console.log('Something went wrong trying to save. Retry again.');
@@ -155,16 +159,28 @@ export class Application {
   }
 
   /**
-   * Shows the list of projects container and fetches projects if required.
+   * Closes the projects list and shows the current project toolbar.
+   * Sets the state of the ui as projects list closed.
    */
-  showProjectsList() {
-    console.log('Show the projects list.');
-    if (this.workspace !== undefined) {
-      this.closeProjectsListBtn.style.display = 'unset';
+  closeProjectsList() {
+    this.projectsListContainer.style.display = 'none';
+    this.drawingsBtns.style.display = 'unset';
+    this.toolbarsContainer.style.display = 'flex';
+    this.projectsListBtn.dataset.open = 'false';
+  }
+
+  /**
+   * Opens the list of projects container and fetches projects if required.
+   * Sets the state of the ui as projects list closed.
+   */
+  openProjectsList() {
+    if (this.workspace === undefined) {
+      this.closeProjectsListBtn.classList.add('hidden');
     } else {
-      this.closeProjectsListBtn.style.display = 'none';
+      this.closeProjectsListBtn.classList.remove('hidden');
     }
     this.projectsListContainer.style.display = 'block';
+    this.projectsListBtn.dataset.open = 'true';
     // Hide the drawings and tools buttons
     this.drawingsBtns.style.display = 'none';
     this.toolbarsContainer.style.display = 'none';
@@ -347,7 +363,7 @@ export class Application {
             {
               name: 'View projects list',
               function: () => {
-                this.showProjectsList();
+                this.openProjectsList();
                 if (location.search !== "") {
                   history.replaceState({ page: 'Projects list' }, 'Projects list', location.href.replace(location.search, ''));
                 }

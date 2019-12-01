@@ -1,3 +1,6 @@
+/* Current main breakpoints are on 800px and 500px */
+
+
 :root {
   --header-height: 2.5rem;
 }
@@ -73,6 +76,10 @@ svg.svg-loader {
   color: #bdbcbc;
 }
 
+button.disabled:focus {
+  outline-style: none;
+}
+
 /* Locked is similar to disabled but it doesnt change color of content.*/
 .buttonBase.locked {
   cursor: unset;
@@ -112,6 +119,10 @@ header .icon-btn {
   cursor: auto;
 }
 
+.icon-btn.hidden {
+  display: none;
+}
+
 .btn-tool-enabled {
   background-color: #9ee6fc;
 }
@@ -126,11 +137,7 @@ header .icon-btn {
   background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+c3VwZXIgZzwvdGl0bGU+PGcgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNOSAzLjQ4YzEuNjkgMCAyLjgzLjczIDMuNDggMS4zNGwyLjU0LTIuNDhDMTMuNDYuODkgMTEuNDMgMCA5IDAgNS40OCAwIDIuNDQgMi4wMi45NiA0Ljk2bDIuOTEgMi4yNkM0LjYgNS4wNSA2LjYyIDMuNDggOSAzLjQ4eiIgZmlsbD0iI0VBNDMzNSIvPjxwYXRoIGQ9Ik0xNy42NCA5LjJjMC0uNzQtLjA2LTEuMjgtLjE5LTEuODRIOXYzLjM0aDQuOTZjLS4xLjgzLS42NCAyLjA4LTEuODQgMi45MmwyLjg0IDIuMmMxLjctMS41NyAyLjY4LTMuODggMi42OC02LjYyeiIgZmlsbD0iIzQyODVGNCIvPjxwYXRoIGQ9Ik0zLjg4IDEwLjc4QTUuNTQgNS41NCAwIDAgMSAzLjU4IDljMC0uNjIuMTEtMS4yMi4yOS0xLjc4TC45NiA0Ljk2QTkuMDA4IDkuMDA4IDAgMCAwIDAgOWMwIDEuNDUuMzUgMi44Mi45NiA0LjA0bDIuOTItMi4yNnoiIGZpbGw9IiNGQkJDMDUiLz48cGF0aCBkPSJNOSAxOGMyLjQzIDAgNC40Ny0uOCA1Ljk2LTIuMThsLTIuODQtMi4yYy0uNzYuNTMtMS43OC45LTMuMTIuOS0yLjM4IDAtNC40LTEuNTctNS4xMi0zLjc0TC45NyAxMy4wNEMyLjQ1IDE1Ljk4IDUuNDggMTggOSAxOHoiIGZpbGw9IiMzNEE4NTMiLz48cGF0aCBmaWxsPSJub25lIiBkPSJNMCAwaDE4djE4SDB6Ii8+PC9nPjwvc3ZnPg==);
 }
 
-#saveBtn svg {
-  fill: #c3c3c3;
-}
-
-#saveBtn.enabled svg {
+#saveBtn.enabled > svg {
   fill: #ea8c15;
   transform: scale(1.2);
 }
@@ -334,18 +341,19 @@ main {
   padding: 1rem;
 }
 
-@media (max-width: 500px) {
-  #projectsListContainer {
-    padding-top: 2.5rem;
-  }
-
-  #projectsListContainer > div:first-child {
-    border-top: 1px solid #d3d3d3;
-  }
-}
-
 #projectsListContainer > div:first-child > span {
   width: 20%;
+}
+
+@media (max-width: 500px) {
+
+  #closeProjectsListBtn {
+    display: none;
+  } 
+}
+
+#newProjectBtn {
+  background-color: #d1f0ec;
 }
 
 #closeProjectsListBtn {
@@ -353,6 +361,7 @@ main {
 }
 
 #projectsListContainer > div:first-child > h4 {
+  overflow-x: hidden;
   font-weight: normal;
   font-size: 1.6rem;
 }
@@ -411,12 +420,14 @@ main {
   box-shadow: 2px 2px 7px #b2b2b2;
 }
 
-.projectItem.current {
-  cursor: auto;
+.projectItem > h4 {
+  background-color: #f9f9f9;
 }
 
-.projectItem.current > h4 {
-  background-color: #bad9e6;
+.projectItem.current {
+  cursor: auto;
+  outline: 4px solid #7da5b6;
+  box-shadow: none;
 }
 
 .projectItem.unsync {

@@ -18,7 +18,7 @@
       <img src="src/assets/vadv-logo.png" alt="VisualARQ Drawings Viewer Logo" title="VisualARQ Drawings Viewer">
     </span>
     <h1>VisualARQ Drawings Viewer</h1>
-    <h2 id="projectsListBtn" class="buttonBase light sides" style="display: none;"></h2>
+    <h2 id="projectsListBtn" class="buttonBase light sides" data-open="false" style="display: none;"></h2>
     <div id="drawingsBtns" class="dropdown-container" style="display: none;">
       <button class="buttonBase light sides">Pick a drawing</button>
       <ul class="dropdown-content">
@@ -46,7 +46,7 @@
       </div>
     </div>
     <div class="global-nav-btns">
-      <button id="saveBtn" class="icon-btn">
+      <button id="saveBtn" class="icon-btn disabled">
         <svg viewBox="0 0 462 462" xmlns="http://www.w3.org/2000/svg">
           <path d="m457.166 103.834-99-99c-3.094-3.094-7.283-4.834-11.666-4.834h-330c-9.12 0-16.5 7.38-16.5 16.5v429c0 9.12 7.38 16.5 16.5 16.5h429c9.12 0 16.5-7.38 16.5-16.5v-330c0-4.383-1.741-8.572-4.834-11.666zm-325.166-70.834h198v165h-198zm297 396h-396v-396h66v181.5c0 9.12 7.38 16.5 16.5 16.5h231c9.12 0 16.5-7.38 16.5-16.5v-158.168l66 66z" />
         </svg>
@@ -73,11 +73,11 @@
     <div id='projectsListContainer' style="display: none;">
       <div>
         <span>
-          <button id="newProjectBtn" class="buttonBase light">Add new project</button>
+          <button id="newProjectBtn" class="buttonBase light">NEW PROJECT</button>
         </span>
         <h4>PROJECTS</h4>
         <span>
-          <button id="closeProjectsListBtn" class="icon-btn" style="display: none;">
+          <button id="closeProjectsListBtn" class="icon-btn hidden">
             <svg>
               <use href="#crossIcon" />
             </svg>
