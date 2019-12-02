@@ -104,7 +104,7 @@ header .icon-btn {
   width: calc(var(--header-height) - 2px);
 }
 
-.icon-btn:not(.disabled):hover {
+.icon-btn:not(.disabled):not(.btn-tool-enabled):hover {
   background-color: #ececec;
 }
 
@@ -124,7 +124,7 @@ header .icon-btn {
 }
 
 .btn-tool-enabled {
-  background-color: #9ee6fc;
+  background-color: #96cbdb;
 }
 
 .btn-bg-img {
@@ -227,11 +227,11 @@ header > h1 {
 }
 
 #drawingsBtns > ul > li.active {
-  background-color: #dfdfdf;
+  background-color: #c2c2c2;
   cursor: auto;
 }
 
-#drawingsBtns > ul > li:hover {
+#drawingsBtns > ul > li:not(.active):hover {
   background-color: #dfdfdf;
 }
 

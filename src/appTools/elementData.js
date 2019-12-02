@@ -2,9 +2,9 @@ import API from '../api';
 import { ElementSelection } from './elementSelection';
 
 export class ElementData extends ElementSelection {
-  constructor(name, workspace) {
-    super(name, workspace);
-    console.log('Elements data tool activated!');
+  constructor(name, toolBtn, workspace) {
+    super(name, toolBtn, workspace);
+    console.log('Elements data tool enabled.');
     this.elementsData = workspace.elementsData;
     this.projectsData = workspace.projectsData;
     this.projectIndex = workspace.projectIndex;
@@ -60,7 +60,7 @@ export class ElementData extends ElementSelection {
 
   kill() {
     super.kill();
-    console.log('Elements data tool killed!');
+    console.log('Elements data tool disabled.');
     // TODO: Clear the data table.
   }
 }

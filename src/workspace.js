@@ -17,7 +17,7 @@ export class Workspace {
     this.activeTool;
     // this.toolSettings;
     this.appendedDrawingsIds = [];
-    this.activeDrawing; // The div container with the svg drawing.
+    this.activeDrawing; // Drawing object instance.
     // Set title of the project in the button to list the projects.
     App.projectsListBtn.innerHTML = '<span>' + projectData.name + '</span>';
     this.drawingsBtns = App.drawingsBtns;
@@ -60,22 +60,20 @@ export class Workspace {
       return;
     }
     if (this.activeTool === undefined) {
-      this.activeTool = new Tool(name, this);
-      e.currentTarget.classList.add('btn-tool-enabled');
+      this.activeTool = new Tool(name, e.currentTarget, this);
     } else if (this.activeTool.name !== name) {
       this.activeTool.kill();
-      this.activeTool = new Tool(name, this);
-      e.currentTarget.classList.add('btn-tool-enabled');
+      this.activeTool = new Tool(name, e.currentTarget, this);
     } else if (this.activeTool.name === name) {
       this.activeTool.kill();
       this.activeTool = undefined;
-      e.currentTarget.classList.remove('btn-tool-enabled');
     }
   }
 
 
   unsavedCommentsData() {
     this.commentsChangesUnsaved = true;
+    this.saveBtn.classList.remove('disabled');
     this.saveBtn.classList.add('enabled');
   }
 

@@ -2,14 +2,14 @@ import { ElementSelection } from './elementSelection';
 import { Comment } from './../comment';
 
 export class AddComment extends ElementSelection {
-  constructor(name, workspace) {
-    super(name, workspace);
-    console.log('Comments tool activated!');
+  constructor(name, toolBtn, workspace) {
+    super(name, toolBtn, workspace);
+    console.log('Comment element tool enabled.');
     this.boundingBox;
     this.waitingForComment = false;
     this.input = this.workspace.commentForm.elements["comment"];
     this.addComment = this.addComment.bind(this);
-    this.workspace.commentForm.onsubmit = this.addComment;
+    workspace.commentForm.onsubmit = this.addComment;
   }
 
 
@@ -56,7 +56,7 @@ export class AddComment extends ElementSelection {
 
   kill() {
     super.kill();
-    console.log('Comment tool destroyed.');
+    console.log('Comment element tool disabled.');
     if (this.waitingForComment) {
       this.workspace.commentForm.style.display = 'none';
       this.input.value = '';
