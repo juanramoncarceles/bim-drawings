@@ -326,6 +326,42 @@ main {
 }
 
 
+/*************************** MAIN PANEL ****************************/
+
+#mainPanel {
+  position: absolute;
+  /* background-color: #f6f6f6; */
+  background-color: rgba(246, 246, 246, 0.5);
+  transition: right 1s, bottom 1s;
+
+  --width: 200px; /* Used for the panel docked to the right */
+  --height: 200px; /* Used for the panel docked to the bottom */
+}
+
+#mainPanel.right {
+  height: 100%;
+  width: var(--width);
+  top: 0;
+  right: calc(var(--width) * -1); /* Usar variable con scope de este elemento que se modificara con js */
+  border-left: 3px solid #2a8fb1;
+}
+
+#mainPanel.right.open {
+  right: 0;
+}
+
+#mainPanel.bottom {
+  height: var(--height);
+  width: 100%;
+  bottom: calc(var(--height) * -1);
+  border-top: 3px solid #2a8fb1;
+}
+
+#mainPanel.bottom.open {
+  bottom: 0;
+}
+
+
 /************************** PROJECTS LIST **************************/
 
 #projectsListContainer {
