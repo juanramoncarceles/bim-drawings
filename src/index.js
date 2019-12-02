@@ -13,7 +13,7 @@ const App = new Application();
 const sampleProjectBtn = document.getElementById('sampleProjectBtn');
 
 sampleProjectBtn.onclick = () => {
-  document.getElementById('projectsListBtn').removeEventListener('click', App.showProjectsList);
+  document.getElementById('projectsListBtn').onclick = null;
   App.saveBtn.style.visibility = 'hidden';
   App.projectsListBtn.classList.add('locked');
   // TODO: Change the Sign Out button for the Log In button on the side menu.

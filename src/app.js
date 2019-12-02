@@ -31,13 +31,13 @@ export class Application {
     this.saveCommentsData = this.saveCommentsData.bind(this);
     this.saveBtn.addEventListener('click', this.saveCommentsData);
     this.closeProjectsList = this.closeProjectsList.bind(this);
-    this.projectsListBtn.addEventListener('click', () => {
+    this.projectsListBtn.onclick = () => {
       if (this.projectsListBtn.dataset.open === 'true') {
         this.closeProjectsList();
       } else if (this.projectsListBtn.dataset.open === 'false') {
         this.openProjectsList();
       }
-    });
+    }
     this.closeProjectsListBtn.addEventListener('click', this.closeProjectsList);
     this.goToProject = this.goToProject.bind(this);
     this.projectsList.addEventListener('click', this.goToProject);
