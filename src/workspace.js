@@ -1,5 +1,6 @@
 import Generics from './generics';
 import { Comment } from './comment';
+import { MainPanel } from './mainPanel';
 
 export class Workspace {
   constructor(projectData, App) {
@@ -40,6 +41,7 @@ export class Workspace {
       projectData.comments.forEach(comment => this.comments.push(new Comment(comment.elementId, comment.content)));
       this.drawings.forEach(drawing => drawing.commentsChanged = true);
     }
+    this.mainPanel = new MainPanel(App.mainPanel, App.panelsStorage);
   }
 
   // TODO: Set a default 'activeDrawing' with the 'elementsData' tool active by default? this.activeTool = new ElementsData('elementsDataTool', this);
@@ -180,6 +182,7 @@ export class Workspace {
    */
   close() {
     Generics.emptyNode(this.drawingsBtns.querySelector('.dropdown-content'));
+    //this.mainPanel.kill();
     // TODO: If in future version there are elements in the svg with event listeners those should be deleted
     this.drawingsContainer.innerHTML = '';
   }

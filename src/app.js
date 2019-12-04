@@ -27,6 +27,8 @@ export class Application {
     this.projectsListContainer = document.getElementById('projectsListContainer');
     this.projectsList = document.getElementById('projectsList');
     this.closeProjectsListBtn = document.getElementById('closeProjectsListBtn');
+    this.mainPanel = document.getElementById('mainPanel');
+    this.panelsStorage = document.getElementById('panelsStorage');
     this.saveBtn = document.getElementById('saveBtn');
     this.saveCommentsData = this.saveCommentsData.bind(this);
     this.saveBtn.addEventListener('click', this.saveCommentsData);

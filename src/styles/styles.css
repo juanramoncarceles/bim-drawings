@@ -11,7 +11,7 @@
   box-sizing: border-box;
 }
 
-h1, h2, h3, h4, p {
+h1, h2, h3, h4, h5, p {
   margin-top: 0;
   margin-bottom: 0;
 }
@@ -331,7 +331,7 @@ main {
 #mainPanel {
   position: absolute;
   /* background-color: #f6f6f6; */
-  background-color: rgba(246, 246, 246, 0.5);
+  background-color: rgba(246, 246, 246, 0.9);
   transition: right 1s, bottom 1s;
 
   --width: 200px; /* Used for the panel docked to the right */
@@ -359,6 +359,44 @@ main {
 
 #mainPanel.bottom.open {
   bottom: 0;
+}
+
+#mainPanel > .panel-header {
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
+}
+
+#mainPanel > .panel-header > span {
+  padding: 0.2rem;
+  flex-grow: 1;
+}
+
+#mainPanel > .panel-header > span:not(.active) {
+  cursor: pointer;
+  border-bottom: 1px solid #a6a6a6;
+  background-color: #e4e4e4;
+}
+
+#mainPanel > .panel-header > span:not(:last-child) {
+  border-right: 1px solid #a6a6a6;
+}
+
+#mainPanel > .panel-body {
+  padding: 0.5rem;
+}
+
+
+/************************** COMMENT FORM ***************************/
+
+#commentForm > textarea {
+  width: 100%;
+}
+
+#commentForm > .buttonsContainer { 
+  margin-top: 0.5rem;
+  display: flex;
+  justify-content: space-between;
 }
 
 

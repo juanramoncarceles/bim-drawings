@@ -70,6 +70,14 @@
 
   <main style="display: none;">
 
+    <div id="mainPanel" class="right">
+      <div class="panel-header"></div>
+      <div class="panel-body"></div>
+      <div class="panel-footer">
+        <!-- TODO: put here the gear icon for settings like dock to bottom -->
+      </div>
+    </div>
+
     <div id='projectsListContainer' style="display: none;">
       <div>
         <span>
@@ -87,17 +95,12 @@
       <div id="projectsList"></div>
       <button id="loadMoreProjBtn" class="buttonBase disabled">Load more projects</button>
     </div>
-    <div id="drawingsContainer"></div>
-    <div id="mainPanel" class="right open"></div>
-    <div id="viewportMessage"></div>
-  </main>
 
-  <!-- This form is temporarily here but should be placed in the mainPanel -->
-  <form id="commentForm" style="display:none;position:absolute;bottom:0;">
-    <h5>Comment</h5>
-    <textarea name="comment" id="" cols="30" rows="10"></textarea>
-    <button type="submit">Add</button>
-  </form>
+    <div id="drawingsContainer"></div>
+
+    <div id="viewportMessage"></div>
+
+  </main>
 
   <div id="modalDialogContainer" style="display: none;"></div>
 
@@ -112,6 +115,16 @@
 
   <div id="contextMenu" style="display:none;">
     <ul></ul>
+  </div>
+
+  <div id="panelsStorage" style="display: none;">
+    <form id="commentForm">
+      <textarea name="comment" id="" cols="30" rows="10"></textarea>
+      <div class="buttonsContainer">
+        <button type="reset" class="buttonBase light">CANCEL</button>
+        <button type="submit" class="buttonBase light">ADD</button>
+      </div>
+    </form>
   </div>
 
   <div id="modalDialogsStorage" style="display: none;">

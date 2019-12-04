@@ -22,8 +22,10 @@ export class AddComment extends ElementSelection {
       super.manageSelection(e);
       if (this.selection !== null) {
         console.log('Add comment to: ', this.selection);
-        // Show the form to add the comment:
-        this.workspace.commentForm.style.display = 'unset';
+        // Show the form to add the comment.
+        this.workspace.mainPanel.addSection('Comment', this.workspace.commentForm);
+        this.workspace.mainPanel.open();
+        // TODO: Allow to change the commented element by picking another one.
         this.waitingForComment = true;
       }
     }
@@ -41,7 +43,9 @@ export class AddComment extends ElementSelection {
     this.workspace.comments.push(comment);
     console.log(this.workspace.comments);
     this.input.value = '';
-    this.workspace.commentForm.style.display = 'none';
+    // Hide the form to add the comment.
+    this.workspace.mainPanel.removeSection('Comment');
+    this.workspace.mainPanel.close();
     this.waitingForComment = false;
     // Workspace method to indicate that there are unsaved changes on comments.
     this.workspace.unsavedCommentsData();
