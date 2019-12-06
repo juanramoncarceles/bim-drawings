@@ -6,6 +6,7 @@ export class MainPanel {
     this.panelBody = this.panel.querySelector('.panel-body');
     this.panelFooter = this.panel.querySelector('.panel-footer');
     this.activeSection;
+    this.isOpen;
     this.sections = [];
     this.setActive = this.setActive.bind(this);
     this.panelHeader.addEventListener('click', this.setActive);
@@ -13,10 +14,12 @@ export class MainPanel {
 
   open() {
     this.panel.classList.add('open');
+    this.isOpen = true;
   }
 
   close() {
     this.panel.classList.remove('open');
+    this.isOpen = false;
   }
 
   /**

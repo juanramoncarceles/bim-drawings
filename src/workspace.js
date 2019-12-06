@@ -31,6 +31,7 @@ export class Workspace {
     App.toolbarsContainer.style.display = 'flex';
     this.projectsData = App.projectsData;
     this.commentForm = document.getElementById('commentForm');
+    this.dataTablesContainer = document.getElementById('dataTablesContainer');
     this.commentsChangesUnsaved;
     if (projectData.commentsFileId) {
       this.commentsFileId = projectData.commentsFileId;

@@ -329,6 +329,7 @@ main {
 /*************************** MAIN PANEL ****************************/
 
 #mainPanel {
+  display: flex;
   position: absolute;
   /* background-color: #f6f6f6; */
   background-color: rgba(246, 246, 246, 0.9);
@@ -341,6 +342,7 @@ main {
 #mainPanel.right {
   height: 100%;
   width: var(--width);
+  flex-direction: column;
   top: 0;
   right: calc(var(--width) * -1); /* Usar variable con scope de este elemento que se modificara con js */
   border-left: 3px solid #2a8fb1;
@@ -364,6 +366,7 @@ main {
 #mainPanel > .panel-header {
   display: flex;
   justify-content: space-around;
+  align-items: center;
   text-align: center;
 }
 
@@ -383,6 +386,7 @@ main {
 }
 
 #mainPanel > .panel-body {
+  flex-grow: 1;
   padding: 0.5rem;
 }
 
@@ -397,6 +401,36 @@ main {
   margin-top: 0.5rem;
   display: flex;
   justify-content: space-between;
+}
+
+
+/*************************** DATA TABLE ****************************/
+
+div#dataTablesContainer {
+  display: flex;
+}
+
+#mainPanel.right div#dataTablesContainer {
+  flex-direction: column;
+}
+
+.data-table {
+  text-align: left;
+}
+
+.data-table > thead th {
+  padding-left: 0.3rem;
+  padding-right: 0.3rem;
+  background-color: #dddddd;
+}
+
+.data-table > tbody th {
+  width: 50%;
+  font-weight: normal;
+}
+
+.data-table td {
+  font-weight: lighter;
 }
 
 

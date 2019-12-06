@@ -20,9 +20,10 @@ export class ElementData extends ElementSelection {
     if (this.selection !== null) {
       this.showElementData(this.selection.dataset.category, this.selection.dataset.id);
     } else if (this.currentElementData) {
-      // TODO: Clean the data table.
       this.currentElementData = undefined;
-      console.log('Clean the data table');
+      this.workspace.mainPanel.close();
+      this.workspace.mainPanel.removeSection('Properties');
+      console.log('Data table cleaned.');
     }
   }
 
@@ -34,7 +35,8 @@ export class ElementData extends ElementSelection {
    * @param {String} category 
    * @param {String} id 
    */
-  showElementData(category, id) {
+  async showElementData(category, id) {
+    let success = true;
     if (this.elementsData[category]) {
       this.currentElementData = this.elementsData[category].instances[id];
       console.log(this.currentElementData);
@@ -42,25 +44,60 @@ export class ElementData extends ElementSelection {
       const categoryData = this.projectsData[this.projectIndex].elementsData.find(obj => obj.name.replace('.json', '') === category);
       if (categoryData !== undefined) {
         // TODO: show a loader in the table.
-        API.getFileContent(categoryData.id).then(res => {
+        await API.getFileContent(categoryData.id).then(res => {
           this.elementsData[category] = JSON.parse(res.body);
           // TODO: hide the loader in the table.
           this.currentElementData = this.elementsData[category].instances[id];
           console.log(this.currentElementData);
         }, err => {
           // TODO: hide the loader in the table.
+          success = false;
+          // TODO: show error message.
           console.log(err);
         });
       } else {
         console.log('There is no data for that element.');
       }
     }
+    if (success) {
+      // Create the table to append to the panel.
+      this.workspace.dataTablesContainer.innerHTML = this.createDataTable(this.currentElementData);
+      this.workspace.mainPanel.addSection('Properties', this.workspace.dataTablesContainer);
+      this.workspace.mainPanel.open();
+    }
+  }
+
+
+  /**
+   * Creates various HTML tables with the data of the provided object.
+   * It access two levels of the object, first as titles and second as key value pairs.
+   * @param {Object} data 
+   */
+  createDataTable(data) {
+    const dataTable = [];
+    for (const title in data) {
+      dataTable.push('<table class="data-table"><thead><tr><th colspan="2">' + title + '</th></tr></thead>');
+      dataTable.push('<tbody>');
+      for (const field in data[title]) {
+        dataTable.push('<tr>');
+        dataTable.push('<th>' + field + '</th>');
+        dataTable.push('<td>' + data[title][field] + '</td>');
+        dataTable.push('</tr>');
+      }
+      dataTable.push('</tbody></table>');
+    }
+    dataTable.push('</table>');
+    return dataTable.join('');
   }
 
 
   kill() {
     super.kill();
-    console.log('Elements data tool disabled.');
     // TODO: Clear the data table.
+    if (this.workspace.mainPanel.isOpen) {
+      this.workspace.mainPanel.close();
+      this.workspace.mainPanel.removeSection('Properties');
+    }
+    console.log('Elements data tool disabled.');
   }
 }
