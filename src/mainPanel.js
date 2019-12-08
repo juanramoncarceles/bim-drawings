@@ -9,7 +9,10 @@ export class MainPanel {
     this.isOpen;
     this.sections = [];
     this.setActive = this.setActive.bind(this);
-    this.panelHeader.addEventListener('click', this.setActive);
+    this.panelHeader.onclick = e => {
+      if (e.target.closest('[data-btn]') || !button.classList.contains('active'))
+        this.setActive(e.target.closest('[data-btn]'));
+    };
   }
 
   open() {
@@ -36,13 +39,11 @@ export class MainPanel {
     }
   }
 
-  setActive(e) {
-    let button;
-    if (e.target.closest('[data-btn]') || !button.classList.contains('active')) {
-      button = e.target.closest('[data-btn]');
-    } else {
-      return;
-    }
+  /**
+   * Sets a section as active.
+   * @param {HTMLElement} button The button container that correspons to the section to activate.
+   */
+  setActive(button) {
     if (this.activeSection) {
       this.activeSection.button.classList.remove('active');
       this.activeSection.body.style.display = 'none';
@@ -50,29 +51,30 @@ export class MainPanel {
     // This means that sections should have unique names.
     this.activeSection = this.sections.find(s => s.name === button.innerText);
     this.activeSection.button.classList.add('active');
-    this.activeSection.body.style.display = 'unset';
+    // TODO: flex is needed for some cases but maybe not all.
+    this.activeSection.body.style.display = 'flex';
   }
 
   /**
-   * Adds a new section to the panel contents.
-   * It can be used if
+   * Adds a new section to the panel contents and sets it as active.
+   * If a section with this name already exists then it is only activated.
    * @param {String} name
    * @param {HMLTElement} body
    */
   addSection(name, body) {
-    // The section button.
-    const button = document.createElement('span');
-    button.innerText = name;
-    button.dataset.btn = '';
-    // TODO: Set as the active? then if there is an active one it should be set as inactive?
-    button.classList.add('active');
-    this.panelHeader.appendChild(button);
-    // The section body.
-    //body.style.display = 'none';
-    this.panelBody.appendChild(body);
-    // Added to sections array.
-    this.activeSection = { name, button, body }
-    this.sections.push(this.activeSection);
+    let section = this.sections.find(s => s.name === name);
+    if (section === undefined) {
+      // The section button.
+      const button = document.createElement('span');
+      button.innerText = name;
+      button.dataset.btn = '';
+      this.panelHeader.appendChild(button);
+      this.panelBody.appendChild(body);
+      section = { name, button, body };
+      // Added to sections array.
+      this.sections.push(section);
+    }
+    this.setActive(section.button);
     console.log('Panel sections:', this.sections);
   }
 
@@ -88,8 +90,8 @@ export class MainPanel {
     console.log('Panel sections:', this.sections);
   }
 
-  //kill() {
-  // Remove event liseners
-  // Delete
-  //}
+  kill() {
+    //Remove event liseners
+    this.panelHeader.onclick = null;
+  }
 }

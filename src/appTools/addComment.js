@@ -54,7 +54,7 @@ export class AddComment extends ElementSelection {
         drawing.commentsChanged = true;
       }
     });
-    super.deselect();
+    super.clearSelection();
   }
 
 

@@ -804,12 +804,36 @@ div#dataTablesContainer {
 
 /***************************** SVG STATES **************************/
 
-.selected ellipse,
-.selected rect,
-.selected polygon,
-.selected circle,
-.selected path {
-  fill: rgb(248, 191, 34);
+/* Important to add specificity with two levels to overwrite the drawing styles. */
+
+.selected {
+  --fill: #ffbd00;
+  --stroke: #e89807;
+  --stroke-w: 8px;
+}
+
+.selected.solid path,
+.selected.solid polygon,
+.selected.solid polyline,
+.selected.solid rect,
+.selected.solid text {
+  fill: var(--fill);
+  stroke: var(--stroke);
+  stroke-width: var(--stroke-w);
+}
+
+.selected.curve path,
+.selected.curve polygon,
+.selected.curve polyline,
+.selected.curve rect,
+.selected.curve line {
+  stroke: var(--stroke);
+  stroke-width: var(--stroke-w);
+}
+
+.selected.hatch path,
+.selected.hatch polygon {
+  fill: var(--fill);
 }
 
 

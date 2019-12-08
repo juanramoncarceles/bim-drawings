@@ -468,7 +468,7 @@ export default class {
       const drawingsFolderRes = await this.listFiles({ parentId: projectId, onlyFolder: true, name: 'drawings' });
       const drawingsFolderData = drawingsFolderRes.result.files;
       if (drawingsFolderData && drawingsFolderData.length > 0) {
-        const drawingsRes = await this.listFiles({ parentId: drawingsFolderData[0].id });
+        const drawingsRes = await this.listFiles({ parentId: drawingsFolderData[0].id, trashed: false });
         AppData.projectsData[projectIndex].drawings = [];
         drawingsRes.result.files.forEach(drawing => {
           AppData.projectsData[projectIndex].drawings.push(new Drawing(drawing.name.replace(/.svg$/, ''), drawing.id));
@@ -483,7 +483,7 @@ export default class {
       const elementsDataFolderRes = await this.listFiles({ parentId: projectId, onlyFolder: true, name: 'elementsData' });
       const elementsDataFolderData = elementsDataFolderRes.result.files;
       if (elementsDataFolderData && elementsDataFolderData.length > 0) {
-        const elementsDataRes = await this.listFiles({ parentId: elementsDataFolderData[0].id });
+        const elementsDataRes = await this.listFiles({ parentId: elementsDataFolderData[0].id, trashed: false });
         AppData.projectsData[projectIndex].elementsData = elementsDataRes.result.files;
       } else {
         console.log('No elementsData folder found.');

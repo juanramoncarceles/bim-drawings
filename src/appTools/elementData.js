@@ -60,7 +60,7 @@ export class ElementData extends ElementSelection {
       }
     }
     if (success) {
-      // Create the table to append to the panel.
+      // Sets the content on the data tables container.
       this.workspace.dataTablesContainer.innerHTML = this.createDataTable(this.currentElementData);
       this.workspace.mainPanel.addSection('Properties', this.workspace.dataTablesContainer);
       this.workspace.mainPanel.open();

@@ -21,27 +21,48 @@ export class ElementSelection extends Tool {
     this.selection = e.target.closest('[selectable]');
     if (this.selection !== null) {
       if (this.currentSelection === undefined) {
-        this.selection.classList.add('selected');
+        this.select(this.selection);
         this.currentSelection = this.selection;
       } else if (this.selection.dataset.id !== this.currentSelection.dataset.id) {
         if (this.workspace.activeDrawing.content.querySelector('[data-id="' + this.currentSelection.dataset.id + '"]')) {
-          this.currentSelection.classList.remove('selected');
+          this.deselect(this.currentSelection);
         }
-        this.selection.classList.add('selected');
+        this.select(this.selection);
         this.currentSelection = this.selection;
       }
     } else if (this.currentSelection !== undefined) {
       if (this.workspace.activeDrawing.content.querySelector('[data-id="' + this.currentSelection.dataset.id + '"]')) {
-        this.currentSelection.classList.remove('selected');
+        this.deselect(this.currentSelection);
       }
       this.currentSelection = undefined;
     }
   }
 
+  /**
+   * Selects the specified element.
+   * @param {SVGGElement} element An SVG selectable element.
+   */
+  select(element) {
+    for (let i = 0; i < element.children.length; i++)
+      element.children[i].classList.add('selected');
+  }
 
-  deselect() {
+  /**
+   * Deselects the specified element.
+   * @param {SVGGElement} element An SVG selectable element.
+   */
+  deselect(element) {
+    for (let i = 0; i < element.children.length; i++)
+      element.children[i].classList.remove('selected');
+  }
+
+  /**
+   * Removes the selection from all selected elements in the workspace if any.
+   */
+  clearSelection() {
     if (this.currentSelection) {
-      this.currentSelection.classList.remove('selected');
+      //this.currentSelection.classList.remove('selected');
+      this.deselect(this.currentSelection);
       this.currentSelection = undefined;
     }
   }
@@ -50,6 +71,6 @@ export class ElementSelection extends Tool {
   kill() {
     super.kill();
     this.workspace.drawingsContainer.removeEventListener('click', this.manageSelection);
-    this.deselect();
+    this.clearSelection();
   }
 }
