@@ -390,6 +390,10 @@ main {
   padding: 0.5rem;
 }
 
+#mainPanel > .panel-body > .hidden {
+  display: none;
+}
+
 
 /************************** COMMENT FORM ***************************/
 

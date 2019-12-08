@@ -144,18 +144,31 @@ function showLoginDialog() {
 
 let currentDrawingBtn;
 
-App.drawingsBtns.querySelector('.dropdown-content').addEventListener('click', e => {
+App.drawingsBtns.querySelector('.dropdown-content').addEventListener('click', async function (e) {
   if (currentDrawingBtn) {
     currentDrawingBtn.classList.remove('active');
   }
   currentDrawingBtn = e.target;
   const drawingId = currentDrawingBtn.dataset.id;
   // Set the name of the drawing on the dropdown button.
+  // TODO: Do this only if it was successful.
   App.drawingsBtns.children[0].innerText = currentDrawingBtn.innerText;
   currentDrawingBtn.classList.add('active');
 
   // Get the corresponding drawing object.
   const requestedDrawing = App.workspace.drawings.find(d => d.id === drawingId);
+
+  // Load the drawings styles if it is the first time.
+  // TODO: If this is required always the first time maybe do it in the Workspace constructor.
+  // TODO: If this finally extracted then the function wont need to be async anymore.
+  if (App.workspace.drawingsStylesTag === undefined) {
+    const stylesRes = await API.getFileContent(App.workspace.drawingsStylesId);
+    console.log(stylesRes.body);
+    const styleTag = document.createElement('style');
+    styleTag.innerText = stylesRes.body;
+    document.head.appendChild(styleTag);
+    App.workspace.drawingsStylesTag = styleTag;
+  }
 
   // Check if the requested drawing has already the content.
   if (requestedDrawing.content !== undefined) {

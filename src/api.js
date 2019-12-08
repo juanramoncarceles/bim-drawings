@@ -471,7 +471,11 @@ export default class {
         const drawingsRes = await this.listFiles({ parentId: drawingsFolderData[0].id, trashed: false });
         AppData.projectsData[projectIndex].drawings = [];
         drawingsRes.result.files.forEach(drawing => {
-          AppData.projectsData[projectIndex].drawings.push(new Drawing(drawing.name.replace(/.svg$/, ''), drawing.id));
+          if (drawing.name === 'drawingsStyles.css') {
+            AppData.projectsData[projectIndex].drawingsStylesId = drawing.id;
+          } else {
+            AppData.projectsData[projectIndex].drawings.push(new Drawing(drawing.name.replace(/.svg$/, ''), drawing.id));
+          }
         });
       } else {
         console.log('No drawings folder found.');

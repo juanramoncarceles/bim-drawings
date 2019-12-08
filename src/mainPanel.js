@@ -15,6 +15,7 @@ export class MainPanel {
     };
   }
 
+  // TODO: Make the panel close automatically if empty.
   open() {
     this.panel.classList.add('open');
     this.isOpen = true;
@@ -46,13 +47,12 @@ export class MainPanel {
   setActive(button) {
     if (this.activeSection) {
       this.activeSection.button.classList.remove('active');
-      this.activeSection.body.style.display = 'none';
+      this.activeSection.body.classList.add('hidden');
     }
     // This means that sections should have unique names.
     this.activeSection = this.sections.find(s => s.name === button.innerText);
     this.activeSection.button.classList.add('active');
-    // TODO: flex is needed for some cases but maybe not all.
-    this.activeSection.body.style.display = 'flex';
+    this.activeSection.body.classList.remove('hidden');
   }
 
   /**

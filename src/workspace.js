@@ -9,10 +9,12 @@ export class Workspace {
     this.projectIndex = App.projectsData.findIndex(obj => obj.name === projectData.name);
     if (projectData.id === App.lastUploadedProject.id) {
       this.drawings = App.lastUploadedProject.drawings;
+      //this.drawingsStylesId = App.lastUploadedProject.drawingsStylesId;
       this.elementsData = App.lastUploadedProject.elementsData;
     } else {
       // Store the content of the drawings as entries name:'content'
       this.drawings = projectData.drawings;
+      this.drawingsStylesId = projectData.drawingsStylesId;
       this.elementsData = {};
     }
     this.activeTool;
@@ -23,6 +25,7 @@ export class Workspace {
     App.projectsListBtn.innerHTML = '<span>' + projectData.name + '</span>';
     this.drawingsBtns = App.drawingsBtns;
     this.drawingsContainer = App.drawingsContainer;
+    this.drawingsStylesTag;
     this.saveBtn = App.saveBtn;
     this.createDrawingsBtns(this.drawings);
     // Show drawings and tools buttons.
@@ -182,7 +185,12 @@ export class Workspace {
    * TODO: Remove possible event listeners before emptying containers ?
    */
   close() {
+    // Empty the drawings buttons container.
     Generics.emptyNode(this.drawingsBtns.querySelector('.dropdown-content'));
+    // Remove the create style tag for the styles of the drawings.
+    if (this.drawingsStylesTag !== undefined)
+      this.drawingsStylesTag.remove();
+    // Remove the main panel.   
     //this.mainPanel.kill();
     // TODO: If in future version there are elements in the svg with event listeners those should be deleted
     this.drawingsContainer.innerHTML = '';

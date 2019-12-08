@@ -43,8 +43,9 @@ export class AddComment extends ElementSelection {
     this.workspace.comments.push(comment);
     console.log(this.workspace.comments);
     this.input.value = '';
-    // Hide the form to add the comment.
+    // Hide the comment form.
     this.workspace.mainPanel.removeSection('Comment');
+    // TODO: This may be removed because the panel will close itself if empty.
     this.workspace.mainPanel.close();
     this.waitingForComment = false;
     // Workspace method to indicate that there are unsaved changes on comments.
@@ -64,6 +65,10 @@ export class AddComment extends ElementSelection {
     if (this.waitingForComment) {
       this.workspace.commentForm.style.display = 'none';
       this.input.value = '';
+      // Hide the comment form.
+      this.workspace.mainPanel.removeSection('Comment');
+      // TODO: This may be removed because the panel will close itself if empty.
+      this.workspace.mainPanel.close();
     }
     // Remove the tool event listener.
     this.workspace.commentForm.onsubmit = null;
