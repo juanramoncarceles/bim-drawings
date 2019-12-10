@@ -99,7 +99,7 @@ button.disabled:focus {
 }
 
 header .icon-btn {
-  padding: 0.4rem;
+  padding: calc(((var(--header-height) - 2px) - 24px) / 2); /* Icons should be 24px */
   height: calc(var(--header-height) - 2px);
   width: calc(var(--header-height) - 2px);
 }
@@ -621,8 +621,7 @@ div#dataTablesContainer {
   font-size: 1.2rem;
 }
 
-#authorizeDialog > div:last-child > button:nth-child(2) {
-  margin-top: 0.4rem;
+#authorizeDialog > div:last-child > button:not(:last-child) {
   margin-bottom: 0.4rem;
 }
 
@@ -836,7 +835,8 @@ div#dataTablesContainer {
 }
 
 .selected.hatch path,
-.selected.hatch polygon {
+.selected.hatch polygon,
+.selected.hatch text {
   fill: var(--fill);
 }
 

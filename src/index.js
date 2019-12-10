@@ -163,7 +163,6 @@ App.drawingsBtns.querySelector('.dropdown-content').addEventListener('click', as
   // TODO: If this finally extracted then the function wont need to be async anymore.
   if (App.workspace.drawingsStylesTag === undefined) {
     const stylesRes = await API.getFileContent(App.workspace.drawingsStylesId);
-    console.log(stylesRes.body);
     const styleTag = document.createElement('style');
     styleTag.innerText = stylesRes.body;
     document.head.appendChild(styleTag);

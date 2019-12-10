@@ -15,9 +15,9 @@ export class Comment {
    * @param {SVGElement} element 
    */
   createRepresentation(commentsGroup, element) {
-    const representation = Generics.createBBox(element, 10, 10);
+    const representation = Generics.createBBox(element, 15, 15);
     // TODO: the style values will come from the app settings file if any.
-    representation.setAttribute('style', 'fill:none;stroke:#e22a2a;stroke-width:4px;stroke-dasharray:10;');
+    representation.setAttribute('style', 'fill:none;stroke:#e22a2a;stroke-width:8px;stroke-dasharray:18;');
     representation.dataset.id = this.id;
     commentsGroup.appendChild(representation);
     this.representations.push(representation);

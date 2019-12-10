@@ -3,7 +3,7 @@ import { Tool } from './tool';
 export class ElementSelection extends Tool {
   constructor(name, toolBtn, workspace) {
     super(name, toolBtn, workspace);
-    this.currentSelection;
+    this.currentSelection; // TODO: This could be a property of the workspace?
     this.selection; // TODO: Rename as clickedElement ?
     this.manageSelection = this.manageSelection.bind(this);
     workspace.drawingsContainer.addEventListener('click', this.manageSelection);

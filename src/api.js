@@ -17,7 +17,7 @@ export default class {
     if (query.excludeName) queryItems.push('not name contains \'' + query.excludeName + '\'');
     if (query.onlyFolder) queryItems.push('mimeType=\'application/vnd.google-apps.folder\'');
     let request = gapi.client.drive.files.list({
-      'pageSize': 10,
+      'pageSize': 15,
       'fields': "nextPageToken, files(id, name)",
       'q': queryItems.join(' and ')
     });

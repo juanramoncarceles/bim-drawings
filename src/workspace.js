@@ -15,6 +15,7 @@ export class Workspace {
       // Store the content of the drawings as entries name:'content'
       this.drawings = projectData.drawings;
       this.drawingsStylesId = projectData.drawingsStylesId;
+      // TODO: Elements data could be changed to a similar system like the drawing objects.
       this.elementsData = {};
     }
     this.activeTool;
@@ -96,7 +97,7 @@ export class Workspace {
     if (this.activeDrawing && this.activeDrawing.name !== drawing.name) {
       // If in the drawing to be hided there is a selection remove it.
       if (this.activeTool && this.activeTool.currentSelection && this.activeDrawing.content.querySelector('[data-id="' + this.activeTool.currentSelection.dataset.id + '"]')) {
-        this.activeTool.currentSelection.classList.remove('selected');
+        this.activeTool.deselect(this.activeTool.currentSelection);
       }
       this.activeDrawing.content.style.display = 'none';
     } else if (this.activeDrawing && this.activeDrawing.name === drawing.name) {
@@ -158,7 +159,7 @@ export class Workspace {
     }
     if (this.activeTool && this.activeTool.currentSelection && drawing.content.querySelector('[data-id="' + this.activeTool.currentSelection.dataset.id + '"]')) {
       this.activeTool.currentSelection = drawing.content.querySelector('[data-id="' + this.activeTool.currentSelection.dataset.id + '"]');
-      this.activeTool.currentSelection.classList.add('selected');
+      this.activeTool.select(this.activeTool.currentSelection);
     }
 
     drawing.content.style.visibility = 'unset';
