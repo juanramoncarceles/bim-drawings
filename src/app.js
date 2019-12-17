@@ -4,6 +4,7 @@ import { ProjectData } from './projectData';
 import Generics from './generics';
 import { AddComment } from './appTools/addComment';
 import { ElementData } from './appTools/elementData';
+import { ShareProject } from './shareProject';
 
 export class Application {
   constructor() {
@@ -21,12 +22,20 @@ export class Application {
     this.drawingsContainer = document.getElementById('drawingsContainer');
     this.drawingsBtns = document.getElementById('drawingsBtns');
     this.toolbarsContainer = document.getElementById('toolbarsContainer');
+    // Modal dialog.
     this.modalDialogContainer = document.getElementById('modalDialogContainer');
+    this.modalDialogContent = this.modalDialogContainer.querySelector('.modal-content');
     this.modalDialogsStorage = document.getElementById('modalDialogsStorage');
+    this.closeModalBtn = document.getElementById('closeModalBtn');
+    this.closeModalDialog = this.closeModalDialog.bind(this);
+    this.closeModalBtn.onclick = this.closeModalDialog;
+    // Viewport message.
     this.viewportMessage = document.getElementById('viewportMessage');
+    // Projects list.
     this.projectsListContainer = document.getElementById('projectsListContainer');
     this.projectsList = document.getElementById('projectsList');
     this.closeProjectsListBtn = document.getElementById('closeProjectsListBtn');
+    // Main panel.
     this.mainPanel = document.getElementById('mainPanel');
     this.panelsStorage = document.getElementById('panelsStorage');
     this.saveBtn = document.getElementById('saveBtn');
@@ -93,6 +102,8 @@ export class Application {
         console.error(err);
       });
     }
+    /********************* Share project form *********************/
+    this.shareProjectDialog = new ShareProject(document.getElementById('shareProjectDialog'), this);
     /********************** Message container **********************/
     this.messageContainer = document.getElementById('messageContainer');
     this.messageContainer.querySelector('button').addEventListener('click', () => {
@@ -283,13 +294,17 @@ export class Application {
     projItem.dataset.projId = projData.id;
     projItem.dataset.name = projData.name;
     projItem.classList.add('projectItem');
-    let projItemContent;
-    if (projData.thumbId) {
-      projItemContent = `<img src='https://drive.google.com/uc?id=${projData.thumbId}'>`;
-    } else {
-      projItemContent = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -50 350 210"><path d="M143,10.44H65.27V7a7,7,0,0,0-7-7H7A7,7,0,0,0,0,7V103a7,7,0,0,0,7,7H65V70.18H85V110h58a7,7,0,0,0,7-7V17.41A7,7,0,0,0,143,10.44ZM125,53.49H105v-20h20Z" style="fill:#e6e6e6"/></svg>`;
+    let projItemContent = [];
+    if (projData.shared) {
+      projItemContent.push('<img class="sharedIcon" src="src/assets/icons/shareIcon.svg">');
     }
-    projItem.innerHTML = projItemContent.concat(`<h4>${projData.name}</h4>`);
+    if (projData.thumbId) {
+      projItemContent.push(`<img class="thumb" src="https://drive.google.com/uc?id=${projData.thumbId}">`);
+    } else {
+      projItemContent.push(`<svg class="thumb" xmlns="http://www.w3.org/2000/svg" viewBox="-100 -50 350 210"><path d="M143,10.44H65.27V7a7,7,0,0,0-7-7H7A7,7,0,0,0,0,7V103a7,7,0,0,0,7,7H65V70.18H85V110h58a7,7,0,0,0,7-7V17.41A7,7,0,0,0,143,10.44ZM125,53.49H105v-20h20Z" style="fill:#e6e6e6"/></svg>`);
+    }
+    projItemContent.push(`<h4>${projData.name}</h4>`);
+    projItem.innerHTML = projItemContent.join('');
     return projItem;
   }
 
@@ -405,25 +420,25 @@ export class Application {
 
   /********************* MODAL DIALOGS *********************/
   /*
-   * All modal dialogs are stored in a container and fetched when needed.
+   * All modal dialog contents are stored in a container and fetched when needed.
    */
 
   /**
    * Shows the modal dialog provided from the same document.
-   * @param {HTMLElement} dialog Reference to the outer HTML element of the dialog.
+   * @param {HTMLElement} content Reference to the outer HTML element of the dialog.
    */
-  showModalDialog(dialog) {
-    this.modalDialogContainer.appendChild(dialog);
+  showModalDialog(content) {
+    this.modalDialogContent.appendChild(content);
     this.modalDialogContainer.style.display = 'flex';
   }
 
   /**
-   * Hides the modal dialog provided from the same document.
-   * @param {HTMLElement} dialog Reference to the outer HTML element of the dialog.
+   * Hides the current modal dialog.
    */
-  closeModalDialog(dialog) {
+  closeModalDialog() {
+    const content = this.modalDialogContent.firstElementChild;
     this.modalDialogContainer.style.display = 'none';
-    this.modalDialogsStorage.appendChild(dialog);
+    this.modalDialogsStorage.appendChild(content);
   }
 
 
@@ -435,8 +450,6 @@ export class Application {
    * @param {String} projectId Optional projectId to start.
    */
   start(projectId) {
-    // Hide the login dialog in case it was visible.
-    this.closeModalDialog(authorizeDialog);
     // Show the app interface.
     document.querySelector('header').style.display = 'flex';
     document.querySelector('main').style.display = 'block';

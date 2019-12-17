@@ -89,6 +89,10 @@ function updateSigninStatus(isSignedIn) {
     console.log('Authorized.');
     // Get the URL params.
     const projectId = Generics.getUrlParams(window.location.href).id;
+    // Hide the login dialog in case it was visible.
+    if (App.modalDialogContent.firstElementChild) {
+      App.closeModalDialog();
+    }
     // If a project id is provided to start() method the app will start from the project view.
     App.start(projectId);
   } else {
@@ -232,13 +236,16 @@ window.addEventListener("click", () => {
 
 window.addEventListener("contextmenu", e => {
   e.preventDefault();
+  // Context menu for a project item.
   if (e.target.closest('[data-proj-id]')) {
     // Clean previous content of the context menu.
     contextMenu.querySelector('ul').childNodes.forEach(btn => btn.onclick = null);
     Generics.emptyNode(contextMenu.querySelector('ul'));
-    // Get the id of the project.
+    // Get the project item.
     const projectItem = e.target.closest('[data-proj-id]');
-    // Create the context menu buttons.
+    // Get the index of the project in the projectsData.
+    const projIndex = App.projectsData.findIndex(proj => proj.id === projectItem.dataset.projId);
+    // Create the delete button.
     const deleteBtn = document.createElement('li');
     deleteBtn.innerText = 'Delete';
     deleteBtn.onclick = () => {
@@ -249,8 +256,7 @@ window.addEventListener("contextmenu", e => {
             App.showViewportDialog('loader', `Deleting ${projectItem.dataset.name} project.`);
             API.deleteFile(projectItem.dataset.projId).then(res => {
               projectItem.remove();
-              const index = App.projectsData.findIndex(proj => proj.id === projectItem.dataset.projId);
-              App.projectsData.splice(index, 1);
+              App.projectsData.splice(projIndex, 1);
               // TODO check also if it is in the value of currentProject or lastUploadedProject and delete it as well
               App.hideViewportMessage();
               App.showMessage('success', 'Project deleted successfully');
@@ -266,6 +272,15 @@ window.addEventListener("contextmenu", e => {
       ]);
     };
     contextMenu.querySelector('ul').appendChild(deleteBtn);
+    // Create the share button.
+    const shareBtn = document.createElement('li');
+    shareBtn.innerText = 'Share project';
+    shareBtn.onclick = () => {
+      App.shareProjectDialog.openDialog(App.projectsData[projIndex]);
+      App.showModalDialog(App.shareProjectDialog.htmlContainer);
+      App.modalDialogContainer.classList.add('grayTranslucent');
+    }
+    contextMenu.querySelector('ul').appendChild(shareBtn);
     const origin = {
       left: e.pageX,
       top: e.pageY

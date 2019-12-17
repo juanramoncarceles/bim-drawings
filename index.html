@@ -105,7 +105,14 @@
 
   </main>
 
-  <div id="modalDialogContainer" style="display: none;"></div>
+  <div id="modalDialogContainer" style="display: none;">
+    <span id="closeModalBtn" class="icon-btn">
+      <svg>
+        <use href="#crossIcon" />
+      </svg>
+    </span>
+    <div class="modal-content"></div>
+  </div>
 
   <div id="messageContainer" style="display: none;">
     <button class="icon-btn">
@@ -147,6 +154,31 @@
       <label for="fileInput" class="buttonBase light">Choose a file</label>
       <button type="submit" class="buttonBase light disabled">Upload</button>
     </form>
+    <div id="shareProjectDialog">
+      <p>Project shared with:</p>
+      <table class="users-table">
+        <tbody></tbody>
+      </table>
+      <p>Pending users to share with:</p>
+      <table class="pending-users-table">
+        <tbody></tbody>
+      </table>
+      <form class="share-form">
+        <label for="sharingEmail">Email address of members to add:</label>
+        <input type="email" name="email" id="sharingEmail">
+        <button type="submit" class="buttonBase light">Add</button>
+      </form>
+      <button class="confirm-share-btn buttonBase light disabled">Confirm share</button>
+      <div class="remove-users-btns hidden">
+        <button class="buttonBase light save-changes-btn">Save changes</button>
+        <button class="buttonBase light cancel-changes-btn">Cancel</button>
+      </div>
+      <div class="loader-container hidden">
+        <svg class="svg-loader">
+          <use href="#vaLoader" />
+        </svg>
+      </div>
+    </div>
     <div id="authorizeDialog">
       <img src="src/assets/vadv-logo.png" alt="VisualARQ Drawings Viewer Logo">
       <h2>VisualARQ Drawings Viewer</h2>

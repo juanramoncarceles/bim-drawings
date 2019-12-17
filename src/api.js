@@ -8,8 +8,9 @@ export default class {
   /**
    * Retrieves id and name of the files that match the query object.
    * @param {Object} query Object with optional entries: name (str), parentId (str), trashed (bool), excludeName (str), and onlyFolder (bool)
+   * @param {String} metadataFields Optional, by default it includes id and name of the file, but any other can be added: 'field, field'
    */
-  static listFiles(query) {
+  static listFiles(query, metadataFields) {
     const queryItems = [];
     if (query.name) queryItems.push('name=\'' + query.name + '\'');
     if (query.parentId) queryItems.push('\'' + query.parentId + '\' in parents');
@@ -18,7 +19,7 @@ export default class {
     if (query.onlyFolder) queryItems.push('mimeType=\'application/vnd.google-apps.folder\'');
     let request = gapi.client.drive.files.list({
       'pageSize': 15,
-      'fields': "nextPageToken, files(id, name)",
+      'fields': `nextPageToken, files(id, name${metadataFields ? ', ' + metadataFields : ''})`,
       'q': queryItems.join(' and ')
     });
     request.then(res => {
@@ -237,6 +238,76 @@ export default class {
   }
 
 
+  /**
+   * Subscribes to changes to a file.
+   * @param {String} fileId ID of the file to watch.
+   */
+  static watchFile(fileId) {
+    const body = {
+      "kind": "api#channel",
+      "id": "01234567-89ab-cdef-0123456789ab",
+      //"resourceId": string,
+      //"resourceUri": string,
+      "type": "web_hook",
+      "address": "https://www.ramoncarceles.com"
+    }
+    const request = gapi.client.request({
+      'path': `https://www.googleapis.com/drive/v3/files/${fileId}/watch`,
+      'method': 'POST',
+      'body': body
+    });
+    request.then(res => {
+      console.log(res);
+    });
+    return request;
+  }
+
+
+  /**
+   * Creates permissions for a specific file.
+   * @param {String} fileId 
+   * @param {String} emailAddress
+   */
+  static shareFile(fileId, emailAddress) {
+    const request = gapi.client.request({
+      'path': 'https://www.googleapis.com/drive/v3/files/' + fileId + '/permissions',
+      'method': 'POST',
+      'headers': {
+        'Content-Type': 'application/json'
+      },
+      'body': {
+        'role': 'writer', // owner, writer, commenter, reader
+        'type': 'user',
+        'emailAddress': emailAddress
+      }
+    });
+    request.then(res => {
+      console.log(res);
+    });
+    return request;
+  }
+
+
+  /**
+   * Deletes permissions for a specific file.
+   * @param {String} fileId 
+   * @param {String} permissionId 
+   */
+  static stopSharingFile(fileId, permissionId) {
+    const request = gapi.client.request({
+      'path': 'https://www.googleapis.com/drive/v3/files/' + fileId + '/permissions/' + permissionId,
+      'method': 'DELETE',
+      'headers': {
+        'Content-Type': 'application/json'
+      }
+    });
+    request.then(res => {
+      console.log(res);
+    });
+    return request;
+  }
+
+
   /*******************************************************************/
   /***************** APPLICATION SPECIFIC FUNCTIONS ******************/
   /*******************************************************************/
@@ -375,7 +446,7 @@ export default class {
     }
 
     // Gets the project folders names and ids.
-    const projectsFoldersRes = await this.listFiles({ parentId: AppData.appMainFolderId, onlyFolder: true, excludeName: 'appSettings', trashed: false });
+    const projectsFoldersRes = await this.listFiles({ parentId: AppData.appMainFolderId, onlyFolder: true, excludeName: 'appSettings', trashed: false }, 'shared, permissions');
     let newProjects;
     const projectsFoldersData = projectsFoldersRes.result.files;
     if (projectsFoldersData && projectsFoldersData.length > 0) {
