@@ -593,12 +593,21 @@ div#dataTablesContainer {
   left: 0;
 }
 
+#modalDialogContainer > div {
+  padding: 1rem;
+  background-color: #fff;
+}
+
 #modalDialogContainer.grayTranslucent {
   background-color: rgba(216, 216, 216, 0.8);
 }
 
 #modalDialogContainer.lightOpaque {
   background-color: #fff;
+}
+
+#closeModalBtn {
+  float: right;
 }
 
 
@@ -681,23 +690,75 @@ div#dataTablesContainer {
   position: relative;
   min-height: 350px;
   min-width: 400px;
-  padding: 1rem;
   background-color: #fff;
 }
 
-#shareProjectDialog > .users-table {
-  width: 100%;
-  margin-top: 1rem;
+#shareProjectDialog .table-wrapper {
+  margin-top: 0.5rem;
   margin-bottom: 1rem;
+  background-color: #f1f1f1;
+}
+
+#shareProjectDialog .table-wrapper.fixed-height {
+  height: 100px;
+  overflow-y: auto;
+}
+
+#shareProjectDialog .table-wrapper > table {
+  width: 100%;
+  border-collapse: collapse;
   background-color: #eeeeee;
 }
 
-#shareProjectDialog > .users-table tr.to-delete {
+#shareProjectDialog .table-wrapper > .empty-msg {
+  display: none;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+#shareProjectDialog > .users-container.empty .empty-msg {
+  display: flex;
+}
+
+#shareProjectDialog > .users-container.empty table {
+  display: none;
+}
+
+#shareProjectDialog > .users-container.hidden {
+  visibility: hidden;
+}
+
+#shareProjectDialog td.action-btn {
+  width: 30px;
+  cursor: pointer;
+  text-align: center;    
+}
+
+#shareProjectDialog td.action-btn > svg {
+  width: 12px;
+  height: 12px;
+}
+
+#shareProjectDialog td.action-btn:hover {
+  background-color: #dbdbdb;
+}
+
+#shareProjectDialog tr {
+  border-bottom: 2px solid #fff;
+}
+
+#shareProjectDialog tr.to-delete > td:first-child {
   opacity: 0.4;
 }
 
-#shareProjectDialog > .users-table tr.to-delete > th:nth-child(2) {
+/* #shareProjectDialog tr.to-delete > td:nth-child(2) {
   visibility: hidden;
+} */
+
+#shareProjectDialog td.user-data {
+  padding: 0.4rem;
 }
 
 #shareProjectDialog td.user-data > span {
@@ -708,15 +769,26 @@ div#dataTablesContainer {
   font-weight: lighter;
 }
 
-#shareProjectDialog > .remove-users-btns.hidden {
-  display: none;
+/* #shareProjectDialog > .form-wrapper {
+  position: relative;
+} */
+
+#shareProjectDialog > form > label {
+  display: block;
+  margin-bottom: 0.5rem;
 }
 
-#shareProjectDialog > form > input {
-  display: block;
-  width: 100%;
-  margin-bottom: 0.5rem;
-  margin-top: 0.5rem;
+#shareProjectDialog > form > div {
+  display: flex;
+}
+
+#shareProjectDialog > form input {
+  flex-grow: 1;
+  padding: 0.4rem;
+}
+
+#shareProjectDialog > form button {
+  width: 60px;
 }
 
 #shareProjectDialog > .loader-container {
@@ -735,8 +807,27 @@ div#dataTablesContainer {
   display: none;
 }
 
-#closeShareForm {
-  align-self: flex-end;
+/* #shareProjectDialog .confirm-share-btn {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+
+#shareProjectDialog .confirm-share-btn.hidden {
+  visibility: hidden;
+} */
+
+#shareProjectDialog .confirm-changes-btns {
+  flex-grow: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+#shareProjectDialog .save-changes-btn {
+  margin-left: 0.5rem;
+  background-color: #d1f0ec;
 }
 
 
@@ -763,6 +854,14 @@ div#dataTablesContainer {
   
 #messageContainer.success {
   background-color: #aef5ad;
+}
+
+#messageContainer.error {
+  background-color: #dc9393;
+}
+
+#messageContainer.warning {
+  background-color: #ecdaa4;
 }
 
 

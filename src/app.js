@@ -106,9 +106,9 @@ export class Application {
     this.shareProjectDialog = new ShareProject(document.getElementById('shareProjectDialog'), this);
     /********************** Message container **********************/
     this.messageContainer = document.getElementById('messageContainer');
-    this.messageContainer.querySelector('button').addEventListener('click', () => {
-      this.messageContainer.style.display = 'none';
-    });
+    this.closeMessage = this.closeMessage.bind(this);
+    this.messageContainer.querySelector('button').onclick = this.closeMessage;
+    this.messageTimerId;
     /*************** Projects list items distribution **************/
     window.onresize = this.adjustItems;
     /**************** Tools buttons event listeners ****************/
@@ -353,9 +353,20 @@ export class Application {
   * Disaplays feedback message.
   * @param {String} message 
   * @param {String} type Use keywords 'success', 'warning' or 'error' to specify the type of message.
+  * 
   */
-  showMessage(type, message) {
-    this.messageContainer.style.display = 'flex';
+  showMessage(type, message, timer) {
+    // If the data-type attr has value is because the message is still open.
+    if (this.messageContainer.dataset.type !== '') {
+      this.messageContainer.classList.remove(this.messageContainer.dataset.type);
+      if (this.messageTimerId) {
+        clearTimeout(this.messageTimerId);
+        this.messageTimerId = undefined;
+      }
+    } else {
+      this.messageContainer.style.display = 'flex';
+    }
+    this.messageContainer.dataset.type = type;
     this.messageContainer.querySelector('p').innerText = message;
     switch (type) {
       case 'success':
@@ -367,6 +378,22 @@ export class Application {
       case 'error':
         this.messageContainer.classList.add('error');
         break;
+    }
+    if (timer) {
+      this.messageTimerId = setTimeout(() => this.closeMessage(), timer);
+    }
+  }
+
+  /**
+   * Closes the message container and removes the class that gives the type of message style.
+   */
+  closeMessage() {
+    this.messageContainer.style.display = 'none';
+    this.messageContainer.classList.remove(this.messageContainer.dataset.type);
+    this.messageContainer.dataset.type = '';
+    if (this.messageTimerId) {
+      clearTimeout(this.messageTimerId);
+      this.messageTimerId = undefined;
     }
   }
 

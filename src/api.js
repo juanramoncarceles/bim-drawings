@@ -265,26 +265,49 @@ export default class {
 
   /**
    * Creates permissions for a specific file.
+   * The delay has been added because the GD API doesnt allow to create several permissions at the same time.
    * @param {String} fileId 
    * @param {String} emailAddress
+   * @param {Number} delay Amount of milliseconds to wait before sending the request.
    */
-  static shareFile(fileId, emailAddress) {
-    const request = gapi.client.request({
-      'path': 'https://www.googleapis.com/drive/v3/files/' + fileId + '/permissions',
-      'method': 'POST',
-      'headers': {
-        'Content-Type': 'application/json'
-      },
-      'body': {
-        'role': 'writer', // owner, writer, commenter, reader
-        'type': 'user',
-        'emailAddress': emailAddress
-      }
+  static shareFile(fileId, emailAddress, delay = 0) {
+    const delayedPromise = new Promise(res => setTimeout(res, delay));
+    return delayedPromise.then(res => {
+      const request = gapi.client.request({
+        'path': 'https://www.googleapis.com/drive/v3/files/' + fileId + '/permissions',
+        'method': 'POST',
+        'headers': {
+          'Content-Type': 'application/json'
+        },
+        'body': {
+          'role': 'writer', // owner, writer, commenter, reader
+          'type': 'user',
+          'emailAddress': emailAddress
+        }
+      });
+      request.then(res => {
+        console.log(res);
+      });
+      return request;
     });
-    request.then(res => {
-      console.log(res);
-    });
-    return request;
+
+    // ORIGINAL CODE WITHOUT DELAY
+    // const request = gapi.client.request({
+    //   'path': 'https://www.googleapis.com/drive/v3/files/' + fileId + '/permissions',
+    //   'method': 'POST',
+    //   'headers': {
+    //     'Content-Type': 'application/json'
+    //   },
+    //   'body': {
+    //     'role': 'writer', // owner, writer, commenter, reader
+    //     'type': 'user',
+    //     'emailAddress': emailAddress
+    //   }
+    // });
+    // request.then(res => {
+    //   console.log(res);
+    // });
+    // return request;
   }
 
 

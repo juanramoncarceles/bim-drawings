@@ -106,15 +106,17 @@
   </main>
 
   <div id="modalDialogContainer" style="display: none;">
-    <span id="closeModalBtn" class="icon-btn">
-      <svg>
-        <use href="#crossIcon" />
-      </svg>
-    </span>
-    <div class="modal-content"></div>
+    <div>
+      <span id="closeModalBtn" class="icon-btn">
+        <svg>
+          <use href="#crossIcon" />
+        </svg>
+      </span>
+      <div class="modal-content"></div>
+    </div>
   </div>
 
-  <div id="messageContainer" style="display: none;">
+  <div id="messageContainer" style="display: none;" data-type="">
     <button class="icon-btn">
       <svg>
         <use href="#crossIcon" />
@@ -154,24 +156,39 @@
       <label for="fileInput" class="buttonBase light">Choose a file</label>
       <button type="submit" class="buttonBase light disabled">Upload</button>
     </form>
+
     <div id="shareProjectDialog">
-      <p>Project shared with:</p>
-      <table class="users-table">
-        <tbody></tbody>
-      </table>
-      <p>Pending users to share with:</p>
-      <table class="pending-users-table">
-        <tbody></tbody>
-      </table>
+      <div class="current-users users-container">
+        <p>Project shared with:</p>
+        <div class="table-wrapper">
+          <table class="">
+            <tbody></tbody>
+          </table>
+          <p class="empty-msg">No members yet.</p>
+        </div>
+      </div>
+      <div class="pending-users users-container hidden">
+        <p>Pending users to share with:</p>
+        <div class="table-wrapper fixed-height">
+          <table class="">
+            <tbody></tbody>
+          </table>
+          <!-- <p class="empty-msg">No pending users to add yet.</p> -->
+        </div>
+      </div>
       <form class="share-form">
         <label for="sharingEmail">Email address of members to add:</label>
-        <input type="email" name="email" id="sharingEmail">
-        <button type="submit" class="buttonBase light">Add</button>
+        <div>
+          <input type="email" name="email" id="sharingEmail" placeholder="member@gmail.com">
+          <button type="submit" class="buttonBase light">Add</button>
+        </div>
       </form>
-      <button class="confirm-share-btn buttonBase light disabled">Confirm share</button>
-      <div class="remove-users-btns hidden">
-        <button class="buttonBase light save-changes-btn">Save changes</button>
-        <button class="buttonBase light cancel-changes-btn">Cancel</button>
+      <!-- <button class="confirm-share-btn buttonBase light hidden">Confirm share</button> -->
+      <!-- <div class="form-wrapper">
+      </div> -->
+      <div class="confirm-changes-btns">
+        <button class="buttonBase light cancel-changes-btn disabled">Cancel</button>
+        <button class="buttonBase light save-changes-btn disabled">Save changes</button>
       </div>
       <div class="loader-container hidden">
         <svg class="svg-loader">
@@ -179,6 +196,7 @@
         </svg>
       </div>
     </div>
+
     <div id="authorizeDialog">
       <img src="src/assets/vadv-logo.png" alt="VisualARQ Drawings Viewer Logo">
       <h2>VisualARQ Drawings Viewer</h2>
@@ -195,6 +213,9 @@
     <svg>
       <symbol id="crossIcon" viewBox="0 0 612 612">
         <polygon points="612,36.004 576.521,0.603 306,270.608 35.478,0.603 0,36.004 270.522,306.011 0,575.997 35.478,611.397 306,341.411 576.521,611.397 612,575.997 341.459,306.011" />
+      </symbol>
+      <symbol id="reloadIcon" viewBox="0 0 489 489">
+        <path d="M268.175,488.161c98.2-11,176.9-89.5,188.1-187.7c14.7-128.4-85.1-237.7-210.2-239.1v-57.6c0-3.2-4-4.9-6.7-2.9 l-118.6,87.1c-2,1.5-2,4.4,0,5.9l118.6,87.1c2.7,2,6.7,0.2,6.7-2.9v-57.5c87.9,1.4,158.3,76.2,152.3,165.6 c-5.1,76.9-67.8,139.3-144.7,144.2c-81.5,5.2-150.8-53-163.2-130c-2.3-14.3-14.8-24.7-29.2-24.7c-17.9,0-31.9,15.9-29.1,33.6 C49.575,418.961,150.875,501.261,268.175,488.161z" />
       </symbol>
       <symbol id="vaLoader" viewBox="0 0 260.00 180.00">
         <defs>
