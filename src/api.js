@@ -222,6 +222,41 @@ export default class {
 
 
   /**
+   * Moves a file or folder inside another folder.
+   * @param {String} fileId 
+   * @param {String} parentId 
+   */
+  static moveFileV2(fileId, parentId) {
+    const request = gapi.client.request({
+      'path': 'https://www.googleapis.com/drive/v2/files/' + fileId + '/parents',
+      'method': 'POST',
+      'headers': {
+        'Content-Type': 'application/json'
+      },
+      'body': {
+        'id': parentId
+      }
+    });
+    request.then(res => {
+      console.log(res);
+    }, rej => {
+      console.log(rej);
+    });
+    return request;
+  }
+
+
+  static moveFile(fileId, parentId) {
+    const body = { 'id': parentId };
+    const request = gapi.client.drive.parents.insert({
+      'fileId': fileId,
+      'resource': body
+    });
+    request.execute(function (resp) { });
+  }
+
+
+  /**
    * Permanently delete a file, skipping the trash.
    * @param {String} fileId ID of the file to delete.
    */
@@ -245,14 +280,31 @@ export default class {
   static watchFile(fileId) {
     const body = {
       "kind": "api#channel",
-      "id": "01234567-89ab-cdef-0123456789ab",
+      "id": "01234567-89ab-cdef-0123456789ab", // TODO Use a uuid generator
       //"resourceId": string,
       //"resourceUri": string,
       "type": "web_hook",
-      "address": "https://www.ramoncarceles.com"
+      "address": "https://visualarqapp.ramoncarceles.com"
     }
     const request = gapi.client.request({
       'path': `https://www.googleapis.com/drive/v3/files/${fileId}/watch`,
+      'method': 'POST',
+      'body': body
+    });
+    request.then(res => {
+      console.log(res);
+    });
+    return request;
+  }
+
+
+  static stopWatching(channelId, resourceId) {
+    const body = {
+      "id": channelId, // Should be the one to stop created previously.
+      "resourceId": resourceId
+    }
+    const request = gapi.client.request({
+      'path': `https://www.googleapis.com/drive/v3/channels/stop`,
       'method': 'POST',
       'body': body
     });

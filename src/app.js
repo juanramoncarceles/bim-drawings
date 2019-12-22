@@ -115,6 +115,18 @@ export class Application {
     // TODO: This would make more sense as part of the workspace ?
     document.getElementById('tool-4').addEventListener('click', (e) => this.workspace.manageTools(e, ElementData, 'elementsDataTool'));
     document.getElementById('tool-5').addEventListener('click', (e) => this.workspace.manageTools(e, AddComment, 'commentsTool'));
+
+    // WATCH TESTS
+    this.watchBtn = document.getElementById('watchChanges');
+    this.watchBtn.onclick = () => {
+      // console.log(this.watchBtn.dataset.file);
+      API.watchFile(this.watchBtn.dataset.file);
+    }
+    this.stopWatchBtn = document.getElementById('stopWatchChanges');
+    this.stopWatchBtn.onclick = () => {
+      // console.log(this.stopWatchBtn.dataset.channel, this.stopWatchBtn.dataset.resource);
+      API.stopWatching(this.stopWatchBtn.dataset.channel, this.stopWatchBtn.dataset.resource)
+    }
   }
 
 
