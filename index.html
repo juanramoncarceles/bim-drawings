@@ -8,6 +8,14 @@
   <title>VisualARQ Drawings Viewer</title>
   <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <meta name="description" content="VisualARQ web app to review project drawings.">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#f6f6f6" />
+  <!-- Safari on iOS doesnt support the web app manifest so this is needed -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="VA Viewer">
+  <link rel="apple-touch-icon" href="/src/assets/logos/vadv-logo-152.png">
   <link href="https://fonts.googleapis.com/css?family=Oswald:200,400,500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="src/styles/styles.css">
 </head>
@@ -62,8 +70,14 @@
       </div>
       <div class="side-nav-actions">
         <button id="signoutBtn" class="buttonBase light">Sign Out</button>
+
+        <!-- Test buttons start -->
         <button id="watchChanges" data-file="1oIjibI3i7v6xJLtEOhr2yanTcmfVtvUf" class="buttonBase light">Watch changes</button>
         <button id="stopWatchChanges" data-channel="01234567-89ab-cdef-0123456789ab" data-resource="8dGn-xLdEJa3gGPuYd_KA8esOtI" class="buttonBase light">Stop watch changes</button>
+        <button id="installBtn" class="buttonBase light" hidden>Install</button>
+        <button id="pushMsgBtn" class="buttonBase light disabled"></button>
+        <!-- Test buttons end -->
+
       </div>
       <div class="side-nav-footer">
         <p>VisualARQ Drawings Viewer</p>
@@ -71,7 +85,6 @@
     </div>
     <div class="side-nav-shade"></div>
   </header>
-
 
   <main style="display: none;">
 
@@ -175,7 +188,6 @@
           <table class="">
             <tbody></tbody>
           </table>
-          <!-- <p class="empty-msg">No pending users to add yet.</p> -->
         </div>
       </div>
       <form class="share-form">
@@ -185,9 +197,6 @@
           <button type="submit" class="buttonBase light">Add</button>
         </div>
       </form>
-      <!-- <button class="confirm-share-btn buttonBase light hidden">Confirm share</button> -->
-      <!-- <div class="form-wrapper">
-      </div> -->
       <div class="confirm-changes-btns">
         <button class="buttonBase light cancel-changes-btn disabled">Cancel</button>
         <button class="buttonBase light save-changes-btn disabled">Save changes</button>
@@ -300,7 +309,234 @@
     </svg>
   </div>
 
+
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-app.js"></script>
+
+  <!-- SDKs for Firebase products that are used -->
+  <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-analytics.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-messaging.js"></script>
+
+  <script>
+    // The web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyB9KC9Q3NzMt7b6TspNcKxqWqnzzPLvdFg",
+      authDomain: "testgdproject-1570036439931.firebaseapp.com",
+      databaseURL: "https://testgdproject-1570036439931.firebaseio.com",
+      projectId: "testgdproject-1570036439931",
+      storageBucket: "testgdproject-1570036439931.appspot.com",
+      messagingSenderId: "199844453643",
+      appId: "1:199844453643:web:4aa7ba97d1ae2e428b560e"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    const messaging = firebase.messaging();
+
+    // To use a custom service worker
+    // messaging.useServiceWorker(ServiceWorkerRegistration);
+
+    // Add the public key generated from the console.
+    messaging.usePublicVapidKey("BGGcFL0Bts297K89sOxMDv6lh23a-lMFYtuU0cYmWlxmd73nXH3Cbga05E_v47vGQ5TXv1tWOiujHpLyAqKNvxs");
+
+    // Request permission to receive notifications
+    Notification.requestPermission().then(permission => {
+      if (permission === 'granted') {
+        console.log('Notification permission granted.');
+        // Get Instance ID token. Initially this makes a network call, once retrieved
+        // subsequent calls to getToken will return from cache.
+        messaging.getToken().then((currentToken) => {
+          if (currentToken) {
+            // TODO: sendTokenToServer(currentToken);
+            // TODO: updateUIForPushEnabled(currentToken);
+            console.log(currentToken);
+          } else {
+            // Show permission request.
+            console.log('No Instance ID token available. Request permission to generate one.');
+            // Show permission UI.
+            // TODO: updateUIForPushPermissionRequired();
+            // TODO: setTokenSentToServer(false);
+          }
+        }).catch((err) => {
+          console.log('An error occurred while retrieving token. ', err);
+          showToken('Error retrieving Instance ID token. ', err);
+          // TODO: setTokenSentToServer(false);
+        });
+      } else {
+        console.log('Unable to get permission to notify.');
+      }
+    })
+
+    // Callback fired if Instance ID token is updated.
+    messaging.onTokenRefresh(() => {
+      messaging.getToken().then((refreshedToken) => {
+        console.log('Token refreshed.');
+        // Indicate that the new Instance ID token has not yet been sent to the
+        // app server.
+        // TODO: setTokenSentToServer(false);
+        // Send Instance ID token to app server.
+        // TODO: sendTokenToServer(refreshedToken);
+        // ...
+      }).catch((err) => {
+        console.log('Unable to retrieve refreshed token ', err);
+        showToken('Unable to retrieve refreshed token ', err);
+      });
+    });
+
+    // TO DELETE
+    // messaging.requestPermission()
+    //   .then(res => {
+    //     console.log('Have permission');
+    //     return messaging.getToken();
+    //   })
+    //   .then(token => {
+    //     console.log(token);
+    //   })
+    //   .catch(err => {
+    //     console.log('Error occured');
+    //   });
+
+    // This is the message when the page is open so manage it as you want.
+    messaging.onMessage(payload => {
+      console.log('onMessage: ', payload);
+    });
+
+  </script>
   <script src="dist/main.js"></script>
+  <script src="/src/install.js"></script>
+  <script>
+    // Register service worker.
+    // if ('serviceWorker' in navigator) {
+    //   window.addEventListener('load', () => {
+    //     navigator.serviceWorker.register('/service-worker.js')
+    //       .then((reg) => {
+    //         console.log('Service worker registered.', reg);
+    //       });
+    //   });
+    // }
+
+
+
+    // PUSH NOTIFICATIONS
+    // From the tutorial: https://codelabs.developers.google.com/codelabs/push-notifications
+    // All this can be placed in the index.js
+
+    const pushButton = document.getElementById('pushMsgBtn');
+
+    let isSubscribed = false;
+    let swRegistration = null;
+
+    function urlB64ToUint8Array(base64String) {
+      const padding = '='.repeat((4 - base64String.length % 4) % 4);
+      const base64 = (base64String + padding)
+        .replace(/\-/g, '+')
+        .replace(/_/g, '/');
+
+      const rawData = window.atob(base64);
+      const outputArray = new Uint8Array(rawData.length);
+
+      for (let i = 0; i < rawData.length; ++i) {
+        outputArray[i] = rawData.charCodeAt(i);
+      }
+      return outputArray;
+    }
+
+    // enable your button and change the text depending on whether the user is subscribed or not
+    function updateBtn() {
+      if (isSubscribed) {
+        pushButton.textContent = 'Disable Push Messaging';
+      } else {
+        pushButton.textContent = 'Enable Push Messaging';
+      }
+      pushButton.disabled = false;
+      pushButton.classList.remove('disabled');
+    }
+
+    // This function is symbolic but it should send your subscription data to a backend
+    function updateSubscriptionOnServer(subscription) {
+      // TODO: Send subscription to application server
+      // const subscriptionJson = document.querySelector('.js-subscription-json');
+      // const subscriptionDetails = document.querySelector('.js-subscription-details');
+      if (subscription) {
+        // subscriptionJson.textContent = JSON.stringify(subscription);
+        // subscriptionDetails.classList.remove('is-invisible');
+        console.log(subscription);
+      } else {
+        // subscriptionDetails.classList.add('is-invisible');
+      }
+    }
+
+    function subscribeUser() {
+      const applicationServerKey = urlB64ToUint8Array(API_KEY);
+      swRegistration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: applicationServerKey
+      })
+        .then(function (subscription) {
+          console.log('User is subscribed.');
+
+          updateSubscriptionOnServer(subscription);
+
+          isSubscribed = true;
+
+          updateBtn();
+        })
+        .catch(function (error) {
+          console.error('Failed to subscribe the user: ', error);
+          updateBtn();
+        });
+    }
+
+    // check if the user is currently subscribed
+    function initializeUI() {
+      pushButton.addEventListener('click', function () {
+        pushButton.disabled = true;
+        pushButton.classList.add('disabled');
+        if (isSubscribed) {
+          // TODO: Unsubscribe user
+        } else {
+          subscribeUser();
+        }
+      });
+
+      // Set the initial subscription value
+      swRegistration.pushManager.getSubscription()
+        .then((subscription) => {
+          isSubscribed = !(subscription === null);
+
+          updateSubscriptionOnServer(subscription);
+
+          if (isSubscribed) {
+            console.log('User IS subscribed.');
+          } else {
+            console.log('User is NOT subscribed.');
+          }
+          updateBtn();
+        });
+    }
+
+    // if ('serviceWorker' in navigator && 'PushManager' in window) {
+    //   console.log('Service Worker and Push are supported');
+    //   navigator.serviceWorker.register('/service-worker.js')
+    //     .then((swReg) => {
+    //       console.log('Service Worker is registered', swReg);
+    //       swRegistration = swReg;
+    //       initializeUI();
+    //     })
+    //     .catch((error) => {
+    //       console.error('Service Worker Error', error);
+    //     });
+    // } else {
+    //   console.warn('Push messaging is not supported');
+    //   pushButton.textContent = 'Push Not Supported';
+    // }
+
+
+
+
+
+  </script>
 </body>
 
 </html>

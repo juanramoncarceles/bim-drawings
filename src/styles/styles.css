@@ -1037,3 +1037,12 @@ div#dataTablesContainer {
 #contextMenu > ul > li:hover {
   background-color: rgba(0, 0, 0, 0.2);
 }
+
+
+/******************* INSTALLED APP CUSTOM STYLES *******************/
+
+/* @media all and (display-mode: standalone) {
+  body {
+    background-color: yellow;
+  }
+} */
