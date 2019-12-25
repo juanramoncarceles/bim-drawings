@@ -274,6 +274,7 @@ export default class {
 
 
   /**
+   * Not working. This would only make sense with a server.
    * Subscribes to changes to a file.
    * @param {String} fileId ID of the file to watch.
    */
@@ -297,7 +298,7 @@ export default class {
     return request;
   }
 
-
+  // Not working. This would only make sense with a server.
   static stopWatching(channelId, resourceId) {
     const body = {
       "id": channelId, // Should be the one to stop created previously.

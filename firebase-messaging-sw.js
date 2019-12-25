@@ -1,7 +1,7 @@
 importScripts('https://www.gstatic.com/firebasejs/7.6.1/firebase-app.js');
 importScripts('https://www.gstatic.com/firebasejs/7.6.1/firebase-messaging.js');
 
-// Your web app's Firebase configuration
+// The firebase configuration for the app
 const firebaseConfig = {
   apiKey: "AIzaSyB9KC9Q3NzMt7b6TspNcKxqWqnzzPLvdFg",
   authDomain: "testgdproject-1570036439931.firebaseapp.com",
@@ -15,14 +15,14 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
-const messaging = firebase.messaging();
+// const messaging = firebase.messaging();
 
 // Advanced messages with data
 // This is only going to be called if the user is not in the webpage
-messaging.setBackgroundMessageHandler(payload => {
-  const title = 'Hello World';
-  const options = {
-    body: payload.data.status
-  };
-  return self.registration.showNotification(title, options);
-});
+// messaging.setBackgroundMessageHandler(payload => {
+//   const title = 'Hello World';
+//   const options = {
+//     body: payload.data.status
+//   };
+//   return self.registration.showNotification(title, options);
+// });
