@@ -5,6 +5,7 @@ import Generics from './generics';
 import { AddComment } from './appTools/addComment';
 import { ElementData } from './appTools/elementData';
 import { ShareProject } from './shareProject';
+import { NotificationsManager } from './notificationsManager';
 
 export class Application {
   constructor() {
@@ -119,11 +120,14 @@ export class Application {
     document.getElementById('tool-4').addEventListener('click', (e) => this.workspace.manageTools(e, ElementData, 'elementsDataTool'));
     document.getElementById('tool-5').addEventListener('click', (e) => this.workspace.manageTools(e, AddComment, 'commentsTool'));
 
+    this.notificationsManager = new NotificationsManager();
 
     // TESTS. TO DELETE
     document.getElementById('viewDeviceToken').onclick = () => getMessagingToken();
     document.getElementById('saveDeviceToken').onclick = () => saveMessagingDeviceToken();
     document.getElementById('sendEmail').onclick = () => API.sendSharingProjectEmail('Pepi', 'juanramoncarceles@gmail.com', 'Casa', '94w02u');
+
+    document.getElementById('createNotification').onclick = () => this.notificationsManager.createNotificaction({ author: 'Jaime', projectName: 'Test Hotel', content: 'Take a look at this.', thumb: 'src/assets/avatar-placeholder.png', projectId: 'j424r4349roi4oe' });
     // this.sendNotification = document.getElementById('sendNotification');
     // this.sendNotification.onclick = () => {
     //   // What ?

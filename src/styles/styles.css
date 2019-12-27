@@ -16,7 +16,7 @@ h1, h2, h3, h4, h5, p {
   margin-bottom: 0;
 }
 
-ul {
+ul, ol {
   list-style-type: none;
   margin-top: 0;
   margin-bottom: 0;
@@ -958,6 +958,85 @@ div#dataTablesContainer {
 
 .side-nav-footer {
   padding: 1rem;
+  font-weight: lighter;
+}
+
+
+/************************** NOTIFICATIONS **************************/
+
+#notificationsContainer {
+  display: none;
+  position: absolute;
+  width: 450px;
+  top: calc(var(--header-height) + 1rem);
+  right: 1rem;
+  opacity: 0;
+  transition: opacity .2s ease-in;
+  background-color: #f6f6f6;
+  box-shadow: 0 0 12px rgba(0,0,0,0.2);
+}
+
+#notificationsContainer > .empty-msg {
+  display: none;
+  padding: 2rem 0.8rem;
+  text-align: center;
+}
+
+#notificationsContainer.open {
+  display: unset;
+  opacity: 1;
+}
+
+#notificationsContainer.empty > .notifications-body {
+  display: none;
+}
+
+#notificationsContainer.empty > .empty-msg {
+  display: block;
+}
+
+.notifications-header {
+  padding: 0.8rem;
+  background-color: #fbfbfb;
+  border-bottom: 2px solid #dbdbdb;
+}
+
+.notifications-body {
+  max-height: 350px;
+  overflow: auto;
+}
+
+.notifications-body > li {
+  display: flex;
+  padding: 0.8rem;
+  cursor: pointer;
+  border-bottom: 1px solid #dbdbdb;
+}
+
+.notifications-body > li.pending {
+  background-color: #cbeaf5;
+}
+
+.notifications-body > li.pending:hover {
+  background-color: #c2e0ea;
+}
+
+.notifications-body > li:hover {
+  background-color: #eaeaea; /* Should match the one in the buttons, put in a variable */
+}
+
+.notification-thumb {
+  height: 50px;
+  margin-right: 1rem;
+  border-radius: 50%;
+}
+
+.notification-content > h4 {
+  margin-bottom: 0.2rem;
+  font-weight: 500;
+}
+
+.notification-content > p {
   font-weight: lighter;
 }
 
