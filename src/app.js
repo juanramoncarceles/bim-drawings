@@ -13,6 +13,9 @@ export class Application {
     this.projectsData = undefined;
     this.appSettingsFolderId = undefined;
     this.thumbsFolderId = undefined;
+    // If a user is logged it profile info is stored here.
+    this.userInfo = undefined;
+    this.userInfoContainer = document.getElementById('user-info');
     // The current workspace object will be referenced here.
     this.workspace = undefined;
     this.lastUploadedProject = new ProjectData();
@@ -117,20 +120,31 @@ export class Application {
     document.getElementById('tool-5').addEventListener('click', (e) => this.workspace.manageTools(e, AddComment, 'commentsTool'));
 
 
-    // WATCH TESTS. TO DELETE
-    // this.watchBtn = document.getElementById('watchChanges');
-    // this.watchBtn.onclick = () => {
-    //   API.watchFile(this.watchBtn.dataset.file);
+    // TESTS. TO DELETE
+    document.getElementById('viewDeviceToken').onclick = () => getMessagingToken();
+    document.getElementById('saveDeviceToken').onclick = () => saveMessagingDeviceToken();
+    document.getElementById('sendEmail').onclick = () => API.sendSharingProjectEmail('Pepi', 'juanramoncarceles@gmail.com', 'Casa', '94w02u');
+    // this.sendNotification = document.getElementById('sendNotification');
+    // this.sendNotification.onclick = () => {
+    //   // What ?
     // }
-    // this.stopWatchBtn = document.getElementById('stopWatchChanges');
-    // this.stopWatchBtn.onclick = () => {
-    //   API.stopWatching(this.stopWatchBtn.dataset.channel, this.stopWatchBtn.dataset.resource);
-    // }
-    // TEST Send notifications
-    this.sendNotification = document.getElementById('sendNotification');
-    this.sendNotification.onclick = () => {
-      // What ?
-    }
+  }
+
+
+  /**
+   * Stores the current logged user info as a property of the app and
+   * populates the UI with the user info.
+   */
+  async setUserInfo() {
+    const userInfoRes = await API.getUserInfo();
+    // An object with at least displayName, photoLink and emailAddress.
+    const user = JSON.parse(userInfoRes.body).user;
+    this.userInfo = user;
+    this.userInfoContainer.innerHTML = `
+      <img src=${this.userInfo.photoLink}>
+      <span>
+        <span>${this.userInfo.displayName}</span><span class="email">${this.userInfo.emailAddress}</span>
+      </span>`;
   }
 
 

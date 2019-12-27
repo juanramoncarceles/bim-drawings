@@ -12,10 +12,12 @@ const firebaseConfig = {
   appId: "1:199844453643:web:4aa7ba97d1ae2e428b560e"
 };
 
-// Initialize Firebase
+// Initialization of the Firebase app.
 firebase.initializeApp(firebaseConfig);
 
-// const messaging = firebase.messaging();
+// An instance of the Firebase Messaging should be retrieved so it can handle background messages.
+const messaging = firebase.messaging();
+
 
 // Advanced messages with data
 // This is only going to be called if the user is not in the webpage

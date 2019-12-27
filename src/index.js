@@ -31,9 +31,8 @@ const API_KEY = 'AIzaSyDgot_h8p7RzZunGoSDVlKxrpUNN97rPeg';
 // Array of API discovery doc URLs for APIs used by the quickstart
 const DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"];
 
-// Authorization scopes required by the API; multiple scopes can be
-// included, separated by spaces.
-const SCOPES = 'https://www.googleapis.com/auth/drive';
+// Authorization scopes required by the API; multiple scopes can be included, separated by spaces.
+const SCOPES = "https://www.googleapis.com/auth/drive";
 
 const authorizeButton = document.getElementById('authorizeBtn');
 const signoutButton = document.getElementById('signoutBtn');
@@ -93,6 +92,8 @@ function updateSigninStatus(isSignedIn) {
     if (App.modalDialogContent.firstElementChild) {
       App.closeModalDialog();
     }
+    // Manage the logged user personal info.
+    App.setUserInfo();
     // If a project id is provided to start() method the app will start from the project view.
     App.start(projectId);
   } else {

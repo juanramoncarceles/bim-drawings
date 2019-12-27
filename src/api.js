@@ -274,46 +274,46 @@ export default class {
 
 
   /**
-   * Not working. This would only make sense with a server.
+   * NOT WORKING. THIS WOULD ONLY MAKE SENSE IN A SERVER.
    * Subscribes to changes to a file.
    * @param {String} fileId ID of the file to watch.
    */
-  static watchFile(fileId) {
-    const body = {
-      "kind": "api#channel",
-      "id": "01234567-89ab-cdef-0123456789ab", // TODO Use a uuid generator
-      //"resourceId": string,
-      //"resourceUri": string,
-      "type": "web_hook",
-      "address": "https://visualarqapp.ramoncarceles.com"
-    }
-    const request = gapi.client.request({
-      'path': `https://www.googleapis.com/drive/v3/files/${fileId}/watch`,
-      'method': 'POST',
-      'body': body
-    });
-    request.then(res => {
-      console.log(res);
-    });
-    return request;
-  }
+  // static watchFile(fileId) {
+  //   const body = {
+  //     "kind": "api#channel",
+  //     "id": "01234567-89ab-cdef-0123456789ab", // TODO Use a uuid generator
+  //     //"resourceId": string,
+  //     //"resourceUri": string,
+  //     "type": "web_hook",
+  //     "address": "https://visualarqapp.ramoncarceles.com"
+  //   }
+  //   const request = gapi.client.request({
+  //     'path': `https://www.googleapis.com/drive/v3/files/${fileId}/watch`,
+  //     'method': 'POST',
+  //     'body': body
+  //   });
+  //   request.then(res => {
+  //     console.log(res);
+  //   });
+  //   return request;
+  // }
 
-  // Not working. This would only make sense with a server.
-  static stopWatching(channelId, resourceId) {
-    const body = {
-      "id": channelId, // Should be the one to stop created previously.
-      "resourceId": resourceId
-    }
-    const request = gapi.client.request({
-      'path': `https://www.googleapis.com/drive/v3/channels/stop`,
-      'method': 'POST',
-      'body': body
-    });
-    request.then(res => {
-      console.log(res);
-    });
-    return request;
-  }
+  // NOT WORKING. THIS WOULD ONLY MAKE SENSE IN A SERVER.
+  // static stopWatching(channelId, resourceId) {
+  //   const body = {
+  //     "id": channelId, // Should be the one to stop created previously.
+  //     "resourceId": resourceId
+  //   }
+  //   const request = gapi.client.request({
+  //     'path': `https://www.googleapis.com/drive/v3/channels/stop`,
+  //     'method': 'POST',
+  //     'body': body
+  //   });
+  //   request.then(res => {
+  //     console.log(res);
+  //   });
+  //   return request;
+  // }
 
 
   /**
@@ -327,7 +327,7 @@ export default class {
     const delayedPromise = new Promise(res => setTimeout(res, delay));
     return delayedPromise.then(res => {
       const request = gapi.client.request({
-        'path': 'https://www.googleapis.com/drive/v3/files/' + fileId + '/permissions',
+        'path': 'https://www.googleapis.com/drive/v3/files/' + fileId + '/permissions?sendNotificationEmail=false',
         'method': 'POST',
         'headers': {
           'Content-Type': 'application/json'
@@ -379,6 +379,47 @@ export default class {
     });
     request.then(res => {
       console.log(res);
+    });
+    return request;
+  }
+
+
+  /**
+   * Gets information about the current user logged in with Google.
+   */
+  static getUserInfo() {
+    const request = gapi.client.drive.about.get({
+      fields: 'user'
+    });
+    request.then(res => {
+      console.log(JSON.parse(res.body).user);
+    });
+    return request;
+  }
+
+
+  /**
+   * Sends an email indicating that a project as been shared with the receiver.
+   * @param {String} sharer Name of the user who shared the project.
+   * @param {String} receiver Email address of the receiver.
+   * @param {String} projectName The name of the project that has been shared.
+   * @param {String} projectId This is required to create the url link to the project.
+   */
+  static sendSharingProjectEmail(sharer, receiver, projectName, projectId) {
+    const request = fetch(`https://us-central1-testgdproject-1570036439931.cloudfunctions.net/sendMail`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ sharer, receiver, projectName, projectId }) // body data type must match "Content-Type" header
+    });
+    request.then(res => {
+      console.log(res);
+      // if (res.ok === true && res.status === 200) {
+      //   console.log('Send successful.');
+      // }
+    }, err => {
+      console.error(err);
     });
     return request;
   }

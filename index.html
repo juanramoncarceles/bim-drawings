@@ -59,6 +59,12 @@
       </div>
     </div>
     <div class="global-nav-btns">
+      <button id="notificationBtn" class="icon-btn disabled">
+        <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+          <path d="M467.812,431.851l-36.629-61.056c-16.917-28.181-25.856-60.459-25.856-93.312V224c0-67.52-45.056-124.629-106.667-143.04	V42.667C298.66,19.136,279.524,0,255.993,0s-42.667,19.136-42.667,42.667V80.96C151.716,99.371,106.66,156.48,106.66,224v53.483	c0,32.853-8.939,65.109-25.835,93.291l-36.629,61.056c-1.984,3.307-2.027,7.403-0.128,10.752c1.899,3.349,5.419,5.419,9.259,5.419	H458.66c3.84,0,7.381-2.069,9.28-5.397C469.839,439.275,469.775,435.136,467.812,431.851z" />
+          <path d="M188.815,469.333C200.847,494.464,226.319,512,255.993,512s55.147-17.536,67.179-42.667H188.815z" />
+        </svg>
+      </button>
       <button id="saveBtn" class="icon-btn disabled">
         <svg viewBox="0 0 462 462" xmlns="http://www.w3.org/2000/svg">
           <path d="m457.166 103.834-99-99c-3.094-3.094-7.283-4.834-11.666-4.834h-330c-9.12 0-16.5 7.38-16.5 16.5v429c0 9.12 7.38 16.5 16.5 16.5h429c9.12 0 16.5-7.38 16.5-16.5v-330c0-4.383-1.741-8.572-4.834-11.666zm-325.166-70.834h198v165h-198zm297 396h-396v-396h66v181.5c0 9.12 7.38 16.5 16.5 16.5h231c9.12 0 16.5-7.38 16.5-16.5v-158.168l66 66z" />
@@ -68,16 +74,19 @@
     </div>
     <div id="sideNavContainer">
       <div class="side-nav-header">
-
+        <div id="user-info"></div>
       </div>
       <div class="side-nav-actions">
         <button id="signoutBtn" class="buttonBase light">Sign Out</button>
 
-        <!-- Test buttons start -->
+        <!-- TEST BUTTONS start -->
         <button id="installBtn" class="buttonBase light" hidden>Install</button>
-        <button id="pushMsgBtn" class="buttonBase light disabled"></button>
-        <button id="sendNotification" data-url="" data-token="" class="buttonBase">Send Notification</button>
-        <!-- Test buttons end -->
+        <!-- <button id="pushMsgBtn" class="buttonBase light disabled"></button> -->
+        <button id="saveDeviceToken" class="buttonBase">Save Device Token</button>
+        <button id="viewDeviceToken" class="buttonBase">View Device Token</button>
+        <button id="sendEmail" class="buttonBase">Send Email</button>
+        <!-- <button id="sendNotification" class="buttonBase">Send Notification</button> -->
+        <!-- TEST BUTTONS end -->
 
       </div>
       <div class="side-nav-footer">
@@ -311,6 +320,8 @@
   </div>
 
 
+  <script src="dist/main.js"></script>
+  <script src="/src/install.js"></script>
 
   <!-- The core Firebase JS SDK is always required and must be listed first -->
   <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-app.js"></script>
@@ -335,9 +346,63 @@
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
 
+    // Retrieve Firebase Messaging object.
+    const messaging = firebase.messaging();
+    // When does firebase register the service worker? is it the first time it calls firebase.messaging()?
+
+
+    // Handle incoming messages. Called when:
+    // - a message is received while the app has focus
+    // - the user clicks on an app notification created by a service worker `messaging.setBackgroundMessageHandler` handler.
+    messaging.onMessage((payload) => {
+      console.log('Message received. ', payload);
+      // Update the UI accordingly with the new message. Paint the notifications icon.
+      // ...
+    });
+
+
+    // TEMP
+    function getMessagingToken() {
+      firebase.messaging().getToken()
+        .then(token => {
+          console.log(token);
+        })
+        .catch(err => {
+          console.error(err);
+        })
+    }
+
+    // For this to work the user has to grant permissions first.
+    // Saves the messaging device token to the datastore.
+    function saveMessagingDeviceToken() {
+      firebase.messaging().getToken().then(function (currentToken) {
+        if (currentToken) {
+          console.log('Got FCM device token:', currentToken);
+          // Saving the Device Token to the datastore.
+          firebase.firestore().collection('fcmTokens').doc(currentToken)
+            .set({ email: 'ramoncarcelesroman@gmail.com' }); // App.user.emailAddress
+        } else {
+          // Need to request permissions to show notifications.
+          requestNotificationsPermissions();
+        }
+      }).catch(function (error) {
+        console.error('Unable to get messaging token.', error);
+      });
+    }
+
+    // Requests permission to show notifications.
+    function requestNotificationsPermissions() {
+      console.log('Requesting notifications permission...');
+      firebase.messaging().requestPermission().then(function () {
+        // Notification permission granted.
+        saveMessagingDeviceToken();
+      }).catch(function (error) {
+        console.error('Unable to get permission to notify.', error);
+      });
+    }
+
   </script>
-  <script src="dist/main.js"></script>
-  <script src="/src/install.js"></script>
+
 </body>
 
 </html>

@@ -137,7 +137,8 @@ header .icon-btn {
   background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+c3VwZXIgZzwvdGl0bGU+PGcgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNOSAzLjQ4YzEuNjkgMCAyLjgzLjczIDMuNDggMS4zNGwyLjU0LTIuNDhDMTMuNDYuODkgMTEuNDMgMCA5IDAgNS40OCAwIDIuNDQgMi4wMi45NiA0Ljk2bDIuOTEgMi4yNkM0LjYgNS4wNSA2LjYyIDMuNDggOSAzLjQ4eiIgZmlsbD0iI0VBNDMzNSIvPjxwYXRoIGQ9Ik0xNy42NCA5LjJjMC0uNzQtLjA2LTEuMjgtLjE5LTEuODRIOXYzLjM0aDQuOTZjLS4xLjgzLS42NCAyLjA4LTEuODQgMi45MmwyLjg0IDIuMmMxLjctMS41NyAyLjY4LTMuODggMi42OC02LjYyeiIgZmlsbD0iIzQyODVGNCIvPjxwYXRoIGQ9Ik0zLjg4IDEwLjc4QTUuNTQgNS41NCAwIDAgMSAzLjU4IDljMC0uNjIuMTEtMS4yMi4yOS0xLjc4TC45NiA0Ljk2QTkuMDA4IDkuMDA4IDAgMCAwIDAgOWMwIDEuNDUuMzUgMi44Mi45NiA0LjA0bDIuOTItMi4yNnoiIGZpbGw9IiNGQkJDMDUiLz48cGF0aCBkPSJNOSAxOGMyLjQzIDAgNC40Ny0uOCA1Ljk2LTIuMThsLTIuODQtMi4yYy0uNzYuNTMtMS43OC45LTMuMTIuOS0yLjM4IDAtNC40LTEuNTctNS4xMi0zLjc0TC45NyAxMy4wNEMyLjQ1IDE1Ljk4IDUuNDggMTggOSAxOHoiIGZpbGw9IiMzNEE4NTMiLz48cGF0aCBmaWxsPSJub25lIiBkPSJNMCAwaDE4djE4SDB6Ii8+PC9nPjwvc3ZnPg==);
 }
 
-#saveBtn.enabled > svg {
+#saveBtn.enabled > svg,
+#notificationBtn.enabled > svg {
   fill: #ea8c15;
   transform: scale(1.2);
 }
@@ -148,7 +149,7 @@ header .icon-btn {
 header {
   /* display: flex;  este actualmente se sobreescribe desde js */
   height: var(--header-height);
-  padding-right: 6rem;
+  padding-right: 8rem;
   align-items: stretch;
   z-index: 1;
   background-color: #f6f6f6;
@@ -242,6 +243,7 @@ header > h1 {
   top: 0;
   right: 0;
   z-index: 1000;
+  border-left: 1px solid #c8c8c8;
 }
 
 @media (max-width: 500px) {
@@ -885,7 +887,31 @@ div#dataTablesContainer {
 }
 
 .side-nav-header {
-  height: var(--header-height);
+  padding-right: 1rem;
+  padding-left: 1rem;
+}
+
+#user-info {
+  display: flex;
+  align-items: flex-end;
+  margin-top: var(--header-height);
+}
+
+#user-info > img {
+  margin-right: 0.6rem;
+  border-radius: 50%;
+}
+
+#user-info > span {
+  overflow-x: hidden;
+}
+
+#user-info > span > span {
+  display: block;
+}
+
+#user-info .email {
+  font-weight: lighter;
 }
 
 .side-nav-actions {
