@@ -1,6 +1,106 @@
+// Firebase App (the core Firebase SDK) is always required and must be listed first.
+import * as firebase from "firebase/app";
+// The Firebase SDK for Analytics.
+import "firebase/analytics";
+// The Firebase products that are used.
+import "firebase/firestore";
+import "firebase/messaging";
+
 import { Application } from './app';
 import Generics from './generics';
 import API from './api';
+
+
+
+
+// The firebase configuration for the app
+const firebaseConfig = {
+  apiKey: "AIzaSyB9KC9Q3NzMt7b6TspNcKxqWqnzzPLvdFg",
+  authDomain: "testgdproject-1570036439931.firebaseapp.com",
+  databaseURL: "https://testgdproject-1570036439931.firebaseio.com",
+  projectId: "testgdproject-1570036439931",
+  storageBucket: "testgdproject-1570036439931.appspot.com",
+  messagingSenderId: "199844453643",
+  appId: "1:199844453643:web:4aa7ba97d1ae2e428b560e"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+
+// Retrieve Firebase Messaging object.
+const messaging = firebase.messaging();
+// When does firebase register the service worker? is it the first time it calls firebase.messaging()?
+
+
+// Handle incoming messages. Called when:
+// - a message is received while the app has focus
+// - the user clicks on an app notification created by a service worker `messaging.setBackgroundMessageHandler` handler.
+messaging.onMessage((payload) => {
+  console.log('Message received. ', payload);
+  App.notificationsManager.createNotificaction({
+    author: 'John',
+    projectName: 'Villa Savoye',
+    projectId: '95949394o4',
+    content: payload.notification.body, // Change to use the custom: data.body
+    thumb: payload.notification.image // Change to use the custom: data.image
+  });
+});
+
+
+const broadCastChannel = new BroadcastChannel('app-channel');
+
+broadCastChannel.onmessage = e => {
+  if (e.data.action === 'newNotification') {
+    console.log('Add notification to the list.');
+    App.notificationsManager.createNotificaction(e.data.content);
+  }
+};
+
+
+// TEMP
+function getMessagingToken() {
+  firebase.messaging().getToken()
+    .then(token => {
+      console.log(token);
+    })
+    .catch(err => {
+      console.error(err);
+    })
+}
+
+// For this to work the user has to grant permissions first.
+// Saves the messaging device token to the datastore.
+function saveMessagingDeviceToken() {
+  firebase.messaging().getToken().then(function (currentToken) {
+    if (currentToken) {
+      console.log('Got FCM device token:', currentToken);
+      // Saving the Device Token to the datastore.
+      firebase.firestore().collection('fcmTokens').doc(currentToken)
+        .set({ email: 'ramoncarcelesroman@gmail.com' }); // App.user.emailAddress
+    } else {
+      // Need to request permissions to show notifications.
+      requestNotificationsPermissions();
+    }
+  }).catch(function (error) {
+    console.error('Unable to get messaging token.', error);
+  });
+}
+
+// Requests permission to show notifications.
+function requestNotificationsPermissions() {
+  console.log('Requesting notifications permission...');
+  firebase.messaging().requestPermission().then(function () {
+    // Notification permission granted.
+    saveMessagingDeviceToken();
+  }).catch(function (error) {
+    console.error('Unable to get permission to notify.', error);
+  });
+}
+
+
+document.getElementById('viewDeviceToken').onclick = () => getMessagingToken();
+document.getElementById('saveDeviceToken').onclick = () => saveMessagingDeviceToken();
 
 
 /****************** THE ONLY INSTANCE OF THE APP *******************/

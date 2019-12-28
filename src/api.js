@@ -425,6 +425,26 @@ export default class {
   }
 
 
+  static sendNotification(emails, author, thumb, text, projectName, projectId) {
+    const request = fetch(`https://us-central1-testgdproject-1570036439931.cloudfunctions.net/sendMail`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ emails, author, thumb, text, projectName, projectId }) // body data type must match "Content-Type" header
+    });
+    request.then(res => {
+      console.log(res);
+      // if (res.ok === true && res.status === 200) {
+      //   console.log('Send successful.');
+      // }
+    }, err => {
+      console.error(err);
+    });
+    return request;
+  }
+
+
   /*******************************************************************/
   /***************** APPLICATION SPECIFIC FUNCTIONS ******************/
   /*******************************************************************/

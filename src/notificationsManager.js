@@ -27,7 +27,7 @@ export class NotificationsManager {
    * Creates a notification representation that appears in the UI and adds an object
    * with all the notification data to the notifications array.
    *   src/assets/avatar-placeholder.png
-   * @param {Object} notificationObj It should have author, projectName, projectId, content and thumb entries.
+   * @param {Object} notificationObj It should have author, projectName, projectId, text and thumb entries.
    */
   createNotificaction(notificationObj) {
     const notificationElement = document.createElement('li');
@@ -38,7 +38,7 @@ export class NotificationsManager {
       <img class="notification-thumb" src="${notificationObj.thumb}">
       <div class="notification-content">
         <h4>${notificationObj.author} mentioned you in a comment on the project ${notificationObj.projectName}</h4>
-        <p>${notificationObj.content}</p>
+        <p>${notificationObj.text}</p>
       </div>`;
     this.notificationsList.prepend(notificationElement);
     this.notifications.push({ id: notificationId, representation: notificationElement, state: 'pending', data: notificationObj });

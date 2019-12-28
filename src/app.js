@@ -123,15 +123,11 @@ export class Application {
     this.notificationsManager = new NotificationsManager();
 
     // TESTS. TO DELETE
-    document.getElementById('viewDeviceToken').onclick = () => getMessagingToken();
-    document.getElementById('saveDeviceToken').onclick = () => saveMessagingDeviceToken();
     document.getElementById('sendEmail').onclick = () => API.sendSharingProjectEmail('Pepi', 'juanramoncarceles@gmail.com', 'Casa', '94w02u');
-
     document.getElementById('createNotification').onclick = () => this.notificationsManager.createNotificaction({ author: 'Jaime', projectName: 'Test Hotel', content: 'Take a look at this.', thumb: 'src/assets/avatar-placeholder.png', projectId: 'j424r4349roi4oe' });
-    // this.sendNotification = document.getElementById('sendNotification');
-    // this.sendNotification.onclick = () => {
-    //   // What ?
-    // }
+    this.sendNotification = document.getElementById('sendNotification');
+    this.sendNotification.onclick = () => API.sendNotification(['ramoncarcelesroman@gmail.com'], 'Jose', 'https://lh3.googleusercontent.com/a-/AAuE7mBuMJ-AmWcmm7TpM7YYsKCHry32ZIsL6wjC3HQL=s64', 'Take a look at this', 'Little house', '1p_ACJhiKf0Bx9JTVPNLs-9yIwt8H23ln');
+
   }
 
 
