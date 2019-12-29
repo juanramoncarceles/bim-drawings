@@ -406,7 +406,7 @@ export default class {
    * @param {String} projectId This is required to create the url link to the project.
    */
   static sendSharingProjectEmail(sharer, receiver, projectName, projectId) {
-    const request = fetch(`https://us-central1-testgdproject-1570036439931.cloudfunctions.net/sendMail`, {
+    const request = fetch('https://us-central1-testgdproject-1570036439931.cloudfunctions.net/sendMail', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -425,8 +425,18 @@ export default class {
   }
 
 
+  /**
+   * Sends a push notification to a user identified by his/her email address.
+   * It uses the Firebase database to obtain the device tokens associated to each email address.
+   * @param {String[]} emails array of emails of the users to send the notification to.
+   * @param {String} author name of the author that generated the notification.
+   * @param {String} thumb url of the image to identify the message.
+   * @param {String} text the textual content of the notification message.
+   * @param {String} projectName the name of the project for which the notification is sent.
+   * @param {String} projectId the id of the project for which the notification is sent.
+   */
   static sendNotification(emails, author, thumb, text, projectName, projectId) {
-    const request = fetch(`https://us-central1-testgdproject-1570036439931.cloudfunctions.net/sendMail`, {
+    const request = fetch('https://us-central1-testgdproject-1570036439931.cloudfunctions.net/sendPushNotification', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

@@ -1,6 +1,8 @@
 {
   "name": "VisualARQ Drawings Viewer",
   "short_name": "VA Viewer",
+  "description": "Review project drawings alone or with a team. View the infomation associated to BIM elements. Add comments and collaborate.",
+  "lang": "en-US",
   "icons": [
     {
       "src": "/src/assets/logos/vadv-logo-128.png",
@@ -28,7 +30,7 @@
       "type": "image/png"
     }
   ],
-  "start_url": "/index.html",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#f6f6f6",
   "theme_color": "#2a8fb1",

@@ -122,7 +122,7 @@ export class Application {
 
     this.notificationsManager = new NotificationsManager();
 
-    // TESTS. TO DELETE
+    // TESTS TO DELETE
     document.getElementById('sendEmail').onclick = () => API.sendSharingProjectEmail('Pepi', 'juanramoncarceles@gmail.com', 'Casa', '94w02u');
     document.getElementById('createNotification').onclick = () => this.notificationsManager.createNotificaction({ author: 'Jaime', projectName: 'Test Hotel', content: 'Take a look at this.', thumb: 'src/assets/avatar-placeholder.png', projectId: 'j424r4349roi4oe' });
     this.sendNotification = document.getElementById('sendNotification');

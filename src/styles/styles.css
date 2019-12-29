@@ -1144,7 +1144,10 @@ div#dataTablesContainer {
 }
 
 
-/******************* INSTALLED APP CUSTOM STYLES *******************/
+/******************* INSTALLED APP CUSTOM STYLES *******************
+*
+* The display is set to standalone on the manifest.json
+*/
 
 /* @media all and (display-mode: standalone) {
   body {

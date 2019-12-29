@@ -11,9 +11,9 @@ import Generics from './generics';
 import API from './api';
 
 
+/********************* FIREBASE INITIALIZATION *********************/
 
-
-// The firebase configuration for the app
+// The firebase configuration for the app.
 const firebaseConfig = {
   apiKey: "AIzaSyB9KC9Q3NzMt7b6TspNcKxqWqnzzPLvdFg",
   authDomain: "testgdproject-1570036439931.firebaseapp.com",
@@ -24,41 +24,59 @@ const firebaseConfig = {
   appId: "1:199844453643:web:4aa7ba97d1ae2e428b560e"
 };
 
-// Initialize Firebase
+// Initialization of Firebase.
 firebase.initializeApp(firebaseConfig);
 
 
-// Retrieve Firebase Messaging object.
+/******************* SERVICE WORKER REGISTRATION *******************/
+
+// TODO: Do this only if the user autenticates?
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(reg => {
+        console.log('Service worker registered.', reg);
+        // Use a custom service worker for firebase messaging.
+        // Otherwise 'firebase-messaging-sw.js' should be used.
+        messaging.useServiceWorker(reg);
+      })
+      .catch(err => {
+        console.error('Service Worker Error', err);
+      });
+  });
+}
+
+
+/******************** FIREBASE CLOUD MESSAGING ******************
+ * Manages the creation of device tokens to receive push notifications.
+*/
+
+// Retrieve the Firebase Messaging object.
 const messaging = firebase.messaging();
-// When does firebase register the service worker? is it the first time it calls firebase.messaging()?
 
-
-// Handle incoming messages. Called when:
-// - a message is received while the app has focus
-// - the user clicks on an app notification created by a service worker `messaging.setBackgroundMessageHandler` handler.
-messaging.onMessage((payload) => {
+// Handle incoming messages when the app is in the foreground / focus.
+messaging.onMessage(payload => {
   console.log('Message received. ', payload);
-  App.notificationsManager.createNotificaction({
-    author: 'John',
-    projectName: 'Villa Savoye',
-    projectId: '95949394o4',
-    content: payload.notification.body, // Change to use the custom: data.body
-    thumb: payload.notification.image // Change to use the custom: data.image
+  const data = payload.data;
+  App.notificationsManager.createNotificaction(data);
+});
+
+// Callback fired if Instance ID token is updated.
+messaging.onTokenRefresh(() => {
+  messaging.getToken().then(refreshedToken => {
+    console.log('FCM token refreshed:', refreshedToken);
+    // Send the new Device Token to the datastore.
+    firebase.firestore().collection('fcmTokens').doc(refreshedToken)
+      .set({ email: App.userInfo.emailAddress });
+  }).catch(err => {
+    console.log('Unable to retrieve refreshed token ', err);
   });
 });
 
 
-const broadCastChannel = new BroadcastChannel('app-channel');
-
-broadCastChannel.onmessage = e => {
-  if (e.data.action === 'newNotification') {
-    console.log('Add notification to the list.');
-    App.notificationsManager.createNotificaction(e.data.content);
-  }
-};
-
-
-// TEMP
+/**
+ * Auxiliary function to view the device token for FCM.
+ */
 function getMessagingToken() {
   firebase.messaging().getToken()
     .then(token => {
@@ -69,36 +87,58 @@ function getMessagingToken() {
     })
 }
 
-// For this to work the user has to grant permissions first.
-// Saves the messaging device token to the datastore.
+
+/**
+ * Saves the messaging device token to the datastore.
+ * If notification permissions have not been granted it asks for them.
+ */
 function saveMessagingDeviceToken() {
-  firebase.messaging().getToken().then(function (currentToken) {
+  firebase.messaging().getToken().then(currentToken => {
     if (currentToken) {
-      console.log('Got FCM device token:', currentToken);
+      console.log('FCM device token:', currentToken);
       // Saving the Device Token to the datastore.
       firebase.firestore().collection('fcmTokens').doc(currentToken)
-        .set({ email: 'ramoncarcelesroman@gmail.com' }); // App.user.emailAddress
+        .set({ email: App.userInfo.emailAddress });
     } else {
       // Need to request permissions to show notifications.
       requestNotificationsPermissions();
     }
-  }).catch(function (error) {
-    console.error('Unable to get messaging token.', error);
+  }).catch(err => {
+    console.error('Unable to get messaging token.', err);
   });
 }
 
-// Requests permission to show notifications.
+
+/**
+ * Requests permission to show notifications.
+ */
 function requestNotificationsPermissions() {
   console.log('Requesting notifications permission...');
-  firebase.messaging().requestPermission().then(function () {
-    // Notification permission granted.
+  firebase.messaging().requestPermission().then(() => {
+    console.log('Notification permission granted.');
     saveMessagingDeviceToken();
-  }).catch(function (error) {
-    console.error('Unable to get permission to notify.', error);
+  }).catch(err => {
+    console.error('Unable to get permission to notify.', err);
   });
 }
 
+// Equivalent to the previous but without Firebase.
+// function requestPermission() {
+//   console.log('Requesting permission...');
+//   Notification.requestPermission().then(permission => {
+//     if (permission === 'granted') {
+//       console.log('Notification permission granted.');
+//       // TODO: Retrieve an Instance ID token for use with FCM.
+//       // If an app has been granted notification permission it can update its UI reflecting this.
+//       // resetUI();
+//     } else {
+//       console.log('Unable to get permission to notify.');
+//     }
+//   });
+// }
 
+
+// TEST BUTTONS
 document.getElementById('viewDeviceToken').onclick = () => getMessagingToken();
 document.getElementById('saveDeviceToken').onclick = () => saveMessagingDeviceToken();
 
@@ -106,6 +146,20 @@ document.getElementById('saveDeviceToken').onclick = () => saveMessagingDeviceTo
 /****************** THE ONLY INSTANCE OF THE APP *******************/
 
 const App = new Application();
+
+
+/************************ BROADCAST CHANNEL *************************
+ * To comunicate with the Service Worker and viceversa.
+*/
+
+const broadCastChannel = new BroadcastChannel('app-channel');
+
+broadCastChannel.onmessage = e => {
+  if (e.data.action === 'newNotification') {
+    console.log('Add notification to the list.');
+    App.notificationsManager.createNotificaction(e.data.content);
+  }
+};
 
 
 /******************* VIEW SAMPLE PROJECT OPTION ********************/
