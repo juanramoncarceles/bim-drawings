@@ -403,8 +403,31 @@ main {
   width: 100%;
 }
 
-#commentForm > .buttonsContainer { 
+#commentForm > .members {
   margin-top: 0.5rem;
+}
+
+#commentForm > .members.hidden {
+  display: none;
+}
+
+#commentForm > .members > p:first-child {
+  font-weight: lighter;
+  margin-bottom: 0.2rem;
+}
+
+#commentForm > .members > select {
+  width: 100%;
+}
+
+#commentForm .info {
+  margin-top: 0.1rem;
+  font-size: 0.7rem;
+  font-weight: lighter;
+}
+
+#commentForm > .buttonsContainer { 
+  margin-top: 0.8rem;
   display: flex;
   justify-content: space-between;
 }
@@ -1149,8 +1172,8 @@ div#dataTablesContainer {
 * The display is set to standalone on the manifest.json
 */
 
-/* @media all and (display-mode: standalone) {
-  body {
-    background-color: yellow;
+@media all and (display-mode: standalone) {
+  header {
+    border-top: 1px solid #dedede;
   }
-} */
+}

@@ -6,6 +6,7 @@ export class Workspace {
   constructor(projectData, App) {
     this.projectName = projectData.name;
     this.projectId = projectData.id;
+    this.permissions = projectData.permissions;
     this.projectIndex = App.projectsData.findIndex(obj => obj.name === projectData.name);
     if (projectData.id === App.lastUploadedProject.id) {
       this.drawings = App.lastUploadedProject.drawings;
@@ -43,7 +44,7 @@ export class Workspace {
     this.comments = [];
     if (projectData.comments) {
       // TODO: Create the comment objects each time a workspace is created or before on the AppData.projectsData object?
-      projectData.comments.forEach(comment => this.comments.push(new Comment(comment.elementId, comment.content)));
+      projectData.comments.forEach(comment => this.comments.push(new Comment(comment.elementId, comment.content, comment.mentions)));
       this.drawings.forEach(drawing => drawing.commentsChanged = true);
     }
     this.mainPanel = new MainPanel(App.mainPanel, App.panelsStorage);

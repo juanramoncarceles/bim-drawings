@@ -1,11 +1,12 @@
 import Generics from './generics';
 
 export class Comment {
-  constructor(elementId, content) {
-    this.elementId = elementId,
-      this.content = content,
-      this.id = 'c-' + elementId,
-      this.representations = []
+  constructor(elementId, content, mentions = []) {
+    this.elementId = elementId;
+    this.content = content;
+    this.id = 'c-' + elementId;
+    this.representations = [];
+    this.mentions = mentions;
   }
 
   /**

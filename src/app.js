@@ -127,7 +127,6 @@ export class Application {
     document.getElementById('createNotification').onclick = () => this.notificationsManager.createNotificaction({ author: 'Jaime', projectName: 'Test Hotel', content: 'Take a look at this.', thumb: 'src/assets/avatar-placeholder.png', projectId: 'j424r4349roi4oe' });
     this.sendNotification = document.getElementById('sendNotification');
     this.sendNotification.onclick = () => API.sendNotification(['ramoncarcelesroman@gmail.com'], 'Jose', 'https://lh3.googleusercontent.com/a-/AAuE7mBuMJ-AmWcmm7TpM7YYsKCHry32ZIsL6wjC3HQL=s64', 'Take a look at this', 'Little house', '1p_ACJhiKf0Bx9JTVPNLs-9yIwt8H23ln');
-
   }
 
 
@@ -161,7 +160,8 @@ export class Application {
       this.workspace.comments.forEach(comment => {
         dataToSave.push({
           elementId: comment.elementId,
-          content: comment.content
+          content: comment.content,
+          mentions: comment.mentions
         });
       });
       const jsonDataToSave = JSON.stringify(dataToSave);

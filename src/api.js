@@ -327,7 +327,7 @@ export default class {
     const delayedPromise = new Promise(res => setTimeout(res, delay));
     return delayedPromise.then(res => {
       const request = gapi.client.request({
-        'path': 'https://www.googleapis.com/drive/v3/files/' + fileId + '/permissions?sendNotificationEmail=false',
+        'path': `https://www.googleapis.com/drive/v3/files/${fileId}/permissions?sendNotificationEmail=false&fields=id,displayName,emailAddress,photoLink,role`,
         'method': 'POST',
         'headers': {
           'Content-Type': 'application/json'
@@ -346,7 +346,7 @@ export default class {
 
     // ORIGINAL CODE WITHOUT DELAY
     // const request = gapi.client.request({
-    //   'path': 'https://www.googleapis.com/drive/v3/files/' + fileId + '/permissions',
+    //   'path': 'same path as above',
     //   'method': 'POST',
     //   'headers': {
     //     'Content-Type': 'application/json'
@@ -379,6 +379,27 @@ export default class {
     });
     request.then(res => {
       console.log(res);
+    });
+    return request;
+  }
+
+
+  /**
+   * Obtains data of the users sharing a project. Minimum result would be the only the owner.
+   * For each user returns the id of the sharing permission, name, email address, role and profile image url.
+   * @param {String} projectId The project id.
+   */
+  static getProjectTeamData(projectId) {
+    // https://developers.google.com/drive/api/v3/reference/permissions/list
+    const request = gapi.client.request({
+      'path': `https://www.googleapis.com/drive/v3/files/${projectId}/permissions?fields=permissions(id,displayName,emailAddress,role,photoLink)`,
+      'method': 'GET',
+      'headers': { 'Content-Type': 'application/json' }
+    });
+    request.then(res => {
+      console.log(res);
+    }, rej => {
+      console.log(rej);
     });
     return request;
   }
@@ -667,6 +688,21 @@ export default class {
       }
     } else if (projectId !== 'temporal') {
       projectIndex = AppData.projectsData.findIndex(proj => proj.id === projectId);
+    }
+
+    // Gets the project team members data and adds it to the corresponding projectData object.
+    if (projectIndex >= 0 && !AppData.projectsData[projectIndex].permissions) {
+      try {
+        const projPermissionsRes = await this.getProjectTeamData(projectId);
+        const projPermissionsData = projPermissionsRes.result.permissions;
+        if (projPermissionsData && projPermissionsData.length > 0) {
+          AppData.projectsData[projectIndex].permissions = projPermissionsData;
+        } else {
+          console.log('No project team members found.');
+        }
+      } catch (error) {
+        console.log('Error fetching the team members data.');
+      }
     }
 
     // If there is no data for projectSettings.json file in the appData yet fetch it.

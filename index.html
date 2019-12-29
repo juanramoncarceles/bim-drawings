@@ -162,9 +162,14 @@
 
   <div id="panelsStorage" style="display: none;">
     <form id="commentForm">
-      <textarea name="comment" id="" cols="30" rows="10"></textarea>
+      <textarea name="comment" rows="10"></textarea>
+      <div class="members">
+        <p>Mention team members:</p>
+        <select name="members" multiple></select>
+        <p class="info">Use Ctrl / Command to select multiple.</p>
+      </div>
       <div class="buttonsContainer">
-        <button type="reset" class="buttonBase light">CANCEL</button>
+        <button id="commentFormCancel" class="buttonBase light">CANCEL</button>
         <button type="submit" class="buttonBase light">ADD</button>
       </div>
     </form>

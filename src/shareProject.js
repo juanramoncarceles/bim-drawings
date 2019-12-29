@@ -275,12 +275,11 @@ export class ShareProject {
         // 'resArr' is an array with all the resolved promises.
         resArr.forEach((res, i) => {
           this.projectData.permissions.push({
-            kind: res.result.kind,
             id: res.result.id,
-            type: res.result.type,
             emailAddress: this.pendingToAdd[i],
             role: res.result.role,
-            displayName: 'User name will be available next time the app is launched.'
+            displayName: res.result.displayName,
+            thumb: res.result.photoLink
           });
         });
       }, rej => {
