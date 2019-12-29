@@ -22,5 +22,7 @@ export class Comment {
     representation.dataset.id = this.id;
     commentsGroup.appendChild(representation);
     this.representations.push(representation);
+    // Add a data-attr to the element to indicate it has an associated comment.
+    element.dataset.comment = this.id;
   }
 }

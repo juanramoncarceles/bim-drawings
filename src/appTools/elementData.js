@@ -19,10 +19,18 @@ export class ElementData extends ElementSelection {
     super.manageSelection(e);
     if (this.selection !== null) {
       this.showElementData(this.selection.dataset.category, this.selection.dataset.id);
+      if (this.selection.dataset.comment) {
+        const comment = this.workspace.comments.find(c => c.id === this.selection.dataset.comment);
+        console.log(comment);
+        this.workspace.viewCommentData(comment);
+      } else {
+        // TODO: if the comments section is there from the previous selected element it should be removed
+        // if (this.workspace.mainPanel.sections.find(s => s.name === 'Comments')) { this.workspace.mainPanel.removeSection('Comments'); }
+      }
     } else if (this.currentElementData) {
       this.currentElementData = undefined;
       this.workspace.mainPanel.close();
-      this.workspace.mainPanel.removeSection('Properties');
+      // TODO: Clean data tables content.
       console.log('Data table cleaned.');
     }
   }

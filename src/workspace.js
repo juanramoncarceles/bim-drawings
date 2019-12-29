@@ -86,6 +86,38 @@ export class Workspace {
   }
 
 
+  /********************** COMMENTS MANAGEMENT **********************/
+
+  viewCommentData(comment) {
+    this.commentForm.elements["comment"].value = comment.content;
+    this.commentForm.elements["comment"].disabled = true;
+    if (comment.mentions.length > 0) {
+      const mentions = [];
+      // It should be still a member of the team otherwise its name is set to 'removed user'
+      // TODO: if a mentioned team member was removed it should be removed from any mention ? when ?
+      comment.mentions.forEach(mentionEmail => {
+        const permission = this.permissions.find(p => p.emailAddress === mentionEmail);
+        mentions.push(`<option value="${mentionEmail}">${permission ? permission.displayName : 'Removed user'}</option>`);
+      });
+      this.commentForm.elements["members"].innerHTML = mentions.join('');
+      this.commentForm.elements["members"].disabled = true; // This may be moved after the 'if' if it is always visible
+      // TODO: Hide the form buttons to add / cancel
+      // ? When clicking Edit is when the rest of members are added or here ?
+    } else {
+      // TODO Show a message indicating no mentions? show the empty select?
+      Generics.emptyNode(this.commentForm.elements["members"]);
+    }
+    this.mainPanel.addSection('Comment', this.commentForm);
+  }
+
+
+  deleteComment(commentId) {
+    // delete representations
+    // remove comment object from array
+    // indicate that there are changes to save
+  }
+
+
   /********************** DRAWINGS MANAGEMENT **********************/
 
   /**
