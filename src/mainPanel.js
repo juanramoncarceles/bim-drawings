@@ -10,12 +10,12 @@ export class MainPanel {
     this.sections = [];
     this.setActive = this.setActive.bind(this);
     this.panelHeader.onclick = e => {
-      if (e.target.closest('[data-btn]') || !button.classList.contains('active'))
-        this.setActive(e.target.closest('[data-btn]'));
+      const button = e.target.closest('[data-btn]');
+      if (button && !button.classList.contains('active'))
+        this.setActive(button.innerText);
     };
   }
 
-  // TODO: Make the panel close automatically if empty.
   open() {
     this.panel.classList.add('open');
     this.isOpen = true;
@@ -42,15 +42,15 @@ export class MainPanel {
 
   /**
    * Sets a section as active.
-   * @param {HTMLElement} button The button container that correspons to the section to activate.
+   * @param {String} name The name of the section to activate.
    */
-  setActive(button) {
+  setActive(name) {
     if (this.activeSection) {
       this.activeSection.button.classList.remove('active');
       this.activeSection.body.classList.add('hidden');
     }
     // This means that sections should have unique names.
-    this.activeSection = this.sections.find(s => s.name === button.innerText);
+    this.activeSection = this.sections.find(s => s.name === name);
     this.activeSection.button.classList.add('active');
     this.activeSection.body.classList.remove('hidden');
   }
@@ -74,12 +74,12 @@ export class MainPanel {
       // Added to sections array.
       this.sections.push(section);
     }
-    this.setActive(section.button);
-    console.log('Panel sections:', this.sections);
+    this.setActive(section.name);
   }
 
   /**
    * Removes a section form the panel contents.
+   * If this was the only section the panel will close.
    * @param {String} name 
    */
   removeSection(name) {
@@ -87,7 +87,12 @@ export class MainPanel {
     const section = this.sections.splice(sectionIndex, 1)[0];
     section.button.remove();
     this.panelsStorage.appendChild(section.body);
-    console.log('Panel sections:', this.sections);
+    if (this.sections.length > 0) {
+      // I set as active the first.
+      this.setActive(this.sections[0].name);
+    } else {
+      this.close();
+    }
   }
 
   kill() {

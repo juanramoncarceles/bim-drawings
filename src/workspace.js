@@ -48,6 +48,13 @@ export class Workspace {
       this.drawings.forEach(drawing => drawing.commentsChanged = true);
     }
     this.mainPanel = new MainPanel(App.mainPanel, App.panelsStorage);
+
+    // TODO Where do i place this??
+    this.deleteCommentBtn = document.getElementById('commentFormDelete');
+    this.deleteCommentBtn.onclick = e => {
+      e.preventDefault();
+      this.deleteComment(this.commentForm.dataset.comment);
+    };
   }
 
   // TODO: Set a default 'activeDrawing' with the 'elementsData' tool active by default? this.activeTool = new ElementsData('elementsDataTool', this);
@@ -89,6 +96,8 @@ export class Workspace {
   /********************** COMMENTS MANAGEMENT **********************/
 
   viewCommentData(comment) {
+    // TODO this could be a property of the CommentForm created
+    this.commentForm.dataset.comment = comment.id;
     this.commentForm.elements["comment"].value = comment.content;
     this.commentForm.elements["comment"].disabled = true;
     if (comment.mentions.length > 0) {
@@ -112,9 +121,17 @@ export class Workspace {
 
 
   deleteComment(commentId) {
-    // delete representations
-    // remove comment object from array
-    // indicate that there are changes to save
+    const index = this.comments.findIndex(c => c.id === commentId);
+    // Delete representations from the SVGs.
+    this.comments[index].representations.forEach(r => r.remove());
+    // Remove comment object from the array.
+    this.comments.splice(index, 1);
+    // Indicate that there are changes to save.
+    this.unsavedCommentsData();
+
+    // IMPORTANT this may ba wrong should be outside of this method
+    // If it has been called from the panel then remove the Comment section ?? maybe not inside this function
+    this.mainPanel.removeSection('Comment');
   }
 
 

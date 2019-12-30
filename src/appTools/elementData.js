@@ -23,9 +23,9 @@ export class ElementData extends ElementSelection {
         const comment = this.workspace.comments.find(c => c.id === this.selection.dataset.comment);
         console.log(comment);
         this.workspace.viewCommentData(comment);
-      } else {
-        // TODO: if the comments section is there from the previous selected element it should be removed
-        // if (this.workspace.mainPanel.sections.find(s => s.name === 'Comments')) { this.workspace.mainPanel.removeSection('Comments'); }
+      } else if (this.workspace.mainPanel.sections.find(s => s.name === 'Comment')) {
+        // If the comments section is there from the previous selected element it should be removed.
+        this.workspace.mainPanel.removeSection('Comment');
       }
     } else if (this.currentElementData) {
       this.currentElementData = undefined;
