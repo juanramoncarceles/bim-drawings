@@ -78,7 +78,7 @@ export class MainPanel {
   }
 
   /**
-   * Removes a section form the panel contents.
+   * Removes a section from the panel contents.
    * If this was the only section the panel will close.
    * @param {String} name 
    */

@@ -426,7 +426,7 @@ main {
   font-weight: lighter;
 }
 
-#commentForm > .buttonsContainer { 
+#commentForm > .formButtonsModes > .buttonsContainer { 
   margin-top: 0.8rem;
   display: flex;
   justify-content: space-between;

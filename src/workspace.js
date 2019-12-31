@@ -1,6 +1,7 @@
 import Generics from './generics';
 import { Comment } from './comment';
 import { MainPanel } from './mainPanel';
+import { CommentForm } from './CommentForm';
 
 export class Workspace {
   constructor(projectData, App) {
@@ -35,7 +36,6 @@ export class Workspace {
     this.drawingsBtns.style.display = 'unset';
     App.toolbarsContainer.style.display = 'flex';
     this.projectsData = App.projectsData;
-    this.commentForm = document.getElementById('commentForm');
     this.dataTablesContainer = document.getElementById('dataTablesContainer');
     this.commentsChangesUnsaved;
     if (projectData.commentsFileId) {
@@ -48,13 +48,7 @@ export class Workspace {
       this.drawings.forEach(drawing => drawing.commentsChanged = true);
     }
     this.mainPanel = new MainPanel(App.mainPanel, App.panelsStorage);
-
-    // TODO Where do i place this??
-    this.deleteCommentBtn = document.getElementById('commentFormDelete');
-    this.deleteCommentBtn.onclick = e => {
-      e.preventDefault();
-      this.deleteComment(this.commentForm.dataset.comment);
-    };
+    this.commentForm = new CommentForm(document.getElementById('commentForm'), this);
   }
 
   // TODO: Set a default 'activeDrawing' with the 'elementsData' tool active by default? this.activeTool = new ElementsData('elementsDataTool', this);
@@ -90,48 +84,6 @@ export class Workspace {
     this.commentsChangesUnsaved = true;
     this.saveBtn.classList.remove('disabled');
     this.saveBtn.classList.add('enabled');
-  }
-
-
-  /********************** COMMENTS MANAGEMENT **********************/
-
-  viewCommentData(comment) {
-    // TODO this could be a property of the CommentForm created
-    this.commentForm.dataset.comment = comment.id;
-    this.commentForm.elements["comment"].value = comment.content;
-    this.commentForm.elements["comment"].disabled = true;
-    if (comment.mentions.length > 0) {
-      const mentions = [];
-      // It should be still a member of the team otherwise its name is set to 'removed user'
-      // TODO: if a mentioned team member was removed it should be removed from any mention ? when ?
-      comment.mentions.forEach(mentionEmail => {
-        const permission = this.permissions.find(p => p.emailAddress === mentionEmail);
-        mentions.push(`<option value="${mentionEmail}">${permission ? permission.displayName : 'Removed user'}</option>`);
-      });
-      this.commentForm.elements["members"].innerHTML = mentions.join('');
-      this.commentForm.elements["members"].disabled = true; // This may be moved after the 'if' if it is always visible
-      // TODO: Hide the form buttons to add / cancel
-      // ? When clicking Edit is when the rest of members are added or here ?
-    } else {
-      // TODO Show a message indicating no mentions? show the empty select?
-      Generics.emptyNode(this.commentForm.elements["members"]);
-    }
-    this.mainPanel.addSection('Comment', this.commentForm);
-  }
-
-
-  deleteComment(commentId) {
-    const index = this.comments.findIndex(c => c.id === commentId);
-    // Delete representations from the SVGs.
-    this.comments[index].representations.forEach(r => r.remove());
-    // Remove comment object from the array.
-    this.comments.splice(index, 1);
-    // Indicate that there are changes to save.
-    this.unsavedCommentsData();
-
-    // IMPORTANT this may ba wrong should be outside of this method
-    // If it has been called from the panel then remove the Comment section ?? maybe not inside this function
-    this.mainPanel.removeSection('Comment');
   }
 
 

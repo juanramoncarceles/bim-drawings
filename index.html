@@ -168,12 +168,19 @@
         <select name="members" multiple></select>
         <p class="info">Use Ctrl / Command to select multiple.</p>
       </div>
-      <div class="buttonsContainer">
-        <button id="commentFormCancel" class="buttonBase light">CANCEL</button>
-        <button type="submit" class="buttonBase light">ADD</button>
+      <div class="formButtonsModes">
+        <div data-mode="create" class="buttonsContainer" style="display:none;">
+          <button id="commentFormCancel" class="buttonBase light">CANCEL</button>
+          <button id="addCommentBtn" class="buttonBase light">ADD</button>
+        </div>
+        <div data-mode="view" class="buttonsContainer" style="display:none;">
+          <button id="commentFormDelete" class="buttonBase light">DELETE</button>
+          <button id="commentFormEdit" class="buttonBase light">EDIT</button>
+        </div>
+        <div data-mode="edit" class="buttonsContainer" style="display:none;">
+          <button id="discardChanges" class="buttonBase light">DISCARD CHANGES</button>
+        </div>
       </div>
-      <button id="commentFormDelete" class="buttonBase light">DELETE</button>
-      <button id="commentFormEdit" class="buttonBase light">EDIT</button>
     </form>
     <div id="dataTablesContainer"></div>
   </div>
