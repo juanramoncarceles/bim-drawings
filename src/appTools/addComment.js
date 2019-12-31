@@ -27,6 +27,8 @@ export class AddComment extends ElementSelection {
     // It could be disabled and or full if the previous use was view mode.
     workspace.commentForm.enableForm();
     workspace.commentForm.reset();
+    // This could be a property of the Tool class.
+    this.hasUsedPanel = false;
   }
 
 
@@ -43,6 +45,7 @@ export class AddComment extends ElementSelection {
         this.workspace.commentForm.buttonsVisibilityMode('create');
         this.workspace.mainPanel.addSection('Comment', this.workspace.commentForm.formElement);
         this.workspace.mainPanel.open();
+        this.hasUsedPanel = true;
         // TODO: Allow to change the commented element by picking another one.
         this.waitingForComment = true;
       }
@@ -97,11 +100,11 @@ export class AddComment extends ElementSelection {
     console.log('Comment element tool disabled.');
     if (this.waitingForComment) {
       this.workspace.commentForm.reset();
-      // Close the panel.
       this.workspace.mainPanel.close();
     }
-    // Remove the comment form.
-    this.workspace.mainPanel.removeSection('Comment');
+    if (this.hasUsedPanel) {
+      this.workspace.mainPanel.removeSection('Comment');
+    }
     // Remove the tool event listeners.
     this.workspace.commentForm.addCommentBtn.onclick = null;
     this.workspace.commentForm.cancelCreateBtn.onclick = null;

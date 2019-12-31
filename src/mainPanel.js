@@ -84,14 +84,18 @@ export class MainPanel {
    */
   removeSection(name) {
     const sectionIndex = this.sections.findIndex(s => s.name === name);
-    const section = this.sections.splice(sectionIndex, 1)[0];
-    section.button.remove();
-    this.panelsStorage.appendChild(section.body);
-    if (this.sections.length > 0) {
-      // I set as active the first.
-      this.setActive(this.sections[0].name);
+    if (sectionIndex >= 0) {
+      const section = this.sections.splice(sectionIndex, 1)[0];
+      section.button.remove();
+      this.panelsStorage.appendChild(section.body);
+      if (this.sections.length > 0) {
+        // I set as active the first.
+        this.setActive(this.sections[0].name);
+      } else {
+        this.close();
+      }
     } else {
-      this.close();
+      console.warn('Impossible to remove the section. No section was found with that name.');
     }
   }
 

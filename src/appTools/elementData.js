@@ -9,6 +9,9 @@ export class ElementData extends ElementSelection {
     this.projectsData = workspace.projectsData;
     this.projectIndex = workspace.projectIndex;
     this.currentElementData;
+    // If a tool requires the panel it is specified here.
+    // This could be a property of the Tool class.
+    this.hasUsedPanel = false;
   }
 
   /**
@@ -72,6 +75,7 @@ export class ElementData extends ElementSelection {
       this.workspace.dataTablesContainer.innerHTML = this.createDataTable(this.currentElementData);
       this.workspace.mainPanel.addSection('Properties', this.workspace.dataTablesContainer);
       this.workspace.mainPanel.open();
+      this.hasUsedPanel = true;
     }
   }
 
@@ -102,9 +106,13 @@ export class ElementData extends ElementSelection {
   kill() {
     super.kill();
     // TODO: Clear the data table.
+    // TODO: If the user has the option to anchor the panel this would be wrong.
     if (this.workspace.mainPanel.isOpen) {
       this.workspace.mainPanel.close();
+    }
+    if (this.hasUsedPanel) {
       this.workspace.mainPanel.removeSection('Properties');
+      // TODO If it has used also the Comment section it should be removed.
     }
     console.log('Elements data tool disabled.');
   }
