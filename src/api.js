@@ -422,17 +422,18 @@ export default class {
   /**
    * Sends an email indicating that a project as been shared with the receiver.
    * @param {String} sharer Name of the user who shared the project.
-   * @param {String} receiver Email address of the receiver.
+   * @param {String | String[]} recipients Comma separated list or an array of recipients email addresses.
    * @param {String} projectName The name of the project that has been shared.
    * @param {String} projectId This is required to create the url link to the project.
    */
-  static sendSharingProjectEmail(sharer, receiver, projectName, projectId) {
+  static sendSharingProjectEmail(sharer, recipients, projectName, projectId) {
     const request = fetch('https://us-central1-testgdproject-1570036439931.cloudfunctions.net/sendMail', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ sharer, receiver, projectName, projectId }) // body data type must match "Content-Type" header
+      // body data type must match "Content-Type" header.
+      body: JSON.stringify({ sharer, recipients, projectName, projectId })
     });
     request.then(res => {
       console.log(res);

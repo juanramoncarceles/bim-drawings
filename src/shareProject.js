@@ -5,6 +5,7 @@ export class ShareProject {
   constructor(shareProjectContainer, App) {
     this.htmlContainer = shareProjectContainer; // This is used in the context menu to pass it to the showModalDialog()
     this.shareForm = shareProjectContainer.querySelector('.share-form');
+    this.shareFormErrorMsg = shareProjectContainer.querySelector('.share-form > .error-msg');
     this.confirmChangesBtns = shareProjectContainer.querySelector('.confirm-changes-btns');
     this.saveChangesBtn = shareProjectContainer.querySelector('.save-changes-btn');
     this.cancelChangesBtn = shareProjectContainer.querySelector('.cancel-changes-btn');
@@ -13,6 +14,8 @@ export class ShareProject {
     this.currentUsersTable = shareProjectContainer.querySelector('.current-users tbody');
     this.pendingUsersContent = shareProjectContainer.querySelector('.pending-users');
     this.pendingUsersToAddTable = shareProjectContainer.querySelector('.pending-users tbody');
+    this.shareNotificationContainer = shareProjectContainer.querySelector('.share-notification');
+    this.shareNotificationInput = shareProjectContainer.querySelector('.share-notification > input');
 
     // The App is needed to access some of its methods.
     this.app = App;
@@ -65,6 +68,7 @@ export class ShareProject {
     this.pendingToAdd = [];
     Generics.emptyNode(this.pendingUsersToAddTable);
     this.pendingUsersContent.classList.add('hidden');
+    this.shareNotificationContainer.classList.add('hidden');
     for (let i = 0; i < this.confirmChangesBtns.children.length; i++) {
       this.confirmChangesBtns.children[i].classList.add('disabled');
     }
@@ -77,14 +81,21 @@ export class ShareProject {
     // Create list of users if any.
     if (projectData.shared) {
       const users = [];
+      const currentUserEmail = window.getCurrentUser().emailAddress;
+      const owner = '<td title="Project owner"><svg><use href="#keyIcon"></use></svg></td>';
+      const collab = '<td class="action-btn" data-action="stage"><svg><use href="#crossIcon"></use></svg></td>';
       projectData.permissions.forEach(user => {
-        if (user.role !== 'owner') {
-          users.push(`
-            <tr data-permission="${user.id}">
-              <td class="user-data"><span>${user.displayName}</span><span>${user.emailAddress}</span></td>
-              <td class="action-btn" data-action="stage"><svg><use href="#crossIcon"></use></svg></td>
-            </tr>`);
-        }
+        users.push(`
+          <tr data-permission="${user.id}">
+            <td class="user-data">
+              <img src="${user.photoLink}">
+              <div>
+                <span>${user.emailAddress === currentUserEmail ? 'You' : user.displayName}</span>
+                <span>${user.emailAddress}</span>
+              </div>
+            </td>
+            ${user.role === 'owner' ? owner : collab}
+          </tr>`);
       });
       this.currentUsersTable.innerHTML = users.join('');
       // Show the table because it could be hidden from the previous time.
@@ -103,6 +114,7 @@ export class ShareProject {
     e.preventDefault();
     const emailAddress = e.target.elements['email'].value;
     if (emailAddress !== '' && !this.pendingToAdd.includes(emailAddress) && this.projectData.permissions.find(p => p.emailAddress === emailAddress) === undefined) {
+      this.shareFormErrorMsg.classList.add('hidden');
       this.pendingToAdd.push(emailAddress);
       this.pendingUsersToAddTable.insertAdjacentHTML('beforeend', `
         <tr data-email="${emailAddress}">
@@ -113,6 +125,8 @@ export class ShareProject {
       // Actions when the first email is added to the table.
       if (this.pendingToAdd.length === 1) {
         this.pendingUsersContent.classList.remove('hidden');
+        this.shareNotificationContainer.classList.remove('hidden');
+        this.shareNotificationInput.checked = true;
         // If this makes that there are changes to save enable the buttons.
         if (this.pendingToRemove.length === 0) {
           for (let i = 0; i < this.confirmChangesBtns.children.length; i++) {
@@ -124,6 +138,7 @@ export class ShareProject {
         }
       }
     } else {
+      this.shareFormErrorMsg.classList.remove('hidden');
       console.log('Not valid input.');
     }
   }
@@ -140,6 +155,7 @@ export class ShareProject {
     // Actions when the table has become empty.
     if (this.pendingToAdd.length === 0) {
       this.pendingUsersContent.classList.add('hidden');
+      this.shareNotificationContainer.classList.add('hidden');
       if (this.pendingToRemove.length === 0) {
         for (let i = 0; i < this.confirmChangesBtns.children.length; i++) {
           this.confirmChangesBtns.children[i].classList.add('disabled');
@@ -282,6 +298,9 @@ export class ShareProject {
             thumb: res.result.photoLink
           });
         });
+        if (this.shareNotificationInput.checked) {
+          API.sendSharingProjectEmail(window.getCurrentUser().displayName, this.pendingToAdd, this.projectData.name, this.projectData.id);
+        }
       }, rej => {
         console.log(rej);
         additionSuccess = false;

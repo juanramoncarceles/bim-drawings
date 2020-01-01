@@ -755,15 +755,19 @@ div#dataTablesContainer {
   visibility: hidden;
 }
 
-#shareProjectDialog td.action-btn {
-  width: 30px;
-  cursor: pointer;
+#shareProjectDialog td:last-child {
+  width: 40px;
   text-align: center;    
+
 }
 
-#shareProjectDialog td.action-btn > svg {
+#shareProjectDialog td:last-child > svg {
   width: 12px;
   height: 12px;
+}
+
+#shareProjectDialog td.action-btn {
+  cursor: pointer;
 }
 
 #shareProjectDialog td.action-btn:hover {
@@ -778,25 +782,27 @@ div#dataTablesContainer {
   opacity: 0.4;
 }
 
-/* #shareProjectDialog tr.to-delete > td:nth-child(2) {
-  visibility: hidden;
-} */
+#shareProjectDialog td.user-data > img {
+  float: left;
+  height: 64px;
+  margin-right: 0.5rem;
+}
 
-#shareProjectDialog td.user-data {
+#shareProjectDialog td.user-data > div {
+  display: flex;
+  height: 64px;
   padding: 0.4rem;
+  flex-direction: column;
+  justify-content: space-around;
 }
 
-#shareProjectDialog td.user-data > span {
-  display: block;
-}
-
-#shareProjectDialog td.user-data > span:nth-child(2) {
+#shareProjectDialog td.user-data > div > span:nth-child(2) {
   font-weight: lighter;
 }
 
-/* #shareProjectDialog > .form-wrapper {
-  position: relative;
-} */
+#shareProjectDialog > .pending-users td.user-data {
+  padding: 0.4rem;
+}
 
 #shareProjectDialog > form > label {
   display: block;
@@ -816,6 +822,16 @@ div#dataTablesContainer {
   width: 60px;
 }
 
+#shareProjectDialog > form > .error-msg {
+  font-size: 0.9rem;
+  font-weight: lighter;
+  color: red;
+}
+
+#shareProjectDialog > form > .error-msg.hidden {
+  visibility: hidden;
+}
+
 #shareProjectDialog > .loader-container {
   display: flex;
   align-items: center;
@@ -832,22 +848,20 @@ div#dataTablesContainer {
   display: none;
 }
 
-/* #shareProjectDialog .confirm-share-btn {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-}
-
-#shareProjectDialog .confirm-share-btn.hidden {
-  visibility: hidden;
-} */
-
 #shareProjectDialog .confirm-changes-btns {
-  flex-grow: 1;
   display: flex;
   align-items: flex-end;
   justify-content: flex-end;
-  margin-top: 1rem;
+  margin-top: 0.3rem;
+}
+
+#shareProjectDialog .share-notification {
+  position: absolute;
+  bottom: 0;
+}
+
+#shareProjectDialog .share-notification.hidden {
+  visibility: hidden;
 }
 
 #shareProjectDialog .save-changes-btn {
