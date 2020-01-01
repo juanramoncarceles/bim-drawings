@@ -148,6 +148,13 @@ document.getElementById('saveDeviceToken').onclick = () => saveMessagingDeviceTo
 const App = new Application();
 
 
+/************************* GLOBAL METHODS **************************/
+
+window.getCurrentUser = function () {
+  return App.userInfo;
+}
+
+
 /************************ BROADCAST CHANNEL *************************
  * To comunicate with the Service Worker and viceversa.
 */

@@ -10,10 +10,11 @@ export class AddComment extends ElementSelection {
     this.waitingForComment = false;
     this.cancelComment = this.cancelComment.bind(this);
     workspace.commentForm.cancelCreateBtn.onclick = this.cancelComment;
-    if (workspace.permissions.length > 1) { // there is always at least the owner
+    if (workspace.permissions.length > 1) { // There is always at least the owner.
       const membersEmails = [];
+      const currentUserEmail = window.getCurrentUser().emailAddress;
       workspace.permissions.forEach(member => {
-        if (member.emailAddress !== 'ramoncarcelesroman@gmail.com') { // TODO: get the current with: window.getCurrentUser().emailAddress
+        if (member.emailAddress !== currentUserEmail) {
           membersEmails.push(`<option value="${member.emailAddress}">${member.displayName}</option>`);
         }
       });
@@ -63,8 +64,9 @@ export class AddComment extends ElementSelection {
     if (this.workspace.permissions.length > 1) { // there is always at least the owner
       selectedEmails = this.workspace.commentForm.getSelectedMembers();
       if (selectedEmails.length > 0) {
-        // TODO: window.getCurrentUser.displayName;
-        // API.sendNotification(selectedEmails, 'Ramon' userInfo.displayName, userInfo.photoLink, this.workspace.commentForm.textInput.value, this.workspace.projectName, this.workspace.projectId);
+        const currentUserName = window.getCurrentUser().displayName;
+        const currentUserPhoto = window.getCurrentUser().photoLink;
+        // TODO: API.sendNotification(selectedEmails, currentUserName, currentUserPhoto, this.workspace.commentForm.textInput.value, this.workspace.projectName, this.workspace.projectId);
       }
     }
     const comment = new Comment(this.selection.dataset.id, this.workspace.commentForm.textInput.value, selectedEmails);
