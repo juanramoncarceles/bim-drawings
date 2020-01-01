@@ -76,9 +76,14 @@
       <div class="side-nav-header">
         <div id="user-info"></div>
       </div>
-      <div class="side-nav-actions">
-        <button id="signoutBtn" class="buttonBase light">Sign Out</button>
-        <button id="installBtn" class="buttonBase" hidden>Install</button>
+      <div class="side-nav-body">
+        <div class="side-nav-section">
+          <button id="signoutBtn" class="buttonBase light">Sign Out</button>
+        </div>
+        <div class="side-nav-section grow"></div>
+        <div class="side-nav-section">
+          <button id="installBtn" class="buttonBase emphasize" hidden>TRY THE APP!</button>
+        </div>
       </div>
       <div class="side-nav-footer">
         <p>VisualARQ Drawings Viewer</p>
@@ -100,7 +105,7 @@
     <div id='projectsListContainer' style="display: none;">
       <div>
         <span>
-          <button id="newProjectBtn" class="buttonBase light">NEW PROJECT</button>
+          <button id="newProjectBtn" class="buttonBase light emphasize">NEW PROJECT</button>
         </span>
         <h4>PROJECTS</h4>
         <span>
@@ -162,10 +167,10 @@
       <div class="formButtonsModes">
         <div data-mode="create" class="buttonsContainer" style="display:none;">
           <button id="commentFormCancel" class="buttonBase light">CANCEL</button>
-          <button id="addCommentBtn" class="buttonBase light">ADD</button>
+          <button id="addCommentBtn" class="buttonBase emphasize">ADD</button>
         </div>
         <div data-mode="view" class="buttonsContainer" style="display:none;">
-          <button id="commentFormDelete" class="buttonBase light">DELETE</button>
+          <button id="commentFormDelete" class="buttonBase danger">DELETE</button>
           <button id="commentFormEdit" class="buttonBase light">EDIT</button>
         </div>
         <div data-mode="edit" class="buttonsContainer" style="display:none;">
@@ -225,7 +230,7 @@
       </div>
       <div class="confirm-changes-btns">
         <button class="buttonBase light cancel-changes-btn disabled">Cancel</button>
-        <button class="buttonBase light save-changes-btn disabled">Save changes</button>
+        <button class="buttonBase emphasize save-changes-btn disabled">Save changes</button>
       </div>
       <div class="loader-container hidden">
         <svg class="svg-loader">

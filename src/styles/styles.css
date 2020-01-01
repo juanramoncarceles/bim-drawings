@@ -67,13 +67,31 @@ svg.svg-loader {
   border-color: #cfcfcf;
 }
 
-.buttonBase.light:hover {
+.buttonBase.light:not(.disabled):hover {
   background-color: #ececec;
+}
+
+.buttonBase.emphasize {
+  border-color: #e0e0e0;
+  background-color: #d1f0ec;
+}
+
+.buttonBase.emphasize:not(.disabled):hover {
+  background-color: #acd3ce;
+}
+
+.buttonBase.danger {
+  color: #f55252;
+  border-color: #fba4a4;
+}
+
+.buttonBase.danger:not(.disabled):hover {
+  background-color: #ffe9e9;
 }
 
 .buttonBase.disabled {
   cursor: unset;
-  color: #bdbcbc;
+  opacity: 0.5;
 }
 
 button.disabled:focus {
@@ -83,10 +101,6 @@ button.disabled:focus {
 /* Locked is similar to disabled but it doesnt change color of content.*/
 .buttonBase.locked {
   cursor: unset;
-}
-
-.buttonBase.disabled:hover {
-  background-color: unset;
 }
 
 .buttonBase.locked:hover {
@@ -490,10 +504,6 @@ div#dataTablesContainer {
   } 
 }
 
-#newProjectBtn {
-  background-color: #d1f0ec;
-}
-
 #closeProjectsListBtn {
   float: right;
 }
@@ -867,7 +877,6 @@ div#dataTablesContainer {
 
 #shareProjectDialog .save-changes-btn {
   margin-left: 0.5rem;
-  background-color: #d1f0ec;
 }
 
 
@@ -937,7 +946,6 @@ div#dataTablesContainer {
 
 #user-info > img {
   margin-right: 0.6rem;
-  border-radius: 50%;
 }
 
 #user-info > span {
@@ -952,13 +960,32 @@ div#dataTablesContainer {
   font-weight: lighter;
 }
 
-.side-nav-actions {
+.side-nav-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   flex-grow: 1;
   padding: 1rem;
+  text-align: center;
 }
 
-.side-nav-actions > button {
+.side-nav-body button {
+  width: 80%;
+}
+
+.side-nav-body > .side-nav-section {
   width: 100%;
+  padding-bottom: 1rem;
+}
+
+/* .side-nav-body > .side-nav-section > .title {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-top: 1px solid #dfdfdf;
+} */
+
+.side-nav-body > .side-nav-section.grow {
+  flex-grow: 1;
 }
 
 #sideNavToggle {

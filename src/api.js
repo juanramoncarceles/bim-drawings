@@ -452,18 +452,18 @@ export default class {
    * It uses the Firebase database to obtain the device tokens associated to each email address.
    * @param {String[]} emails array of emails of the users to send the notification to.
    * @param {String} author name of the author that generated the notification.
-   * @param {String} thumb url of the image to identify the message.
+   * @param {String} photoLink url of the image to identify the message.
    * @param {String} text the textual content of the notification message.
    * @param {String} projectName the name of the project for which the notification is sent.
    * @param {String} projectId the id of the project for which the notification is sent.
    */
-  static sendNotification(emails, author, thumb, text, projectName, projectId) {
+  static sendNotification(emails, author, photoLink, text, projectName, projectId) {
     const request = fetch('https://us-central1-testgdproject-1570036439931.cloudfunctions.net/sendPushNotification', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ emails, author, thumb, text, projectName, projectId }) // body data type must match "Content-Type" header
+      body: JSON.stringify({ emails, author, photoLink, text, projectName, projectId }) // body data type must match "Content-Type" header
     });
     request.then(res => {
       console.log(res);
