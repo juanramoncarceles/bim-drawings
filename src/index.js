@@ -89,23 +89,27 @@ function getMessagingToken() {
 
 
 /**
- * Saves the messaging device token to the datastore.
+ * Saves the FCM token to the datastore and session storage.
  * If notification permissions have not been granted it asks for them.
  */
-function saveMessagingDeviceToken() {
-  firebase.messaging().getToken().then(currentToken => {
-    if (currentToken) {
-      console.log('FCM device token:', currentToken);
-      // Saving the Device Token to the datastore.
-      firebase.firestore().collection('fcmTokens').doc(currentToken)
-        .set({ email: App.userInfo.emailAddress });
-    } else {
-      // Need to request permissions to show notifications.
-      requestNotificationsPermissions();
-    }
-  }).catch(err => {
-    console.error('Unable to get messaging token.', err);
-  });
+window.saveMessagingDeviceToken = function () {
+  if (!sessionStorage.getItem('deviceToken')) {
+    firebase.messaging().getToken().then(token => {
+      if (token) {
+        console.log('FCM token generated:', token);
+        // Saving the FCM token in Firestore.
+        firebase.firestore().collection('fcmTokens').doc(token)
+          .set({ email: App.userInfo.emailAddress });
+        // Saving token in Session Storage.
+        sessionStorage.setItem('deviceToken', token);
+      } else {
+        // Need to request permissions to show notifications.
+        requestNotificationsPermissions();
+      }
+    }).catch(err => {
+      console.error('Unable to get FCM token.', err);
+    });
+  }
 }
 
 
@@ -116,9 +120,9 @@ function requestNotificationsPermissions() {
   console.log('Requesting notifications permission...');
   firebase.messaging().requestPermission().then(() => {
     console.log('Notification permission granted.');
-    saveMessagingDeviceToken();
+    window.saveMessagingDeviceToken();
   }).catch(err => {
-    console.error('Unable to get permission to notify.', err);
+    console.error('Unable to get permission to notify:', err);
   });
 }
 
@@ -136,11 +140,6 @@ function requestNotificationsPermissions() {
 //     }
 //   });
 // }
-
-
-// TEST BUTTONS
-document.getElementById('viewDeviceToken').onclick = () => getMessagingToken();
-document.getElementById('saveDeviceToken').onclick = () => saveMessagingDeviceToken();
 
 
 /****************** THE ONLY INSTANCE OF THE APP *******************/

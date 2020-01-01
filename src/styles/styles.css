@@ -785,6 +785,7 @@ div#dataTablesContainer {
 #shareProjectDialog td.user-data > img {
   float: left;
   height: 64px;
+  width: 64px;
   margin-right: 0.5rem;
 }
 

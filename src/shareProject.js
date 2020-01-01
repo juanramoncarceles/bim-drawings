@@ -295,12 +295,15 @@ export class ShareProject {
             emailAddress: this.pendingToAdd[i],
             role: res.result.role,
             displayName: res.result.displayName,
-            thumb: res.result.photoLink
+            photoLink: res.result.photoLink
           });
         });
         if (this.shareNotificationInput.checked) {
           API.sendSharingProjectEmail(window.getCurrentUser().displayName, this.pendingToAdd, this.projectData.name, this.projectData.id);
         }
+        // It could be that is the first time a collaborator
+        // is added so the FCM device token will be asked.
+        window.saveMessagingDeviceToken();
       }, rej => {
         console.log(rej);
         additionSuccess = false;

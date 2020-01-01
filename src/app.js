@@ -119,14 +119,8 @@ export class Application {
     // TODO: This would make more sense as part of the workspace ?
     document.getElementById('tool-4').addEventListener('click', (e) => this.workspace.manageTools(e, ElementData, 'elementsDataTool'));
     document.getElementById('tool-5').addEventListener('click', (e) => this.workspace.manageTools(e, AddComment, 'commentsTool'));
-
+    /******************** Notifications manager ********************/
     this.notificationsManager = new NotificationsManager();
-
-    // TESTS TO DELETE
-    document.getElementById('sendEmail').onclick = () => API.sendSharingProjectEmail('Pepi', 'juanramoncarceles@gmail.com', 'Casa', '94w02u');
-    document.getElementById('createNotification').onclick = () => this.notificationsManager.createNotificaction({ author: 'Jaime', projectName: 'Test Hotel', content: 'Take a look at this.', thumb: 'src/assets/avatar-placeholder.png', projectId: 'j424r4349roi4oe' });
-    this.sendNotification = document.getElementById('sendNotification');
-    this.sendNotification.onclick = () => API.sendNotification(['ramoncarcelesroman@gmail.com'], 'Jose', 'https://lh3.googleusercontent.com/a-/AAuE7mBuMJ-AmWcmm7TpM7YYsKCHry32ZIsL6wjC3HQL=s64', 'Take a look at this', 'Little house', '1p_ACJhiKf0Bx9JTVPNLs-9yIwt8H23ln');
   }
 
 
@@ -519,6 +513,14 @@ export class Application {
           this.createHTMLProjectsList([res]);
           this.projectsListBtn.style.display = 'unset';
           this.hideViewportMessage();
+          // If the project has collaborators asks the device token
+          // in case it is needed to receive notifications.
+          // TODO: If this project doest have collaborators but other yes I
+          // would need to know otherwise the device token would not be asked.
+          // TODO: Check if any of the project folders has more than one permission.
+          if (res.permissions.length > 1) {
+            window.saveMessagingDeviceToken();
+          }
         }, rej => {
           console.log(rej);
           const errorMessage = rej.body === undefined ? rej : `Message: ${JSON.parse(rej.body).error.message} Code: ${JSON.parse(rej.body).error.code}`;
@@ -545,6 +547,14 @@ export class Application {
       API.listProjectItems(this).then(res => {
         this.createHTMLProjectsList(res);
         this.hideViewportMessage();
+        // Checks if any project has collaborators and if so asks for the
+        // device token in case it is needed to receive notifications.
+        for (let i = 0; i < res.length; i++) {
+          if (res[i].permissions.length > 1) {
+            window.saveMessagingDeviceToken();
+            break;
+          }
+        }
       }, rej => {
         this.projectsList.innerHTML = '<p class="empty-msg">There are no projects. Upload one!</p>';
         this.hideViewportMessage();
