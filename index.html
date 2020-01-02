@@ -82,7 +82,7 @@
         </div>
         <div class="side-nav-section grow"></div>
         <div class="side-nav-section">
-          <button id="installBtn" class="buttonBase emphasize" hidden>TRY THE APP!</button>
+          <button id="installBtn" class="buttonBase emphasize" hidden>INSTALL THE APP!</button>
         </div>
       </div>
       <div class="side-nav-footer">
@@ -160,7 +160,7 @@
     <form id="commentForm">
       <textarea name="comment" rows="10"></textarea>
       <div class="members">
-        <p>Mention team members:</p>
+        <p>Tag team members:</p>
         <select name="members" multiple></select>
         <p class="info">Use Ctrl / Command to select multiple.</p>
       </div>
@@ -174,7 +174,8 @@
           <button id="commentFormEdit" class="buttonBase light">EDIT</button>
         </div>
         <div data-mode="edit" class="buttonsContainer" style="display:none;">
-          <button id="discardChanges" class="buttonBase light">DISCARD CHANGES</button>
+          <button id="discardChanges" class="buttonBase light">CANCEL</button>
+          <button id="confirmChanges" class="buttonBase light disabled">DONE</button>
         </div>
       </div>
     </form>
@@ -209,7 +210,7 @@
         </div>
       </div>
       <div class="pending-users users-container hidden">
-        <p>Pending users to share with:</p>
+        <p>Users to share with:</p>
         <div class="table-wrapper fixed-height">
           <table class="">
             <tbody></tbody>

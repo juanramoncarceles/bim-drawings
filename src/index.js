@@ -77,7 +77,7 @@ messaging.onTokenRefresh(() => {
 /**
  * Auxiliary function to view the device token for FCM.
  */
-function getMessagingToken() {
+window.getMessagingToken = function () {
   firebase.messaging().getToken()
     .then(token => {
       console.log(token);

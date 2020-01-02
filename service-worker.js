@@ -36,7 +36,7 @@ messaging.setBackgroundMessageHandler(payload => {
   const title = `${data.author ? data.author : 'Someone'} mentioned you in the project ${data.projectName}.`;
   const options = {
     body: data.text ? (data.text.length <= 100 ? data.text : data.text.substring(0, 97) + '...') : '',
-    icon: data.thumb,
+    icon: data.photoLink,
     data: { projectId: data.projectId }
   };
 

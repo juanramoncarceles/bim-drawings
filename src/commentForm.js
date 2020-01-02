@@ -10,8 +10,10 @@ export class CommentForm {
     this.deleteBtn = document.getElementById('commentFormDelete');
     this.deleteBtn.onclick = () => this.deleteComment(this.commentId);
     this.editBtn = document.getElementById('commentFormEdit');
-    this.editBtn.onclick = () => this.editComment(this.commentId);
-    // TODO this.cancelEditBtn =
+    this.editBtn.onclick = () => this.enableEditComment(this.commentId);
+    this.cancelUpdateBtn = document.getElementById('discardChanges');
+    this.cancelUpdateBtn.onclick = () => this.discardUpdate();
+    this.confirmUpdateBtn = document.getElementById('confirmChanges');
     this.textInput = formElement.elements["comment"];
     this.mentionsSection = formElement.querySelector('.members');
     this.mentionsInput = formElement.elements["members"];
@@ -76,7 +78,7 @@ export class CommentForm {
     this.buttonsVisibilityMode('view');
   }
 
-  editComment(commentId) {
+  enableEditComment(commentId) {
     const comment = this.workspace.comments.find(c => c.id === commentId);
     if (!this.commentId || commentId !== this.commentId) {
       this.fillInputs(comment);
@@ -84,16 +86,42 @@ export class CommentForm {
     }
     this.enableForm();
     this.buttonsVisibilityMode('edit');
-    // TODO Remove this event listers later? when?
-    // Maybe put a save button or confirm button to end the operation and remove event listeners?
     this.formElement.onchange = () => {
+      this.confirmUpdateBtn.classList.remove('disabled');
+      this.confirmUpdateBtn.onclick = () => this.updateComment(commentId, this.textInput.value, this.getSelectedMembers());
+    }
+  }
+
+  updateComment(commentId, text, mentions) {
+    const comment = this.workspace.comments.find(c => c.id === commentId);
+    if (comment) {
+      comment.content = text;
+      comment.mentions = mentions;
       this.workspace.unsavedCommentsData();
+      this.formElement.onchange = null;
+      this.disableForm();
+      this.buttonsVisibilityMode('view');
+      this.confirmUpdateBtn.classList.add('disabled');
+      this.cancelUpdateBtn.classList.add('disabled');
+      this.confirmUpdateBtn.onclick = null;
+      this.cancelUpdateBtn.onclick = null;
+    } else {
+      console.warn('No comment found with that id:', commentId);
     }
-    this.textInput.onchange = () => {
-      comment.content = this.textInput.value;
-    }
-    this.mentionsInput.onchange = () => {
-      comment.mentions = this.getSelectedMembers();
+  }
+
+  discardUpdate() {
+    const comment = this.workspace.comments.find(c => c.id === this.commentId);
+    if (comment) {
+      this.textInput.value = comment.content;
+      // TODO this.mentionsInput = '' if selection changed put initial selection
+      this.formElement.onchange = null;
+      this.disableForm();
+      this.buttonsVisibilityMode('view');
+      this.confirmUpdateBtn.classList.add('disabled');
+      this.confirmUpdateBtn.onclick = null;
+    } else {
+      console.warn('No comment found with that id:', commentId);
     }
   }
 
