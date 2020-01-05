@@ -207,7 +207,7 @@ header > h1 {
     border-left-style: none;
     background-repeat: no-repeat;
     background-position: center;
-    background-image: url(../assets/icons/projectsListIcon.svg);
+    background-image: url(../assets/icons/projectsListIcon.svg); /* Write svg inline? */
     background-size: 24px;
   }
 }
@@ -990,13 +990,13 @@ div#dataTablesContainer {
   margin: 0.4rem;
   cursor: pointer;
   border-style: none;
-  background-image: url('../assets/icons/hamburgerIcon.svg');
+  background-image: url('../assets/icons/hamburgerIcon.svg'); /* Write svg inline? */
   background-repeat: no-repeat;
   background-position: center;
 }
 
 #sideNavToggle.active {
-  background-image: url('../assets/icons/crossIcon.svg');
+  background-image: url('../assets/icons/crossIcon.svg'); /* Write svg inline? */
 }
 
 #sideNavContainer + .side-nav-shade {

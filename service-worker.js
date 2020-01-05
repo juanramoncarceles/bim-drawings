@@ -76,7 +76,7 @@ self.addEventListener('notificationclick', e => {
 
 
 // Cache name should be updated any time any of the cached files change.
-const CACHE_NAME = 'static-cache-v1';
+const CACHE_NAME = 'static-cache-v2';
 
 
 // Add list of files to cache here.
@@ -84,7 +84,11 @@ const FILES_TO_CACHE = [
   '/index.html',
   '/src/styles/styles.css',
   '/dist/main.js',
-  '/src/assets/vadv-logo.png'
+  '/src/assets/vadv-logo.png',
+  '/src/assets/icons/elementDataIcon.svg',
+  '/src/assets/icons/commentIcon.svg',
+  '/src/assets/icons/hamburgerIcon.svg',
+  '/src/assets/icons/crossIcon.svg'
 ];
 
 
