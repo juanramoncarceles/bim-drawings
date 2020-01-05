@@ -707,10 +707,6 @@ div#dataTablesContainer {
   margin-top: 0.5rem;
 }
 
-#closeUploadForm {
-  align-self: flex-end;
-}
-
 #loadingFile {
   padding: 1rem;
   text-align: center;

@@ -288,7 +288,7 @@ const authorizeDialog = document.getElementById('authorizeDialog');
  * Shows the login dialog and hides and clears anything else.
  */
 function showLoginDialog() {
-  App.showModalDialog(authorizeDialog);
+  App.showModalDialog(authorizeDialog, 'opaque', false);
   // Hide anything else.
   document.querySelector('header').style.display = 'none';
   document.querySelector('main').style.display = 'none';

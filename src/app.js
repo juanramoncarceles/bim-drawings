@@ -66,10 +66,10 @@ export class Application {
       this.modalDialogContainer.classList.add('grayTranslucent');
     });
     // Hide the upload project form.
-    document.getElementById('closeUploadForm').addEventListener('click', () => {
-      this.closeModalDialog(this.uploadFileForm);
-      this.modalDialogContainer.classList.remove('grayTranslucent');
-    });
+    // document.getElementById('closeUploadForm').addEventListener('click', () => {
+    //   this.closeModalDialog(this.uploadFileForm);
+    //   this.modalDialogContainer.classList.remove('grayTranslucent');
+    // });
     // Listen to file input changes.
     this.fileInput.addEventListener('change', () => {
       if (this.fileInput.files.length > 0) {
@@ -477,8 +477,21 @@ export class Application {
   /**
    * Shows the modal dialog provided from the same document.
    * @param {HTMLElement} content Reference to the outer HTML element of the dialog.
+   * @param {String} background It can be 'translucent' or 'opaque'. Default value is 'translucent'.
+   * @param {Boolean} closable Wheater to show a button to close it or not. By deafult it has a button.
    */
-  showModalDialog(content) {
+  showModalDialog(content, background = 'translucent', closable = true) {
+    this.modalDialogContainer.classList.value = '';
+    if (background === 'translucent') {
+      this.modalDialogContainer.classList.add('grayTranslucent');
+    } else if (background === 'opaque') {
+      this.modalDialogContainer.classList.add('lightOpaque');
+    }
+    if (closable) {
+      this.closeModalBtn.style.display = 'unset';
+    } else {
+      this.closeModalBtn.style.display = 'none';
+    }
     this.modalDialogContent.appendChild(content);
     this.modalDialogContainer.style.display = 'flex';
   }
