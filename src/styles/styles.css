@@ -343,6 +343,7 @@ main {
 
 
 /*************************** MAIN PANEL ****************************/
+/* TODO: Do that by default has docked right style and by adding bottom is the other option? */
 
 #mainPanel {
   display: flex;
@@ -368,15 +369,15 @@ main {
   right: 0;
 }
 
+#mainPanel.bottom.open {
+  bottom: 0;
+}
+
 #mainPanel.bottom {
   height: var(--height);
   width: 100%;
   bottom: calc(var(--height) * -1);
   border-top: 3px solid #2a8fb1;
-}
-
-#mainPanel.bottom.open {
-  bottom: 0;
 }
 
 #mainPanel > .panel-header {
@@ -386,19 +387,40 @@ main {
   text-align: center;
 }
 
+#mainPanel.bottom > .panel-header {
+  flex-direction: column;
+}
+
 #mainPanel > .panel-header > span {
   padding: 0.2rem;
   flex-grow: 1;
 }
 
+#mainPanel.bottom > .panel-header > span {
+  width: 35px;
+  writing-mode: vertical-rl;
+  -webkit-writing-mode: vertical-rl; /* Edge */
+}
+
 #mainPanel > .panel-header > span:not(.active) {
   cursor: pointer;
-  border-bottom: 1px solid #a6a6a6;
   background-color: #e4e4e4;
 }
 
-#mainPanel > .panel-header > span:not(:last-child) {
+#mainPanel.right > .panel-header > span:not(.active) {
+  border-bottom: 1px solid #a6a6a6;
+}
+
+#mainPanel.bottom > .panel-header > span:not(.active) {
   border-right: 1px solid #a6a6a6;
+}
+
+#mainPanel.right > .panel-header > span:not(:last-child) {
+  border-right: 1px solid #a6a6a6;
+}
+
+#mainPanel.bottom > .panel-header > span:not(:last-child) {
+  border-bottom: 1px solid #a6a6a6;
 }
 
 #mainPanel > .panel-body {
@@ -413,24 +435,41 @@ main {
 
 /************************** COMMENT FORM ***************************/
 
-#commentForm > textarea {
-  width: 100%;
+#commentForm > .inputs {
+  margin-bottom: 0.8rem;
 }
 
-#commentForm > .members {
+#commentForm > .inputs > textarea {
+  width: 100%;
+  min-height: 150px;
+}
+
+#commentForm.horizontal {
+  display: flex;
+}
+
+#commentForm.horizontal > .inputs {
+  flex-grow: 1;
+}
+
+#commentForm.horizontal > .inputs > textarea {
+  min-height: 60px;
+}
+
+#commentForm > .inputs > .members {
   margin-top: 0.5rem;
 }
 
-#commentForm > .members.hidden {
+#commentForm > .inputs > .members.hidden {
   display: none;
 }
 
-#commentForm > .members > p:first-child {
+#commentForm > .inputs > .members > p:first-child {
   font-weight: lighter;
   margin-bottom: 0.2rem;
 }
 
-#commentForm > .members > select {
+#commentForm > .inputs > .members > select {
   width: 100%;
 }
 
@@ -440,10 +479,26 @@ main {
   font-weight: lighter;
 }
 
-#commentForm > .formButtonsModes > .buttonsContainer { 
-  margin-top: 0.8rem;
+#commentForm > .formButtonsModes > .buttonsContainer {
   display: flex;
   justify-content: space-between;
+}
+
+#commentForm.horizontal > .formButtonsModes {
+  margin-left: 0.5rem;
+}
+
+#commentForm.horizontal > .formButtonsModes > .buttonsContainer {
+  flex-direction: column;
+}
+
+#commentForm.horizontal > .formButtonsModes > .buttonsContainer > button {
+  height: 50px;
+}
+
+#commentForm.horizontal > .formButtonsModes > .buttonsContainer > button:first-child {
+  margin-top: 0.6rem;
+  order: 1;
 }
 
 

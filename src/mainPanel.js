@@ -14,10 +14,16 @@ export class MainPanel {
       if (button && !button.classList.contains('active'))
         this.setActive(button.innerText);
     };
+    // Media breakpoint to determine the panel position.
+    this.mediumBreakpoint = window.matchMedia('(max-width: 700px)');
+    this.panelPositon = this.panelPositon.bind(this);
+    this.mediumBreakpoint.addListener(this.panelPositon);
+    this.panelPositon(this.mediumBreakpoint);
   }
 
   open() {
     this.panel.classList.add('open');
+    this.panelPositon(this.mediumBreakpoint);
     this.isOpen = true;
   }
 
@@ -34,9 +40,17 @@ export class MainPanel {
     if (side === 'right') {
       this.panel.classList.remove('bottom');
       this.panel.classList.add('right');
+      this.panelBody.childNodes.forEach(content => {
+        content.classList.remove('horizontal');
+        content.classList.add('vertical');
+      });
     } else if (side === 'bottom') {
       this.panel.classList.remove('right');
       this.panel.classList.add('bottom');
+      this.panelBody.childNodes.forEach(content => {
+        content.classList.remove('vertical');
+        content.classList.add('horizontal');
+      });
     }
   }
 
@@ -96,6 +110,14 @@ export class MainPanel {
       }
     } else {
       console.warn('Impossible to remove the section. No section was found with that name.');
+    }
+  }
+
+  panelPositon(breakpoint) {
+    if (breakpoint.matches) {
+      this.dockTo('bottom');
+    } else {
+      this.dockTo('right');
     }
   }
 
