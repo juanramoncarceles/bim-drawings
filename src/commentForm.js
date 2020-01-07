@@ -68,27 +68,31 @@ export class CommentForm {
     this.mentionsInput.disabled = false;
   }
 
-  // TODO It makes more sense to pass the id
-  viewComment(comment) {
-    if (comment.id !== this.commentId) {
+  viewComment(commentId) {
+    const comment = this.workspace.comments.find(c => c.id === commentId);
+    if (comment) {
       this.fillInputs(comment);
       this.commentId = comment.id;
+      this.disableForm();
+      this.buttonsVisibilityMode('view');
+    } else {
+      console.warn('No comment found with that id:', commentId);
     }
-    this.disableForm();
-    this.buttonsVisibilityMode('view');
   }
 
   enableEditComment(commentId) {
     const comment = this.workspace.comments.find(c => c.id === commentId);
-    if (!this.commentId || commentId !== this.commentId) {
+    if (comment) {
       this.fillInputs(comment);
       this.commentId = commentId;
-    }
-    this.enableForm();
-    this.buttonsVisibilityMode('edit');
-    this.formElement.onchange = () => {
-      this.confirmUpdateBtn.classList.remove('disabled');
-      this.confirmUpdateBtn.onclick = () => this.updateComment(commentId, this.textInput.value, this.getSelectedMembers());
+      this.enableForm();
+      this.buttonsVisibilityMode('edit');
+      this.formElement.onchange = () => {
+        this.confirmUpdateBtn.classList.remove('disabled');
+        this.confirmUpdateBtn.onclick = () => this.updateComment(commentId, this.textInput.value, this.getSelectedMembers());
+      }
+    } else {
+      console.warn('No comment found with that id:', commentId);
     }
   }
 

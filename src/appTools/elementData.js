@@ -23,8 +23,7 @@ export class ElementData extends ElementSelection {
     if (this.selection !== null) {
       this.showElementData(this.selection.dataset.category, this.selection.dataset.id);
       if (this.selection.dataset.comment) {
-        const comment = this.workspace.comments.find(c => c.id === this.selection.dataset.comment);
-        this.workspace.commentForm.viewComment(comment);
+        this.workspace.commentForm.viewComment(this.selection.dataset.comment);
         this.workspace.mainPanel.addSection('Comment', this.workspace.commentForm.formElement);
       } else if (this.workspace.mainPanel.sections.find(s => s.name === 'Comment')) {
         // If the comments section is there from the previous selected element it should be removed.
