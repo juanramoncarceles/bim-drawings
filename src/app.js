@@ -42,9 +42,11 @@ export class Application {
     // Main panel.
     this.mainPanel = document.getElementById('mainPanel');
     this.panelsStorage = document.getElementById('panelsStorage');
+    // Save button.
     this.saveBtn = document.getElementById('saveBtn');
     this.saveCommentsData = this.saveCommentsData.bind(this);
-    this.saveBtn.addEventListener('click', this.saveCommentsData);
+    this.saveBtn.onclick = this.saveCommentsData;
+    // Projects list.
     this.closeProjectsList = this.closeProjectsList.bind(this);
     this.projectsListBtn.onclick = () => {
       if (this.projectsListBtn.dataset.open === 'true') {
@@ -147,7 +149,9 @@ export class Application {
    */
   async saveCommentsData() {
     if (this.workspace && this.workspace.commentsChangesUnsaved) {
-      // TODO: Show viewport waiting message.
+      this.commentsChangesUnsaved = false;
+      this.saveBtn.classList.remove('enabled');
+      this.saveBtn.classList.add('progress');
       let savingSuccessful;
       // Collect the data to save in backend.
       const dataToSave = [];
@@ -185,16 +189,16 @@ export class Application {
           savingSuccessful = true;
         }
       }
-      // TODO: Remove viewport waiting message.
       if (savingSuccessful) {
-        // TODO: Show message indicating success.
-        this.commentsChangesUnsaved = false;
-        this.saveBtn.classList.remove('enabled');
+        this.saveBtn.classList.remove('progress');
         this.saveBtn.classList.add('disabled');
         console.log('Data saved successfully.');
       } else {
-        // TODO: message something went wrong.
-        console.log('Something went wrong trying to save. Retry again.');
+        this.commentsChangesUnsaved = true;
+        this.saveBtn.classList.remove('progress');
+        this.saveBtn.classList.add('enabled');
+        this.showMessage('error', 'Something went wrong and data could not be saved.');
+        console.error('Something went wrong trying to save. Retry again.');
       }
     }
   }
@@ -375,11 +379,11 @@ export class Application {
 
   /**
   * Disaplays feedback message.
-  * @param {String} message 
   * @param {String} type Use keywords 'success', 'warning' or 'error' to specify the type of message.
-  * 
+  * @param {String} message The actual message.
+  * @param {Number} timer Optional. Time before it autocloses.
   */
-  showMessage(type, message, timer) {
+  showMessage(type, message, timer = undefined) {
     // If the data-type attr has value is because the message is still open.
     if (this.messageContainer.dataset.type !== '') {
       this.messageContainer.classList.remove(this.messageContainer.dataset.type);

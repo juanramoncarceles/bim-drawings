@@ -85,7 +85,7 @@ self.addEventListener('notificationclick', e => {
 
 
 // Cache name should be updated any time any of the cached files change.
-const CACHE_NAME = 'static-cache-v2';
+const CACHE_NAME = 'static-cache-v3';
 
 
 // Add list of files to cache here.

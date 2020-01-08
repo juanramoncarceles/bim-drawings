@@ -158,6 +158,26 @@ header .icon-btn {
 }
 
 
+/*************************** SAVE BUTTON ***************************/
+
+#saveBtn > svg.progress-icon {
+  display: none;
+}
+
+#saveBtn.progress:hover {
+  cursor: auto;
+  background-color: unset;
+}
+
+#saveBtn.progress > svg.save-icon {
+  display: none;
+}
+
+#saveBtn.progress > svg.progress-icon {
+  display: block;
+}
+
+
 /*************************** HEADER ********************************/
 
 header {
