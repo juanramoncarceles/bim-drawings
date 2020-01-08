@@ -158,14 +158,18 @@ window.getCurrentUser = function () {
  * To comunicate with the Service Worker and viceversa.
 */
 
-const broadCastChannel = new BroadcastChannel('app-channel');
+if (window.BroadcastChannel) {
+  const broadCastChannel = new BroadcastChannel('app-channel');
 
-broadCastChannel.onmessage = e => {
-  if (e.data.action === 'newNotification') {
-    console.log('Add notification to the list.');
-    App.notificationsManager.createNotificaction(e.data.content);
-  }
-};
+  broadCastChannel.onmessage = e => {
+    if (e.data.action === 'newNotification') {
+      console.log('Add notification to the list.');
+      App.notificationsManager.createNotificaction(e.data.content);
+    }
+  };
+} else {
+  console.warn('This browser does not support BroadcastChannel.');
+}
 
 
 /******************* VIEW SAMPLE PROJECT OPTION ********************/

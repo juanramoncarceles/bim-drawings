@@ -22,7 +22,13 @@ const messaging = firebase.messaging();
 // Not supported in Safari, check other options:
 // https://developer.mozilla.org/en-US/docs/Web/API/MessagePort/postMessage
 // https://developer.mozilla.org/en-US/docs/Web/API/MessageChannel
-const broadCastChannel = new BroadcastChannel('app-channel');
+let broadCastChannel;
+if (self.BroadcastChannel) {
+  console.log('[SW] There is support for BroadcastChannel');
+  broadCastChannel = new BroadcastChannel('app-channel');
+} else {
+  console.warn('[SW] No support for BroadcastChannel');
+}
 
 
 // Create notifications with the data value.
@@ -40,8 +46,11 @@ messaging.setBackgroundMessageHandler(payload => {
     data: { projectId: data.projectId }
   };
 
-  // This is received in the client window.
-  broadCastChannel.postMessage({ action: 'newNotification', content: data });
+  // Only if support for BroadcastChannel was successful.
+  if (broadCastChannel) {
+    // This is received in the client window.
+    broadCastChannel.postMessage({ action: 'newNotification', content: data });
+  }
 
   return self.registration.showNotification(title, options);
 });
