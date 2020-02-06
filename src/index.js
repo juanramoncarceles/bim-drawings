@@ -331,11 +331,22 @@ App.drawingsBtns.querySelector('.dropdown-content').addEventListener('click', as
   // TODO: If this is required always the first time maybe do it in the Workspace constructor.
   // TODO: If this finally extracted then the function wont need to be async anymore.
   if (App.workspace.drawingsStylesTag === undefined) {
-    const stylesRes = await API.getFileContent(App.workspace.drawingsStylesId);
-    const styleTag = document.createElement('style');
-    styleTag.innerText = stylesRes.body;
-    document.head.appendChild(styleTag);
-    App.workspace.drawingsStylesTag = styleTag;
+    if (App.workspace.drawingsStylesId !== undefined) {
+      let stylesRes;
+      try {
+        stylesRes = await API.getFileContent(App.workspace.drawingsStylesId);
+      } catch {
+        console.error("Error while trying to fetch the drawings styles.");
+      }
+      if (stylesRes) {
+        const styleTag = document.createElement('style');
+        styleTag.innerText = stylesRes.body;
+        document.head.appendChild(styleTag);
+        App.workspace.drawingsStylesTag = styleTag;
+      }
+    } else {
+      console.warn('This project doesn\'t have a css styles file for the drawings.');
+    }
   }
 
   // Check if the requested drawing has already the content.

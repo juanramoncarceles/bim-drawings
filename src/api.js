@@ -47,7 +47,7 @@ export default class {
     });
     request.then(res => {
       if (res.status === 200)
-        console.log('File fetched successfully.');
+        console.log('File with id ' + fileId + ' fetched successfully.');
     }, err => {
       console.error(err.body);
     });
