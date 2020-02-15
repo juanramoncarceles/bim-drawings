@@ -499,8 +499,6 @@ export default class {
     // The contents of the file if valid will be saved in the lastUploadedProject variable to be used
     // without the need to fetch them. This allows to view the project even without internet connexion.
     lastUploadedProject.name = fileContent.projectInfo.title;
-    lastUploadedProject.drawings = fileContent.drawings;
-    lastUploadedProject.elementsData = fileContent.elementsData;
 
     // Check if the id of the appMainFolder is in the appData global object.
     // If there is none then try to get it, and if there is none one should be created.
@@ -549,19 +547,34 @@ export default class {
       const drawingsFolderPromise = await this.createFolder('drawings', projectFolderId);
       const drawingsFolderId = JSON.parse(drawingsFolderPromise.body).id;
       AppData.projectsData[AppData.projectsData.length - 1].drawingsFolderId = drawingsFolderId;
-      // Upload the drawings.
+      // To store all the upload drawings promises.
       const drawingsPromises = [];
+      // Variable for the last uploaded data.
+      lastUploadedProject.drawings = [];
       for (const drawing in fileContent.drawings) {
         const drawingPromise = this.uploadFile(fileContent.drawings[drawing], 'image/svg+xml', drawing.concat('.svg'), drawingsFolderId);
         drawingsPromises.push(drawingPromise);
+        // Store on lastUploadedProject variable.
+        const drawingObj = new Drawing(drawing, undefined);
+        drawingObj.setContent(fileContent.drawings[drawing]);
+        lastUploadedProject.drawings.push(drawingObj);
       }
-      await Promise.all(drawingsPromises)
-        .then(res => {
-          // TODO: Is it necessary to check if each response was (res.ok === true && res.status === 200)?
-          console.log('Drawings uploaded successfully.');
-        }, err => {
-          console.error(err);
+      // Required to decode the body of the response.
+      const decoder = new TextDecoder('utf-8');
+      await Promise.all(drawingsPromises).then(responses => {
+        responses.forEach((res, i) => {
+          if (res.ok === true && res.status === 200) {
+            res.body.getReader().read().then(({ value, done }) => {
+              const id = JSON.parse(decoder.decode(value)).id;
+              // Set the id of the drawing file that has been created.
+              lastUploadedProject.drawings[i].id = id;
+              console.log('Drawing with id ' + id + ' uploaded successfully.');
+            });
+          }
         });
+      }, err => {
+        console.error(err);
+      });
     }
 
     // Create the elementsData subfolder only if there is data and if the project folder was created succesfully.
@@ -569,6 +582,8 @@ export default class {
       const elementsDataFolderPromise = await this.createFolder('elementsData', projectFolderId);
       const elementsDataFolderId = JSON.parse(elementsDataFolderPromise.body).id;
       AppData.projectsData[AppData.projectsData.length - 1].elementsDataFolderId = elementsDataFolderId;
+      // Store on the last uploaded variable.
+      lastUploadedProject.elementsData = fileContent.elementsData;
       // Upload the elements data files.
       const elementsDataPromises = [];
       for (const elementData in fileContent.elementsData) {

@@ -1,0 +1,48 @@
+NAVIGATION
+Utilizar el logo de la app para volver a la lista de proyectos? o poner una flecha al lado?
+
+
+SI ESTOY EN UN PROYECTO Y ACCEDO A LA LISTA EL ACTUAL NO TIENE NI IMAGEN NI ICONO DE COMPARTIDO EN EL CASO DE QUE LO NECESITASE
+
+
+SHARE PROJECT - WHEN A USER RECEIVES AN EMAIL WITH THE LINK IT IS IMPORTANT TO ADD THE SHARED PROJECT TO THE VAVIEWERDATA FOLDER OF THE NEW MEMBER
+
+la solucion es que si detecta que la carpeta del proyecto no tiene como padre la caprpeta VADrawingsViewe la busque y si no la encuetnra la cree y lo mueva.
+Si esto no funcionase la otra opcion seria utilizar una url particular como state=startcollab o que al acceder si no encuetnra la carpeta padre saliese un boton add to my projects
+
+
+
+INSTALLATION frases:
+Install the app and get a better experience.
+Installation is instant without store redirect and it won't take up space on your phone.
+
+
+HACER EN EL LOGO LA LUPA MAS GRUESA Y GRIS CLARO
+
+
+Si haces click en la notificacion debería llevarte al proyecto y al dibujo concreto.
+
+
+Mientras se estan guardando cambios el icono del disquet debería cambiar para indicar el proceso y evitar que haga click varias veces.
+
+
+
+Crear una herramienta o switch para la visibilidad de los comentarios. Al activar la herramienta para crear comentario la visibilidad se activara en el caso de no estarlo.
+La accion de borrar y editar comentarios lo puedo hacer sobre el mismo comentario seleccionandolo y que estas a aparezcan sobre el main panel o con un context menu.
+Se han de poder esconder y mostrar todos los comentarios. Por lo menos con opacidad.
+Si los comentarios estan escondidos y se selecciona un objeto que tiene uno, el comentario se ha de ver.
+
+
+
+Extraer todo el proceso de actualizar comentarios en un dibujo a un función ( updateComments() ) y llamarla solo si commentsChanged y si son visibles. En el caso de que no sean visibles se esperara a que se active la visibilidad de los comentarios en el dibujo para llamar a la funcion updateComments()
+
+
+
+API
+Cuando borro un proyecto tendre que ampliarlo para que haga mas cosas como borrar la miniatura del proyecto que se encuentra en la carpeta de settings.
+Gestionar ademas las varialbes currentProject y lastUploaded project en el caso de que el proyecto este en estas. Ademas si se quisiese borrar el proyecto actual que esta abierto habira que poder cerrar el workspace y poner la aplicacion como en un estado inicial.
+
+
+
+
+AÑADIR FLECHITA HACIA ABAJO EN LOS BOTONES CON EL TITULO DEL PROYECTO Y DEL DIBUJO PARA INDICAR QUE TIENEN CONTENIDO
