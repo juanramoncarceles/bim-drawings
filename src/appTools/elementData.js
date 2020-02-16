@@ -1,5 +1,6 @@
 import API from '../api';
 import { ElementSelection } from './elementSelection';
+import Generics from '../generics';
 
 export class ElementData extends ElementSelection {
   constructor(name, toolBtn, workspace) {
@@ -70,9 +71,13 @@ export class ElementData extends ElementSelection {
       }
     }
     if (success) {
-      // Sets the content on the data tables container.
-      this.workspace.dataTablesContainer.innerHTML = this.createDataTable(this.currentElementData);
-      this.workspace.mainPanel.addSection('Properties', this.workspace.dataTablesContainer);
+      // Sets the contents on the properties and parameters panels.
+      if (this.currentElementData.parameters.length > 0) {
+        this.workspace.paramsTablesContainer.innerHTML = this.createDataTable(this.currentElementData.parameters);
+        this.workspace.mainPanel.addSection('Parameters', this.workspace.paramsTablesContainer);
+      }
+      this.workspace.propsTablesContainer.innerHTML = this.createDataTable(this.currentElementData.properties);
+      this.workspace.mainPanel.addSection('Properties', this.workspace.propsTablesContainer);
       this.workspace.mainPanel.open();
       this.hasUsedPanel = true;
     }
@@ -80,24 +85,29 @@ export class ElementData extends ElementSelection {
 
 
   /**
-   * Creates various HTML tables with the data of the provided object.
-   * It access two levels of the object, first as titles and second as key value pairs.
-   * @param {Object} data 
+   * Creates various HTML tables with the data of the objects array.
+   * Each object in the array should contain 'name', 'value' and 'category'.
+   * @param {Array} entriesArray 
    */
-  createDataTable(data) {
-    const dataTable = [];
-    for (const title in data) {
-      dataTable.push('<table class="data-table"><thead><tr><th colspan="2">' + title + '</th></tr></thead>');
-      dataTable.push('<tbody>');
-      for (const field in data[title]) {
-        dataTable.push('<tr>');
-        dataTable.push('<th>' + field + '</th>');
-        dataTable.push('<td>' + data[title][field] + '</td>');
-        dataTable.push('</tr>');
+  createDataTable(entriesArray) {
+    const categoriesTitles = [];
+    const dataByCategories = [];
+    for (let i = 0; i < entriesArray.length; i++) {
+      const category = entriesArray[i].category;
+      const categoryIndex = categoriesTitles.indexOf(category);
+      const tableRow = `<tr><th>${entriesArray[i].name}</th><td>${entriesArray[i].value}</td></tr>`;
+      if (categoryIndex !== -1) {
+        dataByCategories[categoryIndex].push(tableRow);
       }
-      dataTable.push('</tbody></table>');
+      else {
+        dataByCategories.push([`<table class="data-table"><thead><tr><th colspan="2">${category}</th></tr></thead>`, tableRow]);
+        categoriesTitles.push(category);
+      }
     }
-    dataTable.push('</table>');
+    const dataTable = [];
+    for (let i = 0; i < dataByCategories.length; i++)
+      dataTable.push(dataByCategories[i].join('') + '</tbody></table>');
+
     return dataTable.join('');
   }
 

@@ -36,7 +36,8 @@ export class Workspace {
     this.drawingsBtns.style.display = 'unset';
     App.toolbarsContainer.style.display = 'flex';
     this.projectsData = App.projectsData;
-    this.dataTablesContainer = document.getElementById('dataTablesContainer');
+    this.propsTablesContainer = document.getElementById('propsTablesContainer');
+    this.paramsTablesContainer = document.getElementById('paramsTablesContainer');
     this.commentsChangesUnsaved;
     if (projectData.commentsFileId) {
       this.commentsFileId = projectData.commentsFileId;

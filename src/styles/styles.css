@@ -372,7 +372,7 @@ main {
   background-color: rgba(246, 246, 246, 0.9);
   transition: right 1s, bottom 1s;
 
-  --width: 200px; /* Used for the panel docked to the right */
+  --width: 250px; /* Used for the panel docked to the right */
   --height: 200px; /* Used for the panel docked to the bottom */
 }
 
@@ -524,11 +524,11 @@ main {
 
 /*************************** DATA TABLE ****************************/
 
-div#dataTablesContainer {
+div#propsTablesContainer {
   display: flex;
 }
 
-#mainPanel.right div#dataTablesContainer {
+#mainPanel.right div#propsTablesContainer {
   flex-direction: column;
 }
 
