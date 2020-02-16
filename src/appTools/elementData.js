@@ -72,12 +72,19 @@ export class ElementData extends ElementSelection {
     }
     if (success) {
       // Sets the contents on the properties and parameters panels.
+      this.workspace.propsTablesContainer.innerHTML = this.createDataTable(this.currentElementData.properties);
+      const sections = [{
+        name: 'Properties',
+        body: this.workspace.propsTablesContainer
+      }];
       if (this.currentElementData.parameters.length > 0) {
         this.workspace.paramsTablesContainer.innerHTML = this.createDataTable(this.currentElementData.parameters);
-        this.workspace.mainPanel.addSection('Parameters', this.workspace.paramsTablesContainer);
+        sections.push({
+          name: 'Parameters',
+          body: this.workspace.paramsTablesContainer
+        });
       }
-      this.workspace.propsTablesContainer.innerHTML = this.createDataTable(this.currentElementData.properties);
-      this.workspace.mainPanel.addSection('Properties', this.workspace.propsTablesContainer);
+      this.workspace.mainPanel.addSections(sections);
       this.workspace.mainPanel.open();
       this.hasUsedPanel = true;
     }
@@ -121,6 +128,7 @@ export class ElementData extends ElementSelection {
     }
     if (this.hasUsedPanel) {
       this.workspace.mainPanel.removeSection('Properties');
+      this.workspace.mainPanel.removeSection('Parameters');
       // TODO If it has used also the Comment section it should be removed.
     }
     console.log('Elements data tool disabled.');

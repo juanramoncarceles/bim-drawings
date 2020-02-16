@@ -59,10 +59,8 @@ export class MainPanel {
    * @param {String} name The name of the section to activate.
    */
   setActive(name) {
-    if (this.activeSection) {
-      this.activeSection.button.classList.remove('active');
-      this.activeSection.body.classList.add('hidden');
-    }
+    if (this.activeSection)
+      this.setInactive(this.activeSection);
     // This means that sections should have unique names.
     this.activeSection = this.sections.find(s => s.name === name);
     this.activeSection.button.classList.add('active');
@@ -70,12 +68,24 @@ export class MainPanel {
   }
 
   /**
+   * Sets a section as inactive, so in the back.
+   * If there is only one and it is inactive the body wont be visible.
+   * @param {Object} section Section object {name: string, button: SpanElement, body: HTMLElement }
+   */
+  setInactive(section) {
+    section.button.classList.remove('active');
+    section.body.classList.add('hidden');
+  }
+
+  /**
    * Adds a new section to the panel contents and sets it as active.
    * If a section with this name already exists then it is only activated.
    * @param {String} name
    * @param {HMLTElement} body
+   * @param {Boolean} activate Set the section as active (the one visible). Default true.
+   * @param {Boolean} first If true sets the section as the first one (left side). Default false.
    */
-  addSection(name, body) {
+  addSection(name, body, activate = true, first = false) {
     let section = this.sections.find(s => s.name === name);
     if (section === undefined) {
       // The section button.
@@ -86,9 +96,26 @@ export class MainPanel {
       this.panelBody.appendChild(body);
       section = { name, button, body };
       // Added to sections array.
-      this.sections.push(section);
+      if (first)
+        this.sections.unshift(section);
+      else
+        this.sections.push(section);
     }
-    this.setActive(section.name);
+    if (activate)
+      this.setActive(section.name);
+    else
+      this.setInactive(section);
+  }
+
+  /**
+   * Adds a set of sections to the panel.
+   * The first one in the array will be set as active.
+   * @param {Array} sectionsArray Each object in the array should have a name and a body entry.
+   */
+  addSections(sectionsArray) {
+    for (let i = 0; i < sectionsArray.length; i++) {
+      this.addSection(sectionsArray[i].name, sectionsArray[i].body, i === 0 ? true : false)
+    }
   }
 
   /**
