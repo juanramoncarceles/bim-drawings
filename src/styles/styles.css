@@ -1233,30 +1233,37 @@ div#propsTablesContainer {
   --stroke-w: 8px;
 }
 
-.selected.solid path,
-.selected.solid polygon,
-.selected.solid polyline,
-.selected.solid rect,
-.selected.solid text {
+/* Closed curves, which always have fill */
+.selected.fill.stroke > path,
+.selected.fill.stroke > polygon,
+.selected.fill.stroke > circle {
   fill: var(--fill);
   stroke: var(--stroke);
   stroke-width: var(--stroke-w);
 }
 
-.selected.curve path,
-.selected.curve polygon,
-.selected.curve polyline,
-.selected.curve rect,
-.selected.curve line {
+/* Open curves, which never have fill */
+.selected.stroke > path,
+.selected.stroke > polyline,
+.selected.stroke > line {
   stroke: var(--stroke);
   stroke-width: var(--stroke-w);
 }
 
-.selected.hatch path,
-.selected.hatch polygon,
-.selected.hatch text {
+/* Solids which are only fill with no stroke */
+.selected.fill > path,
+.selected.fill > polygon,
+.selected.fill > circle {
   fill: var(--fill);
 }
+
+/* Segments from a non solid exploded hatch */
+.selected.stroke > .hatch > line {
+  stroke: var(--stroke);
+  stroke-width: var(--stroke-w);
+}
+
+/* TODO handle text element */
 
 
 /**************************** CONTEXT MENU *************************/

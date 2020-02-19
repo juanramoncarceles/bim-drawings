@@ -1,5 +1,5 @@
 NAVIGATION
-Utilizar el logo de la app para volver a la lista de proyectos? o poner una flecha al lado?
+Utilizar click en el logo de la app para volver a la lista de proyectos? o poner una flecha al lado?
 
 
 SI ESTOY EN UN PROYECTO Y ACCEDO A LA LISTA EL ACTUAL NO TIENE NI IMAGEN NI ICONO DE COMPARTIDO EN EL CASO DE QUE LO NECESITASE
@@ -46,3 +46,9 @@ Gestionar ademas las varialbes currentProject y lastUploaded project en el caso 
 
 
 AÑADIR FLECHITA HACIA ABAJO EN LOS BOTONES CON EL TITULO DEL PROYECTO Y DEL DIBUJO PARA INDICAR QUE TIENEN CONTENIDO
+
+
+Si ya hay un proyecto con ese nombre mostrar dialogo para cambiarlo ya que ahora da un error y no obstante se crea un nuevo item.
+
+
+Si la foto de perfil de Google no se carga poner una por defecto.
