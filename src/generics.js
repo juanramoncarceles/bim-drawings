@@ -60,6 +60,19 @@ export default class {
     return rect;
   }
 
+  /**
+   * Function to get the coordinates of the mouse on the SVG canvas.
+   * @param {MouseEvent} evt 
+   * @param {SVGSVGElement} svgDoc 
+   */
+  static getRelativeCoords(evt, svgDoc) {
+    const originPt = svgDoc.createSVGPoint();
+    originPt.x = evt.clientX;
+    originPt.y = evt.clientY;
+    // The cursor point, translated into svg coordinates
+    return originPt.matrixTransform(svgDoc.getScreenCTM().inverse());
+  }
+
   // https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
   static uuidv4() {
     return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
