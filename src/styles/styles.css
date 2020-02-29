@@ -379,10 +379,24 @@ main {
 #mainPanel.right {
   height: 100%;
   width: var(--width);
-  flex-direction: column;
   top: 0;
   right: calc(var(--width) * -1); /* Usar variable con scope de este elemento que se modificara con js */
-  border-left: 3px solid #2a8fb1;
+}
+
+#mainPanel.bottom {
+  flex-direction: column;
+  height: var(--height);
+  width: 100%;
+  bottom: calc(var(--height) * -1);
+}
+
+#mainPanel.right > .panel-content {
+  width: 100%;
+}
+
+#mainPanel.bottom > .panel-content {
+  display: flex;
+  height: 100%;
 }
 
 #mainPanel.right.open {
@@ -393,62 +407,87 @@ main {
   bottom: 0;
 }
 
-#mainPanel.bottom {
-  height: var(--height);
-  width: 100%;
-  bottom: calc(var(--height) * -1);
-  border-top: 3px solid #2a8fb1;
+#mainPanel > .panel-grip {
+  background: #2a8fb1;
 }
 
-#mainPanel > .panel-header {
+#mainPanel.right > .panel-grip {
+  display: flex;
+  align-items: center;
+  padding: 0 5px;
+  cursor: col-resize;
+}
+
+#mainPanel.bottom > .panel-grip {
+  padding: 5px 0;
+  cursor: row-resize;
+}
+
+#mainPanel > .panel-grip::before {
+  content: "";
+  display: block;
+}
+
+#mainPanel.right > .panel-grip::before {
+  height: 27px;
+  border-right: 3px double #fff;
+}
+
+#mainPanel.bottom > .panel-grip::before {
+  width: 27px;
+  border-top: 3px double #fff;  
+  margin: auto;
+}
+
+#mainPanel > .panel-content > .panel-header {
   display: flex;
   justify-content: space-around;
   align-items: center;
   text-align: center;
 }
 
-#mainPanel.bottom > .panel-header {
+#mainPanel.bottom > .panel-content > .panel-header {
   flex-direction: column;
 }
 
-#mainPanel > .panel-header > span {
+#mainPanel > .panel-content > .panel-header > span {
   padding: 0.2rem;
   flex-grow: 1;
 }
 
-#mainPanel.bottom > .panel-header > span {
+#mainPanel.bottom > .panel-content > .panel-header > span {
   width: 35px;
   writing-mode: vertical-rl;
   -webkit-writing-mode: vertical-rl; /* Edge */
 }
 
-#mainPanel > .panel-header > span:not(.active) {
+#mainPanel > .panel-content > .panel-header > span:not(.active) {
   cursor: pointer;
   background-color: #e4e4e4;
 }
 
-#mainPanel.right > .panel-header > span:not(.active) {
+#mainPanel.right > .panel-content > .panel-header > span:not(.active) {
   border-bottom: 1px solid #a6a6a6;
 }
 
-#mainPanel.bottom > .panel-header > span:not(.active) {
+#mainPanel.bottom > .panel-content > .panel-header > span:not(.active) {
   border-right: 1px solid #a6a6a6;
 }
 
-#mainPanel.right > .panel-header > span:not(:last-child) {
+#mainPanel.right > .panel-content > .panel-header > span:not(:last-child) {
   border-right: 1px solid #a6a6a6;
 }
 
-#mainPanel.bottom > .panel-header > span:not(:last-child) {
+#mainPanel.bottom > .panel-content > .panel-header > span:not(:last-child) {
   border-bottom: 1px solid #a6a6a6;
 }
 
-#mainPanel > .panel-body {
+#mainPanel > .panel-content > .panel-body {
   flex-grow: 1;
   padding: 0.5rem;
 }
 
-#mainPanel > .panel-body > .hidden {
+#mainPanel > .panel-content > .panel-body > .hidden {
   display: none;
 }
 
