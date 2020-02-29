@@ -1,3 +1,6 @@
+NOTIFICACIONES
+Enviar notificaciones a colaboradores mencionados solo despues de haber guardado los cambios ya que sino no los veran si acceden al dibujo.
+
 NAVIGATION
 Utilizar click en el logo de la app para volver a la lista de proyectos? o poner una flecha al lado?
 
@@ -21,9 +24,6 @@ HACER EN EL LOGO LA LUPA MAS GRUESA Y GRIS CLARO
 
 
 Si haces click en la notificacion debería llevarte al proyecto y al dibujo concreto.
-
-
-Mientras se estan guardando cambios el icono del disquet debería cambiar para indicar el proceso y evitar que haga click varias veces.
 
 
 
