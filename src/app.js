@@ -20,6 +20,19 @@ export class Application {
     // The current workspace object will be referenced here.
     this.workspace = undefined;
     this.lastUploadedProject = new ProjectData();
+    // TODO when multiple simultaneous workspaces will be possible this should be placed in the Workspace class.
+    this.mainContainer = document.querySelector('main');
+    this.mainContainer.addEventListener('mousemove', e => {
+      if (this.workspace.mainPanel.resizingWidth) {
+        this.workspace.mainPanel.resizeWidth(e);
+      } else if (this.workspace.mainPanel.resizingHeight) {
+        this.workspace.mainPanel.resizeHeight(e);
+      }
+    });
+    this.mainContainer.addEventListener('mouseup', () => { // Add also the same for mouseleave?
+      this.workspace.mainPanel.resizingWidth = false;
+      this.workspace.mainPanel.resizingHeight = false;
+    });
     // Stores the active item in the projects list.
     this.previousActiveItem;
     this.projectsListBtn = document.getElementById('projectsListBtn');

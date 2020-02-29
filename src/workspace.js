@@ -48,7 +48,7 @@ export class Workspace {
       projectData.comments.forEach(comment => this.comments.push(new Comment(comment.elementId, comment.content, comment.mentions)));
       this.drawings.forEach(drawing => drawing.commentsChanged = true);
     }
-    this.mainPanel = new MainPanel(App.mainPanel, App.panelsStorage);
+    this.mainPanel = new MainPanel(App.mainPanel, App.panelsStorage); // Since currently there can be only one workspace this should be better in the Application class.
     this.commentForm = new CommentForm(document.getElementById('commentForm'), this);
   }
 

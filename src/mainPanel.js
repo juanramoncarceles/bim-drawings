@@ -5,8 +5,10 @@ export class MainPanel {
     this.panelHeader = this.panel.querySelector('.panel-header');
     this.panelBody = this.panel.querySelector('.panel-body');
     this.panelFooter = this.panel.querySelector('.panel-footer');
+    this.panelGrip = this.panel.querySelector('.panel-grip');
     this.activeSection;
     this.isOpen;
+    this.panelSide;
     this.sections = [];
     this.setActive = this.setActive.bind(this);
     this.panelHeader.onclick = e => {
@@ -18,7 +20,45 @@ export class MainPanel {
     this.mediumBreakpoint = window.matchMedia('(max-width: 700px)');
     this.panelPositon = this.panelPositon.bind(this);
     this.mediumBreakpoint.addListener(this.panelPositon);
+    this.panelSides = {
+      right: 'r',
+      bottom: 'b'
+    }
     this.panelPositon(this.mediumBreakpoint);
+    // Panel dimensions and resizing.
+    this.panelWidth = 250;
+    this.panel.style.setProperty("--width", this.panelWidth + 'px');
+    this.panelHeight = 200;
+    this.panel.style.setProperty("--height", this.panelHeight + 'px');
+    this.resizingWidth = false;
+    this.resizingHeight = false;
+    this.startX;
+    this.startWidth;
+    this.startY;
+    this.startHeight;
+    this.panelGrip.onmousedown = e => {
+      if (this.panelSide === this.panelSides.right) {
+        this.resizingWidth = true;
+        this.resizingHeight = false;
+        this.startX = e.pageX;
+        this.startWidth = this.panelWidth;
+      } else if (this.panelSide === this.panelSides.bottom) {
+        this.resizingHeight = true;
+        this.resizingWidth = false;
+        this.startY = e.pageY;
+        this.startHeight = this.panelHeight;
+      }
+    };
+  }
+
+  resizeWidth(mouseEvent) {
+    this.panelWidth = this.startWidth - (mouseEvent.pageX - this.startX);
+    this.panel.style.setProperty("--width", this.panelWidth + 'px');
+  }
+
+  resizeHeight(mouseEvent) {
+    this.panelHeight = this.startHeight - (mouseEvent.pageY - this.startY);
+    this.panel.style.setProperty("--height", this.panelHeight + 'px');
   }
 
   open() {
@@ -34,17 +74,19 @@ export class MainPanel {
 
   /**
    * Docks the panel on the specified side.
-   * @param {String} side Options: right or bottom.
+   * @param {Object field} side Use the MainPanel.panelsSides fields.
    */
   dockTo(side) {
-    if (side === 'right') {
+    if (side === this.panelSides.right) {
+      this.panelSide = side;
       this.panel.classList.remove('bottom');
       this.panel.classList.add('right');
       this.panelBody.childNodes.forEach(content => {
         content.classList.remove('horizontal');
         content.classList.add('vertical');
       });
-    } else if (side === 'bottom') {
+    } else if (side === this.panelSides.bottom) {
+      this.panelSide = side;
       this.panel.classList.remove('right');
       this.panel.classList.add('bottom');
       this.panelBody.childNodes.forEach(content => {
@@ -142,14 +184,15 @@ export class MainPanel {
 
   panelPositon(breakpoint) {
     if (breakpoint.matches) {
-      this.dockTo('bottom');
+      this.dockTo(this.panelSides.bottom);
     } else {
-      this.dockTo('right');
+      this.dockTo(this.panelSides.right);
     }
   }
 
   kill() {
-    //Remove event liseners
+    // Remove event liseners
     this.panelHeader.onclick = null;
+    this.panelGrip.onmousedown = null;
   }
 }
