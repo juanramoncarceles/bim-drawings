@@ -66,7 +66,14 @@ export class AddComment extends ElementSelection {
       if (selectedEmails.length > 0) {
         const currentUserName = window.getCurrentUser().displayName;
         const currentUserPhoto = window.getCurrentUser().photoLink;
-        API.sendNotification(selectedEmails, currentUserName, currentUserPhoto, this.workspace.commentForm.textInput.value, this.workspace.projectName, this.workspace.projectId);
+        this.workspace.pendingNotificationsToSend.push({
+          emails: selectedEmails,
+          userName: currentUserName,
+          userPhoto: currentUserPhoto,
+          textContent: this.workspace.commentForm.textInput.value,
+          projectName: this.workspace.projectName,
+          projectId: this.workspace.projectId
+        });
       }
     }
     const comment = new Comment(this.selection.dataset.id, this.workspace.commentForm.textInput.value, selectedEmails);

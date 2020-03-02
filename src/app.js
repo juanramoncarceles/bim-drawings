@@ -157,8 +157,9 @@ export class Application {
 
 
   /**
-   * Saves the comments data created using the comments array from the current workspace.
-   * It creates the file if it still doesnt exist or updates its contents if it exists.
+   * Saves the comments data using the comments array from the current workspace.
+   * It also notifies the mentioned collaborators in the comments if any was mentioned in new comments.
+   * It creates the file (comments.json) if it still doesnt exist or updates its contents if it exists.
    */
   async saveCommentsData() {
     if (this.workspace && this.workspace.commentsChangesUnsaved) {
@@ -166,6 +167,8 @@ export class Application {
       this.saveBtn.classList.remove('enabled');
       this.saveBtn.classList.add('progress');
       let savingSuccessful;
+      let notificationsToSend;
+      let notificationsSuccess;
       // Collect the data to save in backend.
       const dataToSave = [];
       this.workspace.comments.forEach(comment => {
@@ -176,24 +179,23 @@ export class Application {
         });
       });
       const jsonDataToSave = JSON.stringify(dataToSave);
-      // If there is id for the comments.json file.
+      // If there is no id for the comments.json file create the file with the contents and get the id of it.
       if (!this.workspace.commentsFileId) {
-        // Create the file with the contents and get the id of it.
-        // TODO: The current uploadFile doesnt return the id of the created file.
-        // This makes it longer with a second request to get the id of it.
-        // There is no example on the Google Drive API documentation for browser.
         const commentsFileCreationRes = await API.uploadFile(jsonDataToSave, 'application/json', 'comments.json', this.workspace.projectId);
         if (commentsFileCreationRes.ok && commentsFileCreationRes.status === 200) {
-          const commentsFileRes = await API.listFiles({ name: 'comments.json', parentId: this.workspace.projectId, trashed: false });
-          const commentsFileData = commentsFileRes.result.files;
-          if (commentsFileData && commentsFileData.length === 1) {
-            this.workspace.commentsFileId = commentsFileData[0].id;
+          try {
+            const decoder = new TextDecoder('utf-8');
+            let { value, done } = await commentsFileCreationRes.body.getReader().read();
+            const id = JSON.parse(decoder.decode(value)).id;
+            // Set the id of the comments.json file that has been created.
+            this.workspace.commentsFileId = id;
             savingSuccessful = true;
-            console.log('comments.json created: ' + this.workspace.commentsFileId);
-          } else {
-            savingSuccessful = false;
-            // TODO: Delete existing created file/s with name 'comments.json', if there is no id then use the name.
+          } catch (err) {
+            console.log('Error decoding the new comments.json file id: ', err); // JSON.parse(err.body).error.message
           }
+        } else {
+          savingSuccessful = false;
+          // TODO: Delete existing created file/s with name 'comments.json', if there is no id then use the name?
         }
       } else {
         // Update the existing comments.json file.
@@ -202,7 +204,24 @@ export class Application {
           savingSuccessful = true;
         }
       }
-      if (savingSuccessful) {
+      // If savingSuccessful proceed with the notifications if any.
+      if (savingSuccessful && this.workspace.pendingNotificationsToSend.length > 0) {
+        notificationsToSend = true;
+        const notificationsPromises = [];
+        this.workspace.pendingNotificationsToSend.forEach(n => {
+          const notificationPromise = API.sendNotification(n.emails, n.userName, n.userPhoto, n.textContent, n.projectName, n.projectId);
+          notificationsPromises.push(notificationPromise);
+        });
+        await Promise.all(notificationsPromises).then(responses => {
+          notificationsSuccess = true;
+          this.workspace.pendingNotificationsToSend.length = 0;
+          // responses.forEach(res => console.log(res));
+        }, err => {
+          notificationsSuccess = false;
+          console.log(err);
+        });
+      }
+      if (savingSuccessful && (notificationsToSend && notificationsSuccess)) {
         this.saveBtn.classList.remove('progress');
         this.saveBtn.classList.add('disabled');
         console.log('Data saved successfully.');
