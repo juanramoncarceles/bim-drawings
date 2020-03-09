@@ -6,6 +6,7 @@ import { AddComment } from './appTools/addComment';
 import { ElementData } from './appTools/elementData';
 import { ShareProject } from './shareProject';
 import { NotificationsManager } from './notificationsManager';
+import { RenameProject } from './renameProject';
 
 export class Application {
   constructor() {
@@ -121,6 +122,8 @@ export class Application {
         console.error(err);
       });
     }
+    /******************** Rename project form *********************/
+    this.renameProjectDialog = new RenameProject(document.getElementById('renameProjectForm'), this);
     /********************* Share project form *********************/
     this.shareProjectDialog = new ShareProject(document.getElementById('shareProjectDialog'), this);
     /********************** Message container **********************/
@@ -413,7 +416,7 @@ export class Application {
   * Disaplays feedback message.
   * @param {String} type Use keywords 'success', 'warning' or 'error' to specify the type of message.
   * @param {String} message The actual message.
-  * @param {Number} timer Optional. Time before it autocloses.
+  * @param {Number} timer Optional. Time (ms) before it autocloses.
   */
   showMessage(type, message, timer = undefined) {
     // If the data-type attr has value is because the message is still open.

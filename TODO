@@ -1,5 +1,9 @@
 NOTIFICACIONES
-Enviar notificaciones a colaboradores mencionados solo despues de haber guardado los cambios ya que sino no los veran si acceden al dibujo.
+Si haces click en la notificacion debería llevarte al proyecto y al dibujo concreto actualizando el dibujo si fuese necesario para mostrar los cambios.
+Si se tratase de un dibujo de ese mismo proyecto se podria crear un sistema de pestañas para no tener que cerrar el actual.
+Si se tratase de otro proyecto quizas lo mejor seria abrir una nueva pestaña en el navegador o preguntar para cerrar y abrir el otro proyecto.
+
+
 
 NAVIGATION
 Utilizar click en el logo de la app para volver a la lista de proyectos? o poner una flecha al lado?
@@ -23,7 +27,7 @@ Installation is instant without store redirect and it won't take up space on you
 HACER EN EL LOGO LA LUPA MAS GRUESA Y GRIS CLARO
 
 
-Si haces click en la notificacion debería llevarte al proyecto y al dibujo concreto.
+
 
 
 
@@ -51,4 +55,4 @@ AÑADIR FLECHITA HACIA ABAJO EN LOS BOTONES CON EL TITULO DEL PROYECTO Y DEL DIB
 Si ya hay un proyecto con ese nombre mostrar dialogo para cambiarlo ya que ahora da un error y no obstante se crea un nuevo item.
 
 
-Si la foto de perfil de Google no se carga poner una por defecto.
+Si la foto de perfil de Google no se carga poner una por defecto, a poder ser un svg.

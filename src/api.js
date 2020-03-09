@@ -208,7 +208,7 @@ export default class {
    * @param {String} newTitle New title for the file.
    */
   static renameFile(fileId, newTitle) {
-    var request = gapi.client.drive.files.update({
+    const request = gapi.client.drive.files.update({
       'fileId': fileId,
       'name': newTitle,
       'uploadType': 'media'
@@ -218,6 +218,7 @@ export default class {
     }, rej => {
       console.log(rej);
     });
+    return request;
   }
 
 

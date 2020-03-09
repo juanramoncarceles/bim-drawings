@@ -421,7 +421,7 @@ window.addEventListener("contextmenu", e => {
     const projectItem = e.target.closest('[data-proj-id]');
     // Get the index of the project in the projectsData.
     const projIndex = App.projectsData.findIndex(proj => proj.id === projectItem.dataset.projId);
-    // Create the delete button.
+    // Create the DELETE button.
     const deleteBtn = document.createElement('li');
     deleteBtn.innerText = 'Delete';
     deleteBtn.onclick = () => {
@@ -448,7 +448,7 @@ window.addEventListener("contextmenu", e => {
       ]);
     };
     contextMenu.querySelector('ul').appendChild(deleteBtn);
-    // Create the share button.
+    // Create the SHARE button.
     const shareBtn = document.createElement('li');
     shareBtn.innerText = 'Share project';
     shareBtn.onclick = () => {
@@ -457,6 +457,14 @@ window.addEventListener("contextmenu", e => {
       App.modalDialogContainer.classList.add('grayTranslucent');
     }
     contextMenu.querySelector('ul').appendChild(shareBtn);
+    // Create the RENAME button.
+    const renameBtn = document.createElement('li');
+    renameBtn.innerText = 'Rename';
+    renameBtn.onclick = () => {
+      App.renameProjectDialog.setUpDialog(projectItem);
+      App.showModalDialog(App.renameProjectDialog.htmlContainer);
+    }
+    contextMenu.querySelector('ul').appendChild(renameBtn);
     const origin = {
       left: e.pageX,
       top: e.pageY
