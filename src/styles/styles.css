@@ -759,6 +759,19 @@ div#propsTablesContainer {
   float: right;
 }
 
+/* Button created by the modal dialog content if needed */
+
+#modalDialogContainer .modal-main-btns {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  margin-top: 0.3rem;
+}
+
+#modalDialogContainer .modal-main-btns > button:not(:first-child) {
+  margin-left: 0.5rem;
+}
+
 
 /*********************** AUTHORIZE DIALOG **************************/
 
@@ -824,6 +837,27 @@ div#propsTablesContainer {
 #loadingFile {
   padding: 1rem;
   text-align: center;
+}
+
+
+/*********************** FORM GENERAL STYLES ***********************/
+
+form .top-label {
+  margin-bottom: 0.5rem;
+}
+
+form .base-input {
+  padding: 0.4rem;
+}
+
+form .error-msg {
+  font-size: 0.9rem;
+  font-weight: lighter;
+  color: red;
+}
+
+form .error-msg.hidden {
+  visibility: hidden;
 }
 
 
@@ -927,7 +961,6 @@ div#propsTablesContainer {
 
 #shareProjectDialog > form > label {
   display: block;
-  margin-bottom: 0.5rem;
 }
 
 #shareProjectDialog > form > div {
@@ -936,21 +969,10 @@ div#propsTablesContainer {
 
 #shareProjectDialog > form input {
   flex-grow: 1;
-  padding: 0.4rem;
 }
 
 #shareProjectDialog > form button {
   width: 60px;
-}
-
-#shareProjectDialog > form > .error-msg {
-  font-size: 0.9rem;
-  font-weight: lighter;
-  color: red;
-}
-
-#shareProjectDialog > form > .error-msg.hidden {
-  visibility: hidden;
 }
 
 #shareProjectDialog > .loader-container {
@@ -969,13 +991,6 @@ div#propsTablesContainer {
   display: none;
 }
 
-#shareProjectDialog .confirm-changes-btns {
-  display: flex;
-  align-items: flex-end;
-  justify-content: flex-end;
-  margin-top: 0.3rem;
-}
-
 #shareProjectDialog .share-notification {
   position: absolute;
   bottom: 0;
@@ -985,8 +1000,13 @@ div#propsTablesContainer {
   visibility: hidden;
 }
 
-#shareProjectDialog .save-changes-btn {
-  margin-left: 0.5rem;
+
+/*********************** RENAME PROJECT FORM ************************/
+
+#renameProjectForm .rename-form-content {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
 }
 
 

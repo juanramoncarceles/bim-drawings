@@ -182,7 +182,7 @@
   <div id="panelsStorage" style="display: none;">
     <form id="commentForm">
       <div class="inputs">
-        <textarea name="comment"></textarea>
+        <textarea class="base-input" name="comment"></textarea>
         <div class="members">
           <p>Tag team members:</p>
           <select name="members" multiple></select>
@@ -239,9 +239,9 @@
         </div>
       </div>
       <form class="share-form">
-        <label for="sharingEmail">Email address of members to add:</label>
+        <label class="top-label" for="sharingEmail">Email address of members to add:</label>
         <div>
-          <input type="email" name="email" id="sharingEmail" placeholder="member@mail.com">
+          <input type="email" class="base-input" name="email" id="sharingEmail" placeholder="member@mail.com">
           <button type="submit" class="buttonBase light">Add</button>
         </div>
         <span class="error-msg hidden">This user is already in the team or pending to add.</span>
@@ -250,7 +250,7 @@
         <span>Notify new members</span>
         <input type="checkbox" checked>
       </div>
-      <div class="confirm-changes-btns">
+      <div class="modal-main-btns">
         <button class="buttonBase light cancel-changes-btn disabled">Cancel</button>
         <button class="buttonBase emphasize save-changes-btn disabled">Save changes</button>
       </div>
@@ -263,13 +263,14 @@
 
     <div id="renameProjectForm">
       <form>
-        <div>
-          <label for="renameProject">Rename project:</label>
-          <input type="text" id="renameProject">
+        <div class="rename-form-content">
+          <label class="top-label" for="renameProject">Rename project</label>
+          <input class="base-input" type="text" id="renameProject">
+          <span class="error-msg hidden">Invalid value.</span>
         </div>
-        <div>
+        <div class="modal-main-btns">
           <button class="buttonBase light cancel-btn">Cancel</button>
-          <button class="buttonBase light" type="submit">OK</button>
+          <button class="buttonBase emphasize" type="submit">OK</button>
         </div>
       </form>
     </div>

@@ -214,9 +214,9 @@ export default class {
       'uploadType': 'media'
     });
     request.then(res => {
-      console.log(res);
+      //console.log(res);
     }, rej => {
-      console.log(rej);
+      console.error('Error renaming file: ' + fileId, rej);
     });
     return request;
   }

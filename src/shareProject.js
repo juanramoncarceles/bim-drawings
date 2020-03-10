@@ -6,7 +6,7 @@ export class ShareProject {
     this.htmlContainer = shareProjectContainer; // This is used in the context menu to pass it to the showModalDialog()
     this.shareForm = shareProjectContainer.querySelector('.share-form');
     this.shareFormErrorMsg = shareProjectContainer.querySelector('.share-form > .error-msg');
-    this.confirmChangesBtns = shareProjectContainer.querySelector('.confirm-changes-btns');
+    this.confirmChangesBtns = shareProjectContainer.querySelector('.modal-main-btns');
     this.saveChangesBtn = shareProjectContainer.querySelector('.save-changes-btn');
     this.cancelChangesBtn = shareProjectContainer.querySelector('.cancel-changes-btn');
     this.waitingAnimation = shareProjectContainer.querySelector('.loader-container');
