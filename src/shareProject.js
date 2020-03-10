@@ -61,7 +61,7 @@ export class ShareProject {
    * When the modal dialog that contains this is open this method should be called.
    * @param {Object} projectData 
    */
-  openDialog(projectData) {
+  setUpDialog(projectData) {
     // Reset to an initial state. Maybe it is better to do this when the previous dialog is closed?
     this.pendingToRemove = [];
     Generics.emptyNode(this.currentUsersTable);

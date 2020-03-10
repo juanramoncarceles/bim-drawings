@@ -452,7 +452,7 @@ window.addEventListener("contextmenu", e => {
     const shareBtn = document.createElement('li');
     shareBtn.innerText = 'Share project';
     shareBtn.onclick = () => {
-      App.shareProjectDialog.openDialog(App.projectsData[projIndex]);
+      App.shareProjectDialog.setUpDialog(App.projectsData[projIndex]);
       App.showModalDialog(App.shareProjectDialog.htmlContainer);
       App.modalDialogContainer.classList.add('grayTranslucent');
     }
