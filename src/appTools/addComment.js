@@ -6,8 +6,9 @@ export class AddComment extends ElementSelection {
   constructor(name, toolBtn, workspace) {
     super(name, toolBtn, workspace);
     console.log('Comment element tool enabled.');
+    this.multipleSelection = true;
     this.boundingBox;
-    this.waitingForComment = false;
+    this.waitingForComment = false; // TODO use this instead to avoid changing drawing?
     this.cancelComment = this.cancelComment.bind(this);
     workspace.commentForm.cancelCreateBtn.onclick = this.cancelComment;
     if (workspace.permissions.length > 1) { // There is always at least the owner.
@@ -38,23 +39,19 @@ export class AddComment extends ElementSelection {
    * @param {MouseEvent} e The click event.
    */
   manageSelection(e) {
-    if (!this.waitingForComment) {
-      super.manageSelection(e);
-      if (this.selection !== null) {
-        console.log('Add comment to: ', this.selection);
-        // Show the form to add the comment.
-        this.workspace.commentForm.buttonsVisibilityMode('create');
-        this.workspace.mainPanel.addSection('Comment', this.workspace.commentForm.formElement);
-        this.workspace.mainPanel.open();
-        this.hasUsedPanel = true;
-        // TODO: Allow to change the commented element by picking another one.
-        this.waitingForComment = true;
-      }
+    super.manageSelection(e);
+    if (this.selection !== null) { // TODO Use this.currentSelection.length > 0 instead
+      // Show the form to add the comment.
+      this.workspace.commentForm.buttonsVisibilityMode('create');
+      this.workspace.mainPanel.addSection('Comment', this.workspace.commentForm.formElement);
+      this.workspace.mainPanel.open();
+      this.hasUsedPanel = true;
     }
   }
 
 
   addComment() {
+    // TODO Check if there are elements selected, if not return this.currentSelection.length > 0
     // If 'activeDrawing' doesnt have a group for comments create it.
     if (this.workspace.activeDrawing.commentsGroup === undefined) {
       this.workspace.activeDrawing.createCommentsGroup();
@@ -92,7 +89,7 @@ export class AddComment extends ElementSelection {
         drawing.commentsChanged = true;
       }
     });
-    super.clearSelection();
+    super.clearAllSelection();
   }
 
 
@@ -100,7 +97,7 @@ export class AddComment extends ElementSelection {
     this.workspace.mainPanel.close();
     this.workspace.commentForm.reset();
     this.waitingForComment = false;
-    super.clearSelection();
+    super.clearAllSelection();
   }
 
 

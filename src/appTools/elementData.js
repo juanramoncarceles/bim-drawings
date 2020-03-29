@@ -21,7 +21,8 @@ export class ElementData extends ElementSelection {
    */
   manageSelection(e) {
     super.manageSelection(e);
-    if (this.selection !== null) {
+    // Only if an element has been clicked and added, since it could have been removed.
+    if (this.selection !== null && this.currentSelection.length > 0) {
       this.showElementData(this.selection.dataset.category, this.selection.dataset.id);
       if (this.selection.dataset.comment) {
         this.workspace.commentForm.viewComment(this.selection.dataset.comment);

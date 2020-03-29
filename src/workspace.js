@@ -99,9 +99,9 @@ export class Workspace {
   setDrawing(drawing) {
     // If there is a previous visible drawing hide it.
     if (this.activeDrawing && this.activeDrawing.name !== drawing.name) {
-      // If in the drawing to be hided there is a selection remove it.
-      if (this.activeTool && this.activeTool.currentSelection && this.activeDrawing.content.querySelector('[data-id="' + this.activeTool.currentSelection.dataset.id + '"]')) {
-        this.activeTool.deselect(this.activeTool.currentSelection);
+      // If in the drawing to be hidden there are selected elements remove their selection appearance.
+      if (this.activeTool && this.activeTool.currentSelection.length > 0) {
+        this.activeTool.removeDrawingSelectionAppearance(this.activeDrawing);
       }
       this.activeDrawing.content.style.display = 'none';
     } else if (this.activeDrawing && this.activeDrawing.name === drawing.name) {
@@ -161,9 +161,10 @@ export class Workspace {
     if (this.activeTool) {
       this.activeTool.activeDrawing = drawing;
     }
-    if (this.activeTool && this.activeTool.currentSelection && drawing.content.querySelector('[data-id="' + this.activeTool.currentSelection.dataset.id + '"]')) {
-      this.activeTool.currentSelection = drawing.content.querySelector('[data-id="' + this.activeTool.currentSelection.dataset.id + '"]');
-      this.activeTool.select(this.activeTool.currentSelection);
+
+    // If there are selected elements in the new drawing add the selection appearance to them.
+    if (this.activeTool && this.activeTool.currentSelection.length > 0) {
+      this.activeTool.addDrawingSelectionAppearance(drawing);
     }
 
     drawing.content.style.visibility = 'unset';
