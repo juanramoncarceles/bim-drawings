@@ -43,11 +43,19 @@ export class Workspace {
       this.commentsFileId = projectData.commentsFileId;
     }
     // Used to store arrays of all the comments that each element has, necessary when an element is clicked.
-    this.elementsComments = {}; // TODO Populate it at start with the data at projectData.comments
     this.comments = [];
+    this.elementsComments = {};
     if (projectData.comments) {
       // TODO: Create the comment objects each time a workspace is created or before on the AppData.projectsData object?
-      projectData.comments.forEach(comment => this.comments.push(new Comment(comment.elementsIds, comment.content, comment.mentions)));
+      projectData.comments.forEach(comment => {
+        const commentObj = new Comment(comment.elementsIds, comment.content, comment.mentions);
+        this.comments.push(commentObj);
+        for (let i = 0; i < comment.elementsIds.length; i++) {
+          if (!this.elementsComments.hasOwnProperty(comment.elementsIds[i]))
+            this.elementsComments[comment.elementsIds[i]] = [];
+          this.elementsComments[comment.elementsIds[i]].push(commentObj.id);
+        }
+      });
       this.drawings.forEach(drawing => drawing.commentsChanged = true);
     }
     this.pendingNotificationsToSend = [];
