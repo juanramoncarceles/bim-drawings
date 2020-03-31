@@ -1,10 +1,11 @@
 import Generics from './generics';
 
 export class Comment {
-  constructor(elementId, content, mentions = []) {
-    this.elementId = elementId;
+  constructor(elementsIds, content, mentions = []) {
+    this.elementsIds = [];
+    this.elementsIds.push(...elementsIds);
     this.content = content;
-    this.id = 'c-' + elementId;
+    this.id = 'c-' + Generics.uuidv4();
     this.representations = [];
     this.mentions = mentions;
   }
@@ -22,7 +23,14 @@ export class Comment {
     representation.dataset.id = this.id;
     commentsGroup.appendChild(representation);
     this.representations.push(representation);
-    // Add a data-attr to the element to indicate it has an associated comment.
-    element.dataset.comment = this.id;
+  }
+
+  /**
+   * Replaces the previous one
+   * @param {SVGGElement} commentsGroup 
+   * @param {Array of SVGGElement} elements 
+   */
+  createRepresentation2(commentsGroup, elements) {
+    // TODO new function
   }
 }

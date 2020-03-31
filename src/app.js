@@ -176,7 +176,7 @@ export class Application {
       const dataToSave = [];
       this.workspace.comments.forEach(comment => {
         dataToSave.push({
-          elementId: comment.elementId,
+          elementsIds: comment.elementsIds,
           content: comment.content,
           mentions: comment.mentions
         });

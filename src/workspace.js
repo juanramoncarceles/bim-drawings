@@ -42,10 +42,12 @@ export class Workspace {
     if (projectData.commentsFileId) {
       this.commentsFileId = projectData.commentsFileId;
     }
+    // Used to store arrays of all the comments that each element has, necessary when an element is clicked.
+    this.elementsComments = {}; // TODO Populate it at start with the data at projectData.comments
     this.comments = [];
     if (projectData.comments) {
       // TODO: Create the comment objects each time a workspace is created or before on the AppData.projectsData object?
-      projectData.comments.forEach(comment => this.comments.push(new Comment(comment.elementId, comment.content, comment.mentions)));
+      projectData.comments.forEach(comment => this.comments.push(new Comment(comment.elementsIds, comment.content, comment.mentions)));
       this.drawings.forEach(drawing => drawing.commentsChanged = true);
     }
     this.pendingNotificationsToSend = [];
@@ -125,32 +127,47 @@ export class Workspace {
     // If the value of commentsChanged is undefined then there are still
     // no comments in the project. If it is false then there are no changes.
     if (drawing.commentsChanged) {
-      // Look for elements in the drawing that should have comment representation.
-      // If still there is no comments group yet check the drawing, otherwise check
-      // in the comments group. This way the comments group is added only if needed.
+      // Update the comments representations for the new drawing.
+      // If still there is no comments group check the drawing, otherwise check
+      // the ones without representation in the comments group.
       if (drawing.commentsGroup === undefined) {
         let groupCreated = false;
-        this.comments.forEach(comment => {
-          if (drawing.content.querySelector('[data-id="' + comment.elementId + '"]') !== null) {
-            // Only if at least one element is found the comments group is created.
+        for (let j = 0; j < this.comments.length; j++) {
+          const elemsForCommentRepresentation = [];
+          for (let i = 0; i < this.comments[j].elementsIds.length; i++) {
+            const element = drawing.content.querySelector('[data-id="' + this.comments[j].elementsIds[i] + '"]');
+            if (element !== null)
+              elemsForCommentRepresentation.push(element);
+          }
+          // If at least one is found create the representation.
+          if (elemsForCommentRepresentation.length > 0) {
+            // Only if at least one comment requires representation the comments group is created.
             if (!groupCreated) {
               drawing.createCommentsGroup();
               // TODO: Set visibility of the group.
               groupCreated = true;
             }
-            const element = drawing.content.querySelector('[data-id="' + comment.elementId + '"]');
-            comment.createRepresentation(drawing.commentsGroup, element);
+            this.comments[j].createRepresentation(drawing.commentsGroup, elemsForCommentRepresentation[0]);
           }
-        });
+        }
       } else {
         // Look for in the comments group, and add the missing ones.
         // Only if the element is in the drawing and it doesnt have representation.
-        this.comments.forEach(comment => {
-          if (drawing.content.querySelector('[data-id="' + comment.elementId + '"]') !== null && drawing.commentsGroup.querySelector('[data-id="' + comment.id + '"]') === null) {
-            const element = drawing.content.querySelector('[data-id="' + comment.elementId + '"]');
-            comment.createRepresentation(drawing.commentsGroup, element);
+        for (let j = 0; j < this.comments.length; j++) {
+          // If this element already has a representation in this drawing skip it.
+          if (drawing.commentsGroup.querySelector('[data-id="' + this.comments[j].id + '"]') !== null) continue;
+          // TODO Do something to avoid checking comments that doesnt have any element in this drawing.
+          // If there is no representation for it get all its elements and if at least one is found create the representation.
+          const elemsForCommentRepresentation = [];
+          for (let i = 0; i < this.comments[j].elementsIds.length; i++) {
+            const element = drawing.content.querySelector('[data-id="' + this.comments[j].elementsIds[i] + '"]');
+            if (element !== null)
+              elemsForCommentRepresentation.push(element);
           }
-        });
+          if (elemsForCommentRepresentation.length > 0) {
+            this.comments[j].createRepresentation(drawing.commentsGroup, elemsForCommentRepresentation[0]);
+          }
+        }
         // TODO: Set visibility of the group.
       }
       // Set the commentsChanged property to false to indicate that it is updated.

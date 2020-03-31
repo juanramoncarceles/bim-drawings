@@ -40,18 +40,22 @@ export class AddComment extends ElementSelection {
    */
   manageSelection(e) {
     super.manageSelection(e);
-    if (this.selection !== null) { // TODO Use this.currentSelection.length > 0 instead
+    if (this.currentSelection.length > 0) {
+      this.waitingForComment = true;
       // Show the form to add the comment.
+      // TODO Open the panel when activating the tool instead.
       this.workspace.commentForm.buttonsVisibilityMode('create');
       this.workspace.mainPanel.addSection('Comment', this.workspace.commentForm.formElement);
       this.workspace.mainPanel.open();
       this.hasUsedPanel = true;
+    } else {
+      this.waitingForComment = false;
     }
   }
 
 
   addComment() {
-    // TODO Check if there are elements selected, if not return this.currentSelection.length > 0
+    if (this.currentSelection.length === 0) return;
     // If 'activeDrawing' doesnt have a group for comments create it.
     if (this.workspace.activeDrawing.commentsGroup === undefined) {
       this.workspace.activeDrawing.createCommentsGroup();
@@ -73,10 +77,17 @@ export class AddComment extends ElementSelection {
         });
       }
     }
-    const comment = new Comment(this.selection.dataset.id, this.workspace.commentForm.textInput.value, selectedEmails);
-    comment.createRepresentation(this.workspace.activeDrawing.commentsGroup, this.selection);
-    // Add attribute to the commented element to indicate it has a comment.
-    this.selection.dataset.comment = comment.id;
+    const comment = new Comment(this.currentSelection, this.workspace.commentForm.textInput.value, selectedEmails);
+    // Get references to the elements in the drawing to pass them
+    const selElementsRef = this.getDrawingSelectedElementsRefs(this.workspace.activeDrawing);
+    comment.createRepresentation(this.workspace.activeDrawing.commentsGroup, selElementsRef[0]); // TODO replace by the new method!!!
+    // Add comment id to all the element arrays in the obj Workspace.elementsComments.
+    for (let i = 0; i < this.currentSelection.length; i++) {
+      if (!this.workspace.elementsComments.hasOwnProperty(this.currentSelection[i]))
+        this.workspace.elementsComments[this.currentSelection[i]] = [];
+      this.workspace.elementsComments[this.currentSelection[i]].push(comment.id);
+    }
+    console.log('elementsComments ', this.workspace.elementsComments);
     this.workspace.comments.push(comment);
     console.log(this.workspace.comments);
     this.workspace.commentForm.reset();
