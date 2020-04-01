@@ -155,7 +155,7 @@ export class Workspace {
               // TODO: Set visibility of the group.
               groupCreated = true;
             }
-            this.comments[j].createRepresentation(drawing.commentsGroup, elemsForCommentRepresentation[0]);
+            this.comments[j].createRepresentation(drawing.commentsGroup, elemsForCommentRepresentation);
           }
         }
       } else {
@@ -173,7 +173,7 @@ export class Workspace {
               elemsForCommentRepresentation.push(element);
           }
           if (elemsForCommentRepresentation.length > 0) {
-            this.comments[j].createRepresentation(drawing.commentsGroup, elemsForCommentRepresentation[0]);
+            this.comments[j].createRepresentation(drawing.commentsGroup, elemsForCommentRepresentation);
           }
         }
         // TODO: Set visibility of the group.

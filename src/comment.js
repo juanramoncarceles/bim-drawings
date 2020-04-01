@@ -16,21 +16,35 @@ export class Comment {
    * @param {SVGGElement} commentsGroup
    * @param {SVGElement} element 
    */
-  createRepresentation(commentsGroup, element) {
-    const representation = Generics.createBBox(element, 15, 15);
-    // TODO: the style values will come from the app settings file if any.
-    representation.setAttribute('style', 'fill:none;stroke:#e22a2a;stroke-width:8px;stroke-dasharray:18;');
-    representation.dataset.id = this.id;
-    commentsGroup.appendChild(representation);
-    this.representations.push(representation);
-  }
+  // createRepresentation(commentsGroup, element) {
+  //   const representation = Generics.createBBox(element, 15, 15);
+  //   // TODO: the style values will come from the app settings file if any.
+  //   representation.setAttribute('style', 'fill:none;stroke:#e22a2a;stroke-width:8px;stroke-dasharray:18;');
+  //   representation.dataset.id = this.id;
+  //   commentsGroup.appendChild(representation);
+  //   this.representations.push(representation);
+  // }
 
   /**
    * Replaces the previous one
    * @param {SVGGElement} commentsGroup 
    * @param {Array of SVGGElement} elements 
    */
-  createRepresentation2(commentsGroup, elements) {
+  createRepresentation(commentsGroup, elements) {
     // TODO new function
+    const rectangles = [];
+    for (let i = 0; i < elements.length; i++) {
+      rectangles.push(Generics.createBBox2(elements[i], 15));
+    }
+    const segments = Generics.rectanglesSilhouette(rectangles);
+    const representation = Generics.svgPathFromLines(segments);
+    representation.setAttribute('style', 'fill:none;stroke:#e22a2a;stroke-width:8px;stroke-dasharray:18;');
+    representation.dataset.id = this.id;
+    commentsGroup.appendChild(representation);
+    this.representations.push(representation);
   }
+
+
+
+
 }

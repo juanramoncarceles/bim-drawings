@@ -80,7 +80,7 @@ export class AddComment extends ElementSelection {
     const comment = new Comment(this.currentSelection, this.workspace.commentForm.textInput.value, selectedEmails);
     // Get references to the elements in the drawing to pass them
     const selElementsRef = this.getDrawingSelectedElementsRefs(this.workspace.activeDrawing);
-    comment.createRepresentation(this.workspace.activeDrawing.commentsGroup, selElementsRef[0]); // TODO replace by the new method!!!
+    comment.createRepresentation(this.workspace.activeDrawing.commentsGroup, selElementsRef); // TODO replace by the new method!!!
     // Add comment id to all the element arrays in the obj Workspace.elementsComments.
     for (let i = 0; i < this.currentSelection.length; i++) {
       if (!this.workspace.elementsComments.hasOwnProperty(this.currentSelection[i]))
