@@ -101,9 +101,9 @@ export default class {
 
   static getRectSegments(rect) {
     const cornerA = { x: rect.x, y: rect.y };
-    const cornerB = { x: rect.x + rect.w, y: rect.y };
-    const cornerC = { x: rect.x + rect.w, y: rect.y + rect.h };
-    const cornerD = { x: rect.x, y: rect.y + rect.h };
+    const cornerB = { x: rect.x + rect.width, y: rect.y };
+    const cornerC = { x: rect.x + rect.width, y: rect.y + rect.height };
+    const cornerD = { x: rect.x, y: rect.y + rect.height };
     return [
       [cornerA, cornerB],
       [cornerB, cornerC],
@@ -120,9 +120,9 @@ export default class {
    */
   static isPtInRect(rect, pt, inclusive = true) {
     if (inclusive) {
-      return (pt.x >= rect.x && pt.x <= (rect.x + rect.w)) && (pt.y >= rect.y && pt.y <= (rect.y + rect.h));
+      return (pt.x >= rect.x && pt.x <= (rect.x + rect.width)) && (pt.y >= rect.y && pt.y <= (rect.y + rect.height));
     } else {
-      return (pt.x > rect.x && pt.x < (rect.x + rect.w)) && (pt.y > rect.y && pt.y < (rect.y + rect.h));
+      return (pt.x > rect.x && pt.x < (rect.x + rect.width)) && (pt.y > rect.y && pt.y < (rect.y + rect.height));
     }
   }
 
@@ -184,37 +184,37 @@ export default class {
   // if a rectangle is totaly overlapped or partially and completely inside it is not considered intersection but Inside. fullContainmentIntersections 
   // intersection includes overlaped partially but no one inside the other
   static rectRectRelationship(rect1, rect2) {
-    if (rect1.x === rect2.x && rect1.y === rect2.y && rect1.w === rect2.w && rect1.h === rect2.h) {
+    if (rect1.x === rect2.x && rect1.y === rect2.y && rect1.width === rect2.width && rect1.height === rect2.height) {
       return rectRectRelationshipType.match;
     } else if (this.isPtInRect(rect2, { x: rect1.x, y: rect1.y }) &&
-      this.isPtInRect(rect2, { x: rect1.x + rect1.w, y: rect1.y }) &&
-      this.isPtInRect(rect2, { x: rect1.x + rect1.w, y: rect1.y + rect1.h }) &&
-      this.isPtInRect(rect2, { x: rect1.x, y: rect1.y + rect1.h })) {
+      this.isPtInRect(rect2, { x: rect1.x + rect1.width, y: rect1.y }) &&
+      this.isPtInRect(rect2, { x: rect1.x + rect1.width, y: rect1.y + rect1.height }) &&
+      this.isPtInRect(rect2, { x: rect1.x, y: rect1.y + rect1.height })) {
       return rectRectRelationshipType.AInsideB;
     } else if (this.isPtInRect(rect1, { x: rect2.x, y: rect2.y }) &&
-      this.isPtInRect(rect1, { x: rect2.x + rect2.w, y: rect2.y }) &&
-      this.isPtInRect(rect1, { x: rect2.x + rect2.w, y: rect2.y + rect2.h }) &&
-      this.isPtInRect(rect1, { x: rect2.x, y: rect2.y + rect2.h })) {
+      this.isPtInRect(rect1, { x: rect2.x + rect2.width, y: rect2.y }) &&
+      this.isPtInRect(rect1, { x: rect2.x + rect2.width, y: rect2.y + rect2.height }) &&
+      this.isPtInRect(rect1, { x: rect2.x, y: rect2.y + rect2.height })) {
       return rectRectRelationshipType.BInsideA;
     } else if (this.isPtInRect(rect2, { x: rect1.x, y: rect1.y }, false) ||
-      this.isPtInRect(rect2, { x: rect1.x + rect1.w, y: rect1.y }, false) ||
-      this.isPtInRect(rect2, { x: rect1.x + rect1.w, y: rect1.y + rect1.h }, false) ||
-      this.isPtInRect(rect2, { x: rect1.x, y: rect1.y + rect1.h }, false) ||
+      this.isPtInRect(rect2, { x: rect1.x + rect1.width, y: rect1.y }, false) ||
+      this.isPtInRect(rect2, { x: rect1.x + rect1.width, y: rect1.y + rect1.height }, false) ||
+      this.isPtInRect(rect2, { x: rect1.x, y: rect1.y + rect1.height }, false) ||
       this.isPtInRect(rect1, { x: rect2.x, y: rect2.y }, false) ||
-      this.isPtInRect(rect1, { x: rect2.x + rect2.w, y: rect2.y }, false) ||
-      this.isPtInRect(rect1, { x: rect2.x + rect2.w, y: rect2.y + rect2.h }, false) ||
-      this.isPtInRect(rect1, { x: rect2.x, y: rect2.y + rect2.h }, false) ||
-      (this.isNumBetween(rect1.y, rect2.y, rect2.y + rect2.h, false) && rect1.x <= rect2.x && (rect1.x + rect1.w) >= (rect2.x + rect2.w)) || // isNumBetween(rect2.x, rect1.x, rect1.x + rect1.w) && isNumBetween()) ||
-      (this.isNumBetween(rect2.y, rect1.y, rect1.y + rect1.h, false) && rect2.x <= rect1.x && (rect2.x + rect2.w) >= (rect1.x + rect1.w))) { // isNumBetween(rect1.x, rect2.x, rect2.x + rect2.w))) {
+      this.isPtInRect(rect1, { x: rect2.x + rect2.width, y: rect2.y }, false) ||
+      this.isPtInRect(rect1, { x: rect2.x + rect2.width, y: rect2.y + rect2.height }, false) ||
+      this.isPtInRect(rect1, { x: rect2.x, y: rect2.y + rect2.height }, false) ||
+      (this.isNumBetween(rect1.y, rect2.y, rect2.y + rect2.height, false) && rect1.x <= rect2.x && (rect1.x + rect1.width) >= (rect2.x + rect2.width)) || // isNumBetween(rect2.x, rect1.x, rect1.x + rect1.width) && isNumBetween()) ||
+      (this.isNumBetween(rect2.y, rect1.y, rect1.y + rect1.height, false) && rect2.x <= rect1.x && (rect2.x + rect2.width) >= (rect1.x + rect1.width))) { // isNumBetween(rect1.x, rect2.x, rect2.x + rect2.width))) {
       return rectRectRelationshipType.intersect;
     } else if (this.isPtInRect(rect2, { x: rect1.x, y: rect1.y }) ||
-      this.isPtInRect(rect2, { x: rect1.x + rect1.w, y: rect1.y }) ||
-      this.isPtInRect(rect2, { x: rect1.x + rect1.w, y: rect1.y + rect1.h }) ||
-      this.isPtInRect(rect2, { x: rect1.x, y: rect1.y + rect1.h }) ||
+      this.isPtInRect(rect2, { x: rect1.x + rect1.width, y: rect1.y }) ||
+      this.isPtInRect(rect2, { x: rect1.x + rect1.width, y: rect1.y + rect1.height }) ||
+      this.isPtInRect(rect2, { x: rect1.x, y: rect1.y + rect1.height }) ||
       this.isPtInRect(rect1, { x: rect2.x, y: rect2.y }) ||
-      this.isPtInRect(rect1, { x: rect2.x + rect2.w, y: rect2.y }) ||
-      this.isPtInRect(rect1, { x: rect2.x + rect2.w, y: rect2.y + rect2.h }) ||
-      this.isPtInRect(rect1, { x: rect2.x, y: rect2.y + rect2.h })) {
+      this.isPtInRect(rect1, { x: rect2.x + rect2.width, y: rect2.y }) ||
+      this.isPtInRect(rect1, { x: rect2.x + rect2.width, y: rect2.y + rect2.height }) ||
+      this.isPtInRect(rect1, { x: rect2.x, y: rect2.y + rect2.height })) {
       return rectRectRelationshipType.tangent;
     } else {
       return rectRectRelationshipType.disjoint;
@@ -336,8 +336,9 @@ export default class {
   static svgPathFromLines(segments) {
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     const pathContent = [];
+    const precision = 3; // TODO Take from the document?
     for (let i = 0; i < segments.length; i++) {
-      pathContent.push(`M${segments[i][0].x},${segments[i][0].y} ${segments[i][1].x},${segments[i][1].y} `);
+      pathContent.push(`M${segments[i][0].x.toFixed(precision)},${segments[i][0].y.toFixed(precision)} ${segments[i][1].x.toFixed(precision)},${segments[i][1].y.toFixed(precision)}`);
     }
     path.setAttribute('d', pathContent.join(''));
     return path;

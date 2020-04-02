@@ -38,7 +38,7 @@ export class Comment {
     }
     const segments = Generics.rectanglesSilhouette(rectangles);
     const representation = Generics.svgPathFromLines(segments);
-    representation.setAttribute('style', 'fill:none;stroke:#e22a2a;stroke-width:8px;stroke-dasharray:18;');
+    representation.setAttribute('style', 'fill:none;stroke:#e22a2a;stroke-width:8px;stroke-dasharray:30;stroke-linecap:round;');
     representation.dataset.id = this.id;
     commentsGroup.appendChild(representation);
     this.representations.push(representation);
