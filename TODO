@@ -1,58 +1,54 @@
-NOTIFICACIONES
-Si haces click en la notificacion debería llevarte al proyecto y al dibujo concreto actualizando el dibujo si fuese necesario para mostrar los cambios.
-Si se tratase de un dibujo de ese mismo proyecto se podria crear un sistema de pestañas para no tener que cerrar el actual.
-Si se tratase de otro proyecto quizas lo mejor seria abrir una nueva pestaña en el navegador o preguntar para cerrar y abrir el otro proyecto.
+BUGS:
+  Comments:
+    ☐ Avoid changing drawing when an element comment is being created. Block from the moment the comment element tool is activated.
+    ☐ When an object has more than one comment their representation overlap and it no clear.
+  SVG Canvas:
+    ☐ Improve the objects selection. Currently it is difficult because lines are too thin. How can I check surrounding pixels? @high
+  Miscelaneous:
+    ☐ If I open the app from the project viewer and then I go to the projects list, the current project doesn't show the thumbnail neither the shared icon. @high 
+    ☐ Currently if a project is uploaded and there is already one with this name an error is thrown. @high 
+      Show a dialog with an explanation and the possibility to set a new name or cancel the operation.
+      Create a json with all the project names or fetch them to make sure there is none with the same name.
+    ☐ When a project is deleted the corresponding thumbnail is not deleted (thumbnails are located in the settings folder). @high 
+    ☐ When a project is deleted empty the contents of the objects `currentProject` and `lastUploadedProject`. @low
+    ☐ When a project name is changed does it change as well on the shared folder for all collaborators?
 
 
-
-NAVIGATION
-Utilizar click en el logo de la app para volver a la lista de proyectos? o poner una flecha al lado?
-
-
-SI ESTOY EN UN PROYECTO Y ACCEDO A LA LISTA EL ACTUAL NO TIENE NI IMAGEN NI ICONO DE COMPARTIDO EN EL CASO DE QUE LO NECESITASE
-
-
-SHARE PROJECT - WHEN A USER RECEIVES AN EMAIL WITH THE LINK IT IS IMPORTANT TO ADD THE SHARED PROJECT TO THE VAVIEWERDATA FOLDER OF THE NEW MEMBER
-
-la solucion es que si detecta que la carpeta del proyecto no tiene como padre la caprpeta VADrawingsViewe la busque y si no la encuetnra la cree y lo mueva.
-Si esto no funcionase la otra opcion seria utilizar una url particular como state=startcollab o que al acceder si no encuetnra la carpeta padre saliese un boton add to my projects
-
-
-
-INSTALLATION frases:
-Install the app and get a better experience.
-Installation is instant without store redirect and it won't take up space on your phone.
-
-
-HACER EN EL LOGO LA LUPA MAS GRUESA Y GRIS CLARO
-
-
-
-
-
-
-Crear una herramienta o switch para la visibilidad de los comentarios. Al activar la herramienta para crear comentario la visibilidad se activara en el caso de no estarlo.
-La accion de borrar y editar comentarios lo puedo hacer sobre el mismo comentario seleccionandolo y que estas a aparezcan sobre el main panel o con un context menu.
-Se han de poder esconder y mostrar todos los comentarios. Por lo menos con opacidad.
-Si los comentarios estan escondidos y se selecciona un objeto que tiene uno, el comentario se ha de ver.
+FEATURES:
+  Workspace:
+    ☐ Be able to close a workspace. When a workspace is closed the app should return to its initial state. Current will be closed every time project is changed. @high
+  Comments:
+    ☐ Add the option to create a comment for all objects of a category, and also by drawing or whole project.
+    ☐ Create a tool to switch the comments visibility, maybe with the option by drawing or global.
+      If the comments are hidden and an object with comments is selected should the comment appear?
+    ☐ Make comments by default semi transparent and only fully visible when the mouse is over its area or the commented object is selected.
+    ☐ Add priority property to comments. This would allow to filter visibility by priority for example.
+    ☐ Allow filter comments visiblity by category of object.
+    ☐ Add the possibility to select a comment. When the comment would be selected the options to edit or delete it may appear on the comment or on the comment properties panel.
+  Notifications:
+    ☐ When clicking a notificacion it should bring you to the corresponding project and drawing, updating it if necessary to show the changes.
+      If the notification is about a different project ask if you want to close current and change or open a new browser tab.
+  Navigation:
+    ☐ Use click on the app logo to go to the projects list?
+    ☐ Add down arrow on the buttons with the project title and the drawing to make it clear that they are clickable. @low
+  Collaboration:
+    ☐ Be able to access the project collaboration setting from inside a project, for example from the side menu.
+    ☐ When a user receives an email with the link it is important to add the shared project to the app folder (VADrawingsViewer) of the new collaborator.
+      One possibility is that if it detects that the project folder doesn't have as parent the app folder, look for it and if it is not found create it, eventually setting as parent.
+      Another option would be to use a specific url like `state=startcollab` which would indicate the this action should be done.
+  Miscelaneous:
+    ☐ If the Google profile picture doesnt load successfully show a default one (svg). @low
+    ☐ Add project units. Important ot be able to calculate distances. Check out how units are stored on an IFC file.
+    ☐ Be able to click on a section or level annotation on a drawing to go to the corresponding section or level drawing.
 
 
-
-Extraer todo el proceso de actualizar comentarios en un dibujo a un función ( updateComments() ) y llamarla solo si commentsChanged y si son visibles. En el caso de que no sean visibles se esperara a que se active la visibilidad de los comentarios en el dibujo para llamar a la funcion updateComments()
-
-
-
-API
-Cuando borro un proyecto tendre que ampliarlo para que haga mas cosas como borrar la miniatura del proyecto que se encuentra en la carpeta de settings.
-Gestionar ademas las varialbes currentProject y lastUploaded project en el caso de que el proyecto este en estas. Ademas si se quisiese borrar el proyecto actual que esta abierto habira que poder cerrar el workspace y poner la aplicacion como en un estado inicial.
-
-
-
-
-AÑADIR FLECHITA HACIA ABAJO EN LOS BOTONES CON EL TITULO DEL PROYECTO Y DEL DIBUJO PARA INDICAR QUE TIENEN CONTENIDO
-
-
-Si ya hay un proyecto con ese nombre mostrar dialogo para cambiarlo ya que ahora da un error y no obstante se crea un nuevo item.
-
-
-Si la foto de perfil de Google no se carga poner una por defecto, a poder ser un svg.
+CHANGES:
+  Comments:
+    ☐ Extract all the process of updating comments of a drawing to a function `updateComments()`, and call it only if `commentsChanged` and if they are visible.
+      In case comments are not visible it will be called when the visibility will be enabled.
+    ☐ Hide the Save button while the projects list is open.
+  Branding:
+    ☐ Change installation sentences:
+      Install the app and get a better experience.
+      Installation is instant without store redirect and it won't take up space on your phone.
+    ☐ Make the maginifying glass of the logo thicker and lighter.
