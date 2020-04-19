@@ -4,6 +4,10 @@ BUGS:
     ☐ When an object has more than one comment their representation overlap and it no clear.
   SVG Canvas:
     ☐ Improve the objects selection. Currently it is difficult because lines are too thin. How can I check surrounding pixels? @high
+  Firebase Cloud Functions:
+    ☐ Currently Firebase Cloud Functions endpoints can be used by anyone, how to limit to only authenticated users?
+      The only way seems to be using the Firebase Auth ID, or sending a custom session token stored as a cookie or local storage.
+      After the authentication, send to the Firestore database a session token, save on a collection "authsessiontokens", and relate to the email. Only one instance, the last one would be stored. When a request to an endpoint is made the session token should be send and inside the function the first step would be to check it.
   Miscelaneous:
     ☐ If I open the app from the project viewer and then I go to the projects list, the current project doesn't show the thumbnail neither the shared icon. @high 
     ☐ Currently if a project is uploaded and there is already one with this name an error is thrown. @high 
