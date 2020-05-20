@@ -42,6 +42,7 @@ FEATURES:
       Another option would be to use a specific url like `state=startcollab` which would indicate the this action should be done.
   Miscelaneous:
     ☐ If the Google profile picture doesnt load successfully show a default one (svg). @low
+    ☐ Use the <pattern> SVG element to create the hatch elements from the original drawing. This should be created in the exporter.
     ☐ Add project units. Important ot be able to calculate distances. Check out how units are stored on an IFC file.
     ☐ Be able to click on a section or level annotation on a drawing to go to the corresponding section or level drawing.
 
