@@ -362,10 +362,21 @@ main {
 }
 
 
+/*************************** WORKSPACES ****************************/
+
+#workspaces {
+  height: 100%;
+}
+
+.workspace {
+  height: 100%;
+}
+
+
 /*************************** MAIN PANEL ****************************/
 /* TODO: Do that by default has docked right style and by adding bottom is the other option? */
 
-#mainPanel {
+.mainPanel {
   display: flex;
   position: absolute;
   /* background-color: #f6f6f6; */
@@ -376,118 +387,118 @@ main {
   --height: 200px; /* Used for the panel docked to the bottom */
 }
 
-#mainPanel.right {
+.mainPanel.right {
   height: 100%;
   width: var(--width);
   top: 0;
   right: calc(var(--width) * -1); /* Usar variable con scope de este elemento que se modificara con js */
 }
 
-#mainPanel.bottom {
+.mainPanel.bottom {
   flex-direction: column;
   height: var(--height);
   width: 100%;
   bottom: calc(var(--height) * -1);
 }
 
-#mainPanel.right > .panel-content {
+.mainPanel.right > .panel-content {
   width: 100%;
 }
 
-#mainPanel.bottom > .panel-content {
+.mainPanel.bottom > .panel-content {
   display: flex;
   height: 100%;
 }
 
-#mainPanel.right.open {
+.mainPanel.right.open {
   right: 0;
 }
 
-#mainPanel.bottom.open {
+.mainPanel.bottom.open {
   bottom: 0;
 }
 
-#mainPanel > .panel-grip {
+.mainPanel > .panel-grip {
   background: #2a8fb1;
 }
 
-#mainPanel.right > .panel-grip {
+.mainPanel.right > .panel-grip {
   display: flex;
   align-items: center;
   padding: 0 5px;
   cursor: col-resize;
 }
 
-#mainPanel.bottom > .panel-grip {
+.mainPanel.bottom > .panel-grip {
   padding: 5px 0;
   cursor: row-resize;
 }
 
-#mainPanel > .panel-grip::before {
+.mainPanel > .panel-grip::before {
   content: "";
   display: block;
 }
 
-#mainPanel.right > .panel-grip::before {
+.mainPanel.right > .panel-grip::before {
   height: 27px;
   border-right: 3px double #fff;
 }
 
-#mainPanel.bottom > .panel-grip::before {
+.mainPanel.bottom > .panel-grip::before {
   width: 27px;
   border-top: 3px double #fff;  
   margin: auto;
 }
 
-#mainPanel > .panel-content > .panel-header {
+.mainPanel > .panel-content > .panel-header {
   display: flex;
   justify-content: space-around;
   align-items: center;
   text-align: center;
 }
 
-#mainPanel.bottom > .panel-content > .panel-header {
+.mainPanel.bottom > .panel-content > .panel-header {
   flex-direction: column;
 }
 
-#mainPanel > .panel-content > .panel-header > span {
+.mainPanel > .panel-content > .panel-header > span {
   padding: 0.2rem;
   flex-grow: 1;
 }
 
-#mainPanel.bottom > .panel-content > .panel-header > span {
+.mainPanel.bottom > .panel-content > .panel-header > span {
   width: 35px;
   writing-mode: vertical-rl;
   -webkit-writing-mode: vertical-rl; /* Edge */
 }
 
-#mainPanel > .panel-content > .panel-header > span:not(.active) {
+.mainPanel > .panel-content > .panel-header > span:not(.active) {
   cursor: pointer;
   background-color: #e4e4e4;
 }
 
-#mainPanel.right > .panel-content > .panel-header > span:not(.active) {
+.mainPanel.right > .panel-content > .panel-header > span:not(.active) {
   border-bottom: 1px solid #a6a6a6;
 }
 
-#mainPanel.bottom > .panel-content > .panel-header > span:not(.active) {
+.mainPanel.bottom > .panel-content > .panel-header > span:not(.active) {
   border-right: 1px solid #a6a6a6;
 }
 
-#mainPanel.right > .panel-content > .panel-header > span:not(:last-child) {
+.mainPanel.right > .panel-content > .panel-header > span:not(:last-child) {
   border-right: 1px solid #a6a6a6;
 }
 
-#mainPanel.bottom > .panel-content > .panel-header > span:not(:last-child) {
+.mainPanel.bottom > .panel-content > .panel-header > span:not(:last-child) {
   border-bottom: 1px solid #a6a6a6;
 }
 
-#mainPanel > .panel-content > .panel-body {
+.mainPanel > .panel-content > .panel-body {
   flex-grow: 1;
   padding: 0.5rem;
 }
 
-#mainPanel > .panel-content > .panel-body > .hidden {
+.mainPanel > .panel-content > .panel-body > .hidden {
   display: none;
 }
 
@@ -567,7 +578,7 @@ div#propsTablesContainer {
   display: flex;
 }
 
-#mainPanel.right div#propsTablesContainer {
+.mainPanel.right div#propsTablesContainer {
   flex-direction: column;
 }
 
@@ -1237,17 +1248,17 @@ form .error-msg.hidden {
 
 /************************ DRAWING CONTAINER ************************/
 
-#drawingsContainer {
+.drawingsContainer {
   height: 100%;
 }
 
-#drawingsContainer > div {
-  display: block;
+.drawingsContainer > div {
+  /* display: block; */
   height: 100%;
 }
 
-#drawingsContainer > div > svg {
-  display: block;
+.drawingsContainer > div > svg {
+  /* display: block; */
   height: 100%;
   width: 100%;
 }
@@ -1295,7 +1306,8 @@ form .error-msg.hidden {
 /* Closed curves, which always have fill */
 .selected.fill.stroke > path,
 .selected.fill.stroke > polygon,
-.selected.fill.stroke > circle {
+.selected.fill.stroke > circle,
+.selected.fill.stroke > rect {
   fill: var(--fill);
   stroke: var(--stroke);
   stroke-width: var(--stroke-w);

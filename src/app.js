@@ -19,25 +19,12 @@ export class Application {
     this.userInfo = undefined;
     this.userInfoContainer = document.getElementById('user-info');
     // The current workspace object will be referenced here.
-    this.workspace = undefined;
+    this.currentWorkspace = undefined;
+    this.workspacesContainer = document.getElementById('workspaces');
     this.lastUploadedProject = new ProjectData();
-    // TODO when multiple simultaneous workspaces will be possible this should be placed in the Workspace class.
-    this.mainContainer = document.querySelector('main');
-    this.mainContainer.addEventListener('mousemove', e => {
-      if (this.workspace.mainPanel.resizingWidth) {
-        this.workspace.mainPanel.resizeWidth(e);
-      } else if (this.workspace.mainPanel.resizingHeight) {
-        this.workspace.mainPanel.resizeHeight(e);
-      }
-    });
-    this.mainContainer.addEventListener('mouseup', () => { // Add also the same for mouseleave?
-      this.workspace.mainPanel.resizingWidth = false;
-      this.workspace.mainPanel.resizingHeight = false;
-    });
     // Stores the active item in the projects list.
     this.previousActiveItem;
     this.projectsListBtn = document.getElementById('projectsListBtn');
-    this.drawingsContainer = document.getElementById('drawingsContainer');
     this.drawingsBtns = document.getElementById('drawingsBtns');
     this.toolbarsContainer = document.getElementById('toolbarsContainer');
     // Modal dialog.
@@ -48,13 +35,12 @@ export class Application {
     this.closeModalDialog = this.closeModalDialog.bind(this);
     this.closeModalBtn.onclick = this.closeModalDialog;
     // Viewport message.
-    this.viewportMessage = document.getElementById('viewportMessage');
+    this.viewportMessage = document.getElementById('viewportMessage'); // TODO Create as a new component of the workspace
     // Projects list.
     this.projectsListContainer = document.getElementById('projectsListContainer');
     this.projectsList = document.getElementById('projectsList');
     this.closeProjectsListBtn = document.getElementById('closeProjectsListBtn');
-    // Main panel.
-    this.mainPanel = document.getElementById('mainPanel');
+    // Panels storage.
     this.panelsStorage = document.getElementById('panelsStorage');
     // Save button.
     this.saveBtn = document.getElementById('saveBtn');
@@ -135,8 +121,8 @@ export class Application {
     window.onresize = this.adjustItems;
     /**************** Tools buttons event listeners ****************/
     // TODO: This would make more sense as part of the workspace ?
-    document.getElementById('tool-4').addEventListener('click', (e) => this.workspace.manageTools(e, ElementData, 'elementsDataTool'));
-    document.getElementById('tool-5').addEventListener('click', (e) => this.workspace.manageTools(e, AddComment, 'commentsTool'));
+    document.getElementById('tool-4').addEventListener('click', (e) => this.currentWorkspace.manageTools(e, ElementData, 'elementsDataTool'));
+    document.getElementById('tool-5').addEventListener('click', (e) => this.currentWorkspace.manageTools(e, AddComment, 'commentsTool'));
     /******************** Notifications manager ********************/
     this.notificationsManager = new NotificationsManager();
   }
@@ -165,7 +151,7 @@ export class Application {
    * It creates the file (comments.json) if it still doesnt exist or updates its contents if it exists.
    */
   async saveCommentsData() {
-    if (this.workspace && this.workspace.commentsChangesUnsaved) {
+    if (this.currentWorkspace && this.currentWorkspace.commentsChangesUnsaved) {
       this.commentsChangesUnsaved = false;
       this.saveBtn.classList.remove('enabled');
       this.saveBtn.classList.add('progress');
@@ -174,7 +160,7 @@ export class Application {
       let notificationsSuccess;
       // Collect the data to save in backend.
       const dataToSave = [];
-      this.workspace.comments.forEach(comment => {
+      this.currentWorkspace.comments.forEach(comment => {
         dataToSave.push({
           elementsIds: comment.elementsIds,
           content: comment.content,
@@ -183,15 +169,15 @@ export class Application {
       });
       const jsonDataToSave = JSON.stringify(dataToSave);
       // If there is no id for the comments.json file create the file with the contents and get the id of it.
-      if (!this.workspace.commentsFileId) {
-        const commentsFileCreationRes = await API.uploadFile(jsonDataToSave, 'application/json', 'comments.json', this.workspace.projectId);
+      if (!this.currentWorkspace.commentsFileId) {
+        const commentsFileCreationRes = await API.uploadFile(jsonDataToSave, 'application/json', 'comments.json', this.currentWorkspace.projectId);
         if (commentsFileCreationRes.ok && commentsFileCreationRes.status === 200) {
           try {
             const decoder = new TextDecoder('utf-8');
             let { value, done } = await commentsFileCreationRes.body.getReader().read();
             const id = JSON.parse(decoder.decode(value)).id;
             // Set the id of the comments.json file that has been created.
-            this.workspace.commentsFileId = id;
+            this.currentWorkspace.commentsFileId = id;
             savingSuccessful = true;
           } catch (err) {
             console.log('Error decoding the new comments.json file id: ', err); // JSON.parse(err.body).error.message
@@ -202,22 +188,22 @@ export class Application {
         }
       } else {
         // Update the existing comments.json file.
-        const commentsFileUpdateRes = await API.updateFileContent(jsonDataToSave, 'application/json', this.workspace.commentsFileId);
+        const commentsFileUpdateRes = await API.updateFileContent(jsonDataToSave, 'application/json', this.currentWorkspace.commentsFileId);
         if (commentsFileUpdateRes.ok && commentsFileUpdateRes.status === 200) {
           savingSuccessful = true;
         }
       }
       // If savingSuccessful proceed with the notifications if any.
-      if (savingSuccessful && this.workspace.pendingNotificationsToSend.length > 0) {
+      if (savingSuccessful && this.currentWorkspace.pendingNotificationsToSend.length > 0) {
         notificationsToSend = true;
         const notificationsPromises = [];
-        this.workspace.pendingNotificationsToSend.forEach(n => {
+        this.currentWorkspace.pendingNotificationsToSend.forEach(n => {
           const notificationPromise = API.sendNotification(n.emails, n.userName, n.userPhoto, n.textContent, n.projectName, n.projectId);
           notificationsPromises.push(notificationPromise);
         });
         await Promise.all(notificationsPromises).then(responses => {
           notificationsSuccess = true;
-          this.workspace.pendingNotificationsToSend.length = 0;
+          this.currentWorkspace.pendingNotificationsToSend.length = 0;
           // responses.forEach(res => console.log(res));
         }, err => {
           notificationsSuccess = false;
@@ -251,7 +237,7 @@ export class Application {
       return;
     }
     // If it is the current project close the list window.
-    if (this.workspace && this.workspace.projectId === projectItem.dataset.projId) {
+    if (this.currentWorkspace && this.currentWorkspace.projectId === projectItem.dataset.projId) {
       return;
     }
     // TODO: If there have been changes in the project ask to save or discard them before closing it.
@@ -290,10 +276,10 @@ export class Application {
    * @param {Object} project Data of the project: id, name, drawings ids and elementsData files ids.
    */
   openProject(project) {
-    if (this.workspace) {
-      this.workspace.close();
+    if (this.currentWorkspace) {
+      this.currentWorkspace.close();
     }
-    this.workspace = new Workspace(project, this);
+    this.currentWorkspace = new Workspace(project, this);
     this.projectsListContainer.style.display = 'none';
     history.replaceState({ projectTitle: project.name }, project.name, "?id=" + project.id); // encodeURIComponent ? use pushState() ?
   }
@@ -314,7 +300,7 @@ export class Application {
    * Sets the state of the ui as projects list closed.
    */
   openProjectsList() {
-    if (this.workspace === undefined) {
+    if (this.currentWorkspace === undefined) {
       this.closeProjectsListBtn.classList.add('hidden');
     } else {
       this.closeProjectsListBtn.classList.remove('hidden');
@@ -331,7 +317,7 @@ export class Application {
         this.createHTMLProjectsList(res);
         // Set the 'current' class in the current project.
         this.projectsList.childNodes.forEach(proj => {
-          if (proj.dataset && proj.dataset.projId === this.workspace.projectId) {
+          if (proj.dataset && proj.dataset.projId === this.currentWorkspace.projectId) {
             proj.classList.add('current');
             this.previousActiveItem = proj;
           }
@@ -561,7 +547,7 @@ export class Application {
       this.showViewportDialog('loader', 'Loading project');
       API.fetchProject(projectId, this)
         .then(res => {
-          this.workspace = new Workspace(res, this);
+          this.currentWorkspace = new Workspace(res, this);
           this.createHTMLProjectsList([res]);
           this.projectsListBtn.style.display = 'unset';
           this.hideViewportMessage();

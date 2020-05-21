@@ -325,16 +325,16 @@ App.drawingsBtns.querySelector('.dropdown-content').addEventListener('click', as
   currentDrawingBtn.classList.add('active');
 
   // Get the corresponding drawing object.
-  const requestedDrawing = App.workspace.drawings.find(d => d.id === drawingId);
+  const requestedDrawing = App.currentWorkspace.drawings.find(d => d.id === drawingId);
 
   // Load the drawings styles if it is the first time.
   // TODO: If this is required always the first time maybe do it in the Workspace constructor.
   // TODO: If this finally extracted then the function wont need to be async anymore.
-  if (App.workspace.drawingsStylesTag === undefined) {
-    if (App.workspace.drawingsStylesId !== undefined) {
+  if (App.currentWorkspace.drawingsStylesTag === undefined) {
+    if (App.currentWorkspace.drawingsStylesId !== undefined) {
       let stylesRes;
       try {
-        stylesRes = await API.getFileContent(App.workspace.drawingsStylesId);
+        stylesRes = await API.getFileContent(App.currentWorkspace.drawingsStylesId);
       } catch {
         console.error("Error while trying to fetch the drawings styles.");
       }
@@ -342,7 +342,7 @@ App.drawingsBtns.querySelector('.dropdown-content').addEventListener('click', as
         const styleTag = document.createElement('style');
         styleTag.innerText = stylesRes.body;
         document.head.appendChild(styleTag);
-        App.workspace.drawingsStylesTag = styleTag;
+        App.currentWorkspace.drawingsStylesTag = styleTag;
       }
     } else {
       console.warn('This project doesn\'t have a css styles file for the drawings.');
@@ -351,12 +351,12 @@ App.drawingsBtns.querySelector('.dropdown-content').addEventListener('click', as
 
   // Check if the requested drawing has already the content.
   if (requestedDrawing.content !== undefined) {
-    App.workspace.setDrawing(requestedDrawing);
+    App.currentWorkspace.setDrawing(requestedDrawing);
   } else {
     App.showViewportDialog('loader', 'Loading drawing');
     API.getFileContent(drawingId).then(res => {
       requestedDrawing.setContent(res.body);
-      App.workspace.setDrawing(requestedDrawing);
+      App.currentWorkspace.setDrawing(requestedDrawing);
       App.hideViewportMessage();
       console.log('Drawing fetched.');
     }, err => {

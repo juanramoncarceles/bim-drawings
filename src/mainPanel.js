@@ -1,11 +1,40 @@
 export class MainPanel {
-  constructor(panel, panelsStorage) {
-    this.panel = panel;
+  constructor(panelsStorage, Workspace) {
     this.panelsStorage = panelsStorage;
-    this.panelHeader = this.panel.querySelector('.panel-header');
-    this.panelBody = this.panel.querySelector('.panel-body');
-    this.panelFooter = this.panel.querySelector('.panel-footer');
-    this.panelGrip = this.panel.querySelector('.panel-grip');
+
+    // Creation of HTML structure.
+    this.panelContainer = document.createElement('div');
+    this.panelContainer.classList.add('mainPanel', 'right');
+    this.panelGrip = document.createElement('div');
+    this.panelGrip.classList.add('panel-grip');
+    this.panelContainer.appendChild(this.panelGrip);
+    this.panelContent = document.createElement('div');
+    this.panelContent.classList.add('panel-content');
+    this.panelHeader = document.createElement('div');
+    this.panelHeader.classList.add('panel-header');
+    this.panelBody = document.createElement('div');
+    this.panelBody.classList.add('panel-body');
+    this.panelFooter = document.createElement('div');
+    this.panelFooter.classList.add('panel-footer');
+    this.panelContent.appendChild(this.panelHeader);
+    this.panelContent.appendChild(this.panelBody);
+    this.panelContent.appendChild(this.panelFooter);
+    this.panelContainer.appendChild(this.panelContent);
+
+
+    // TODO Remove this event listeners when the panel is deleted.
+    Workspace.workspaceContainer.addEventListener('mousemove', e => {
+      if (this.resizingWidth) {
+        this.resizeWidth(e);
+      } else if (this.resizingHeight) {
+        this.resizeHeight(e);
+      }
+    });
+    Workspace.workspaceContainer.addEventListener('mouseup', () => { // Add also the same for mouseleave?
+      this.resizingWidth = false;
+      this.resizingHeight = false;
+    });
+
     this.activeSection;
     this.isOpen;
     this.panelSide;
@@ -27,9 +56,9 @@ export class MainPanel {
     this.panelPositon(this.mediumBreakpoint);
     // Panel dimensions and resizing.
     this.panelWidth = 250;
-    this.panel.style.setProperty("--width", this.panelWidth + 'px');
+    this.panelContainer.style.setProperty("--width", this.panelWidth + 'px');
     this.panelHeight = 200;
-    this.panel.style.setProperty("--height", this.panelHeight + 'px');
+    this.panelContainer.style.setProperty("--height", this.panelHeight + 'px');
     this.resizingWidth = false;
     this.resizingHeight = false;
     this.startX;
@@ -49,26 +78,27 @@ export class MainPanel {
         this.startHeight = this.panelHeight;
       }
     };
+    Workspace.workspaceContainer.appendChild(this.panelContainer);
   }
 
   resizeWidth(mouseEvent) {
     this.panelWidth = this.startWidth - (mouseEvent.pageX - this.startX);
-    this.panel.style.setProperty("--width", this.panelWidth + 'px');
+    this.panelContainer.style.setProperty("--width", this.panelWidth + 'px');
   }
 
   resizeHeight(mouseEvent) {
     this.panelHeight = this.startHeight - (mouseEvent.pageY - this.startY);
-    this.panel.style.setProperty("--height", this.panelHeight + 'px');
+    this.panelContainer.style.setProperty("--height", this.panelHeight + 'px');
   }
 
   open() {
-    this.panel.classList.add('open');
+    this.panelContainer.classList.add('open');
     this.panelPositon(this.mediumBreakpoint);
     this.isOpen = true;
   }
 
   close() {
-    this.panel.classList.remove('open');
+    this.panelContainer.classList.remove('open');
     this.isOpen = false;
   }
 
@@ -79,16 +109,16 @@ export class MainPanel {
   dockTo(side) {
     if (side === this.panelSides.right) {
       this.panelSide = side;
-      this.panel.classList.remove('bottom');
-      this.panel.classList.add('right');
+      this.panelContainer.classList.remove('bottom');
+      this.panelContainer.classList.add('right');
       this.panelBody.childNodes.forEach(content => {
         content.classList.remove('horizontal');
         content.classList.add('vertical');
       });
     } else if (side === this.panelSides.bottom) {
       this.panelSide = side;
-      this.panel.classList.remove('right');
-      this.panel.classList.add('bottom');
+      this.panelContainer.classList.remove('right');
+      this.panelContainer.classList.add('bottom');
       this.panelBody.childNodes.forEach(content => {
         content.classList.remove('vertical');
         content.classList.add('horizontal');

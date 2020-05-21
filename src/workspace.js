@@ -5,6 +5,12 @@ import { CommentForm } from './CommentForm';
 
 export class Workspace {
   constructor(projectData, App) {
+    // Create the workspace HTML container.
+    this.workspaceContainer = document.createElement('div');
+    this.workspaceContainer.classList.add('workspace');
+    // TODO create viewport message as component. This element currently has id viewportMessage
+    //this.viewportMessage = new ViewportMessage();    
+
     this.projectName = projectData.name;
     this.projectId = projectData.id;
     this.permissions = projectData.permissions;
@@ -27,7 +33,6 @@ export class Workspace {
     // Set title of the project in the button to list the projects.
     App.projectsListBtn.innerHTML = '<span>' + projectData.name + '</span>';
     this.drawingsBtns = App.drawingsBtns;
-    this.drawingsContainer = App.drawingsContainer;
     this.drawingsStylesTag;
     this.saveBtn = App.saveBtn;
     this.createDrawingsBtns(this.drawings);
@@ -59,8 +64,14 @@ export class Workspace {
       this.drawings.forEach(drawing => drawing.commentsChanged = true);
     }
     this.pendingNotificationsToSend = [];
-    this.mainPanel = new MainPanel(App.mainPanel, App.panelsStorage); // Since currently there can be only one workspace this should be better in the Application class.
+    this.mainPanel = new MainPanel(App.panelsStorage, this);
     this.commentForm = new CommentForm(document.getElementById('commentForm'), this);
+    // Create and append the HTML drawings container.
+    this.drawingsContainer = document.createElement('div');
+    this.drawingsContainer.classList.add('drawingsContainer');
+    this.workspaceContainer.appendChild(this.drawingsContainer);
+    // Append the workspace container to the DOM.
+    App.workspacesContainer.appendChild(this.workspaceContainer);
   }
 
   // TODO: Set a default 'activeDrawing' with the 'elementsData' tool active by default? this.activeTool = new ElementsData('elementsDataTool', this);
