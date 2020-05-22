@@ -1,4 +1,4 @@
-import { OrthoLineLineRelationship, orthoLineLineRelationshipType, rectRectRelationshipType, GeometryCalc } from './geometry';
+import { OrthoLineLineRelationship, orthoLineLineRelationshipType, rectRectRelationshipType, GeometryCalc, Rectangle, Line } from './geometry';
 
 export default class {
 
@@ -124,6 +124,18 @@ export default class {
     } else {
       return (pt.x > rect.x && pt.x < (rect.x + rect.width)) && (pt.y > rect.y && pt.y < (rect.y + rect.height));
     }
+  }
+
+  /**
+   * Checks if a line is completely inside a rectangle.
+   * Even if the line is completely inside but touching a segment of the rectangle it's considered inside,
+   * this includes a line that is completely overlapped with a segment of the rectangle.
+   * @param {Line} line The line to test.
+   * @param {Rectangle} rect The rectangle to test against.
+   * @returns {boolean} Bool indicating if it is completely inside or not.
+   */
+  static isLineInRect(line, rect) {
+    return (this.isPtInRect(rect, line[0]) && this.isPtInRect(rect, line[1]));
   }
 
   /**
@@ -291,26 +303,28 @@ export default class {
             for (let k = 0; k < currentRectSegments.length; k++) {
               const segmentIntersections = [];
               const line1 = currentRectSegments[k];
-              for (let n = 0; n < rectsSegments[b].length; n++) {
-                const line2 = rectsSegments[b][n];
-                const linesRelationship = this.getOrthoLineLineRelationship(line1, line2);
-                if (linesRelationship.type === orthoLineLineRelationshipType.intersect) {
-                  if (linesRelationship.intersection)
-                    segmentIntersections.push(linesRelationship.intersection);
-                } else if (linesRelationship.type === orthoLineLineRelationshipType.overlap) {
-                  if (linesRelationship.overlap)
-                    tempOverlappedSegments.push(linesRelationship.overlap);
+              if (!this.isLineInRect(line1, rects[b])) {
+                for (let n = 0; n < rectsSegments[b].length; n++) {
+                  const line2 = rectsSegments[b][n];
+                  const linesRelationship = this.getOrthoLineLineRelationship(line1, line2);
+                  if (linesRelationship.type === orthoLineLineRelationshipType.intersect) {
+                    if (linesRelationship.intersection)
+                      segmentIntersections.push(linesRelationship.intersection);
+                  } else if (linesRelationship.type === orthoLineLineRelationshipType.overlap) {
+                    if (linesRelationship.overlap)
+                      tempOverlappedSegments.push(linesRelationship.overlap);
+                  }
                 }
-              }
-              if (segmentIntersections.length > 0) {
-                const sortedIntersections = this.sortPtsByDistance(segmentIntersections, currentRectSegments[k][0], true);
-                const splitedSegments = this.linesBetweenPts([...sortedIntersections, currentRectSegments[k][1]]);
-                for (let p = 0; p < splitedSegments.length; p++) {
-                  if (!this.isPtInRect(rects[b], GeometryCalc.lineMiddlePt(splitedSegments[p])))
-                    newCurrentRectSegments.push(splitedSegments[p]);
+                if (segmentIntersections.length > 0) {
+                  const sortedIntersections = this.sortPtsByDistance(segmentIntersections, currentRectSegments[k][0], true);
+                  const splitedSegments = this.linesBetweenPts([...sortedIntersections, currentRectSegments[k][1]]);
+                  for (let p = 0; p < splitedSegments.length; p++) {
+                    if (!this.isPtInRect(rects[b], GeometryCalc.lineMiddlePt(splitedSegments[p])))
+                      newCurrentRectSegments.push(splitedSegments[p]);
+                  }
+                } else {
+                  newCurrentRectSegments.push(currentRectSegments[k]);
                 }
-              } else {
-                newCurrentRectSegments.push(currentRectSegments[k]);
               }
             }
             if (tempOverlappedSegments.length > 0 && rectsRelation !== rectRectRelationshipType.tangent) {
