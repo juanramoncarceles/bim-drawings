@@ -1,5 +1,6 @@
 BUGS:
   Comments:
+    ☐ Impossible to delete a comment. @critical 
     ☐ Avoid changing drawing when an element comment is being created. Block from the moment the comment element tool is activated.
     ☐ When an object has more than one comment their representation overlap and it no clear.
   SVG Canvas:
@@ -57,3 +58,7 @@ CHANGES:
       Install the app and get a better experience.
       Installation is instant without store redirect and it won't take up space on your phone.
     ☐ Make the maginifying glass of the logo thicker and lighter.
+
+
+Archive:
+  ✔ After saving an error appears in the console even if the file is saved successfuly. It prevents the save icon from becoming default again. @done(20-05-22 19:24)

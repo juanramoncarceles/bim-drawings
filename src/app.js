@@ -156,8 +156,6 @@ export class Application {
       this.saveBtn.classList.remove('enabled');
       this.saveBtn.classList.add('progress');
       let savingSuccessful;
-      let notificationsToSend;
-      let notificationsSuccess;
       // Collect the data to save in backend.
       const dataToSave = [];
       this.currentWorkspace.comments.forEach(comment => {
@@ -195,22 +193,20 @@ export class Application {
       }
       // If savingSuccessful proceed with the notifications if any.
       if (savingSuccessful && this.currentWorkspace.pendingNotificationsToSend.length > 0) {
-        notificationsToSend = true;
         const notificationsPromises = [];
         this.currentWorkspace.pendingNotificationsToSend.forEach(n => {
           const notificationPromise = API.sendNotification(n.emails, n.userName, n.userPhoto, n.textContent, n.projectName, n.projectId);
           notificationsPromises.push(notificationPromise);
         });
         await Promise.all(notificationsPromises).then(responses => {
-          notificationsSuccess = true;
+          console.log('Users notified successfully');
           this.currentWorkspace.pendingNotificationsToSend.length = 0;
           // responses.forEach(res => console.log(res));
         }, err => {
-          notificationsSuccess = false;
-          console.log(err);
+          console.warn('Users couldn\'t be notified. ', err);
         });
       }
-      if (savingSuccessful && (notificationsToSend && notificationsSuccess)) {
+      if (savingSuccessful) {
         this.saveBtn.classList.remove('progress');
         this.saveBtn.classList.add('disabled');
         console.log('Data saved successfully.');
