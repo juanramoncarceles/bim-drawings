@@ -581,12 +581,14 @@ export class Application {
       API.listProjectItems(this).then(res => {
         this.createHTMLProjectsList(res);
         this.hideViewportMessage();
-        // Checks if any project has collaborators and if so asks for the
-        // device token in case it is needed to receive notifications.
-        for (let i = 0; i < res.length; i++) {
-          if (res[i].permissions.length > 1) {
-            window.saveMessagingDeviceToken();
-            break;
+        // Checks if at least one project has collaborators and if so asks for the
+        // device messaging token that could be needed to receive notifications.
+        if (thereIsMessaging) {
+          for (let i = 0; i < res.length; i++) {
+            if (res[i].permissions.length > 1) {
+              window.saveMessagingDeviceToken();
+              break;
+            }
           }
         }
       }, rej => {

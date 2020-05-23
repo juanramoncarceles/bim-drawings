@@ -1,150 +1,38 @@
-// Firebase App (the core Firebase SDK) is always required and must be listed first.
-import * as firebase from "firebase/app";
-// The Firebase SDK for Analytics.
-import "firebase/analytics";
-// The Firebase products that are used.
-import "firebase/firestore";
-import "firebase/messaging";
-
 import { Application } from './app';
 import Generics from './generics';
 import API from './api';
+import { Messaging } from './messaging';
 
 
-/********************* FIREBASE INITIALIZATION *********************/
+/****************** THE ONLY INSTANCE OF THE APP *******************/
 
-// The firebase configuration for the app.
-const firebaseConfig = {
-  apiKey: "AIzaSyB9KC9Q3NzMt7b6TspNcKxqWqnzzPLvdFg",
-  authDomain: "testgdproject-1570036439931.firebaseapp.com",
-  databaseURL: "https://testgdproject-1570036439931.firebaseio.com",
-  projectId: "testgdproject-1570036439931",
-  storageBucket: "testgdproject-1570036439931.appspot.com",
-  messagingSenderId: "199844453643",
-  appId: "1:199844453643:web:4aa7ba97d1ae2e428b560e"
-};
+const App = new Application();
 
-// Initialization of Firebase.
-firebase.initializeApp(firebaseConfig);
+
+/****** THE ONLY INSTANCE OF THE MESSAGING LOGIC BY FIREBASE *******/
+
+const Msg = new Messaging(App);
+
+// Set to true only if the Messaging instance is created.
+window.thereIsMessaging = true;
 
 
 /******************* SERVICE WORKER REGISTRATION *******************/
 
-// TODO: Do this only if the user autenticates?
+// TODO: Do this only if the user authenticates?
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/service-worker.js')
       .then(reg => {
         console.log('Service worker registered.', reg);
-        // Use a custom service worker for firebase messaging.
-        // Otherwise 'firebase-messaging-sw.js' should be used.
-        messaging.useServiceWorker(reg);
+        // Firebase messaging requires to use a service worker.
+        if (thereIsMessaging) Msg.messaging.useServiceWorker(reg);
       })
       .catch(err => {
         console.error('Service Worker Error', err);
       });
   });
 }
-
-
-/******************** FIREBASE CLOUD MESSAGING ******************
- * Manages the creation of device tokens to receive push notifications.
-*/
-
-// Retrieve the Firebase Messaging object.
-const messaging = firebase.messaging();
-
-// Handle incoming messages when the app is in the foreground / focus.
-messaging.onMessage(payload => {
-  console.log('Message received. ', payload);
-  const data = payload.data;
-  App.notificationsManager.createNotificaction(data);
-});
-
-// Callback fired if Instance ID token is updated.
-messaging.onTokenRefresh(() => {
-  messaging.getToken().then(refreshedToken => {
-    console.log('FCM token refreshed:', refreshedToken);
-    // Send the new Device Token to the datastore.
-    firebase.firestore().collection('fcmTokens').doc(refreshedToken)
-      .set({ email: App.userInfo.emailAddress });
-  }).catch(err => {
-    console.log('Unable to retrieve refreshed token ', err);
-  });
-});
-
-
-/**
- * Auxiliary function to view the device token for FCM.
- */
-window.getMessagingToken = function () {
-  firebase.messaging().getToken()
-    .then(token => {
-      console.log(token);
-    })
-    .catch(err => {
-      console.error(err);
-    })
-}
-
-
-/**
- * Saves the FCM token to the datastore and session storage.
- * If notification permissions have not been granted it asks for them.
- */
-window.saveMessagingDeviceToken = function () {
-  if (!sessionStorage.getItem('deviceToken')) {
-    firebase.messaging().getToken().then(token => {
-      if (token) {
-        console.log('FCM token generated:', token);
-        // Saving the FCM token in Firestore.
-        firebase.firestore().collection('fcmTokens').doc(token)
-          .set({ email: App.userInfo.emailAddress });
-        // Saving token in Session Storage.
-        sessionStorage.setItem('deviceToken', token);
-      } else {
-        // Need to request permissions to show notifications.
-        requestNotificationsPermissions();
-      }
-    }).catch(err => {
-      console.error('Unable to get FCM token.', err);
-    });
-  }
-}
-
-
-/**
- * Requests permission to show notifications.
- */
-function requestNotificationsPermissions() {
-  console.log('Requesting notifications permission...');
-  firebase.messaging().requestPermission().then(() => {
-    console.log('Notification permission granted.');
-    window.saveMessagingDeviceToken();
-  }).catch(err => {
-    console.error('Unable to get permission to notify:', err);
-  });
-}
-
-// Equivalent to the previous but without Firebase.
-// function requestPermission() {
-//   console.log('Requesting permission...');
-//   Notification.requestPermission().then(permission => {
-//     if (permission === 'granted') {
-//       console.log('Notification permission granted.');
-//       // TODO: Retrieve an Instance ID token for use with FCM.
-//       // If an app has been granted notification permission it can update its UI reflecting this.
-//       // resetUI();
-//     } else {
-//       console.log('Unable to get permission to notify.');
-//     }
-//   });
-// }
-
-
-/****************** THE ONLY INSTANCE OF THE APP *******************/
-
-const App = new Application();
 
 
 /************************* GLOBAL METHODS **************************/
@@ -185,14 +73,15 @@ sampleProjectBtn.onclick = () => {
 }
 
 
-/************************** AUTHENTICATION *************************/
+/******************* GOOGLE DRIVE AUTHENTICATION *******************/
 
+// OAuth 2.0 Client ID for Google APIs.
+const CLIENT_ID = '344446892746-36ebkcl04viq3poe73mb3dkhr79lspqk.apps.googleusercontent.com';
 
-// Client ID and API key from the Developer Console
-const CLIENT_ID = '199844453643-0s921ir25l6rrventemkvr5te5aattej.apps.googleusercontent.com';
-const API_KEY = 'AIzaSyDgot_h8p7RzZunGoSDVlKxrpUNN97rPeg';
+// API key for Google Drive.
+const API_KEY = 'AIzaSyBuHx9BXXCRFSKiLzjinZgK_2ys58ynGew';
 
-// Array of API discovery doc URLs for APIs used by the quickstart
+// Array of API discovery doc URLs for APIs used by the app.
 const DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"];
 
 // Authorization scopes required by the API; multiple scopes can be included, separated by spaces.
@@ -305,6 +194,11 @@ function showLoginDialog() {
   history.replaceState({ page: 'Sign in dialog' }, 'Sign in dialog', location.href.replace(location.search, ''));
 }
 
+
+
+
+
+// TODO move to a separate file
 
 /********************** DRAWINGS BUTTONS LIST **********************/
 /*
