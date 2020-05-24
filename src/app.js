@@ -7,6 +7,8 @@ import { ElementData } from './appTools/elementData';
 import { ShareProject } from './shareProject';
 import { NotificationsManager } from './notificationsManager';
 import { RenameProject } from './renameProject';
+import { ContextMenu } from './contextMenu';
+import { ProjectItem } from './projectItem';
 
 export class Application {
   constructor() {
@@ -125,6 +127,8 @@ export class Application {
     document.getElementById('tool-5').addEventListener('click', (e) => this.currentWorkspace.manageTools(e, AddComment, 'commentsTool'));
     /******************** Notifications manager ********************/
     this.notificationsManager = new NotificationsManager();
+    /************************ Context menu *************************/
+    this.contextMenu = new ContextMenu();
   }
 
 
@@ -327,40 +331,13 @@ export class Application {
   }
 
   /**
-   * Create an HTML element with the project data provided.
-   * @param {Object} projData Object with name, id and optional thumbId entries.
-   */
-  createProjectItem(projData) {
-    const projItem = document.createElement('button');
-    // Projects that have been uploaded but not send to the backend have an id of 'temporal'.
-    if (projData.id === 'temporal') {
-      projItem.classList.add('unsync');
-    }
-    projItem.dataset.projId = projData.id;
-    projItem.dataset.name = projData.name;
-    projItem.classList.add('projectItem');
-    let projItemContent = [];
-    if (projData.shared) {
-      projItemContent.push('<img class="sharedIcon" src="src/assets/icons/shareIcon.svg">');
-    }
-    if (projData.thumbId) {
-      projItemContent.push(`<img class="thumb" src="https://drive.google.com/uc?id=${projData.thumbId}">`);
-    } else {
-      projItemContent.push(`<svg class="thumb" xmlns="http://www.w3.org/2000/svg" viewBox="-100 -50 350 210"><path d="M143,10.44H65.27V7a7,7,0,0,0-7-7H7A7,7,0,0,0,0,7V103a7,7,0,0,0,7,7H65V70.18H85V110h58a7,7,0,0,0,7-7V17.41A7,7,0,0,0,143,10.44ZM125,53.49H105v-20h20Z" style="fill:#e6e6e6"/></svg>`);
-    }
-    projItemContent.push(`<h4>${projData.name}</h4>`);
-    projItem.innerHTML = projItemContent.join('');
-    return projItem;
-  }
-
-  /**
    * Receives an array of projects data and creates and appends the HTML items.
-   * @param {Array} projectsData The project objects with the name, id and optional thumbId entries.
+   * @param {ProjectData[]} projectsData The project objects with the name, id and optional thumbId entries.
    */
   createHTMLProjectsList(projectsData) {
-    projectsData.forEach(proj => {
-      const projectItem = this.createProjectItem(proj);
-      this.projectsList.appendChild(projectItem);
+    projectsData.forEach(projData => {
+      const projectItem = new ProjectItem(projData, this);
+      this.projectsList.appendChild(projectItem.HTMLContainer);
     });
     this.adjustItems();
   }
@@ -376,15 +353,15 @@ export class Application {
 
   /**
    *  Adds a new HTML element item to the list of projects.
-   * @param {Object} projData Object with name, id and optional thumbId entries.
+   * @param {ProjectData} projData Object with name, id and optional thumbId entries.
    */
   updateProjectsList(projData) {
-    const projectItem = this.createProjectItem(projData);
     // Remove the 'no projects yet' message if it is the first.
     if (this.projectsData.length <= 1) {
       this.projectsList.querySelector('.empty-msg').remove();
     }
-    this.projectsList.prepend(projectItem);
+    const projectItem = new ProjectItem(projData, this);
+    this.projectsList.prepend(projectItem.HTMLContainer);
     this.adjustItems();
   }
 
