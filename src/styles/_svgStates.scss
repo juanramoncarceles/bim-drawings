@@ -1,0 +1,42 @@
+/***************************** SVG STATES **************************/
+
+/* Important to add specificity with two levels to overwrite the drawing styles. */
+
+.selected {
+  --fill: #ffbd00;
+  --stroke: #e89807;
+  --stroke-w: 8px;
+}
+
+/* Closed curves, which always have fill */
+.selected.fill.stroke > path,
+.selected.fill.stroke > polygon,
+.selected.fill.stroke > circle,
+.selected.fill.stroke > rect {
+  fill: var(--fill);
+  stroke: var(--stroke);
+  stroke-width: var(--stroke-w);
+}
+
+/* Open curves, which never have fill */
+.selected.stroke > path,
+.selected.stroke > polyline,
+.selected.stroke > line {
+  stroke: var(--stroke);
+  stroke-width: var(--stroke-w);
+}
+
+/* Solids which are only fill with no stroke */
+.selected.fill > path,
+.selected.fill > polygon,
+.selected.fill > circle {
+  fill: var(--fill);
+}
+
+/* Segments from a non solid exploded hatch */
+.selected.stroke > .hatch > line {
+  stroke: var(--stroke);
+  stroke-width: var(--stroke-w);
+}
+
+/* TODO handle text element */

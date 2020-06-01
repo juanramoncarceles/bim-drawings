@@ -3,6 +3,7 @@ BUGS:
     ☐ Impossible to delete a comment. @critical 
     ☐ Avoid changing drawing when an element comment is being created. Block from the moment the comment element tool is activated.
     ☐ When an object has more than one comment their representation overlap and it no clear.
+      If an element already has a comment only one representation will be created. It represents that this element has one or more comments.
   SVG Canvas:
     ☐ Improve the objects selection. Currently it is difficult because lines are too thin. How can I check surrounding pixels? @high
   Firebase Cloud Functions:

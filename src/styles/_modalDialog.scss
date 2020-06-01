@@ -1,0 +1,41 @@
+/********************** MODAL DIALOGS GENERICS *********************/
+
+#modalDialogContainer {
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+#modalDialogContainer > div {
+  padding: 1rem;
+  background-color: #fff;
+}
+
+#modalDialogContainer.grayTranslucent {
+  background-color: rgba(216, 216, 216, 0.8);
+}
+
+#modalDialogContainer.lightOpaque {
+  background-color: #fff;
+}
+
+#closeModalBtn {
+  float: right;
+}
+
+/* Button created by the modal dialog content if needed */
+
+#modalDialogContainer .modal-main-btns {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  margin-top: 0.3rem;
+}
+
+#modalDialogContainer .modal-main-btns > button:not(:first-child) {
+  margin-left: 0.5rem;
+}

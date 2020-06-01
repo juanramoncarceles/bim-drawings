@@ -1,0 +1,29 @@
+/************************* UPLOAD FILE FORM ************************/
+
+#uploadFileForm {
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+  padding: 1rem;
+  background-color: #fff;
+}
+
+#uploadFileForm > input {
+  font-family: inherit;
+}
+
+#uploadFileForm > label {
+  margin-top: 1rem;
+  text-align: center;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+#uploadFileForm > button:last-child {
+  margin-top: 0.5rem;
+}
+
+#loadingFile {
+  padding: 1rem;
+  text-align: center;
+}

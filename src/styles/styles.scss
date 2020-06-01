@@ -1,0 +1,451 @@
+@use './mainPanel';
+@use './projectsList';
+@use './modalDialog';
+@use './authDialog';
+@use './uploadFileForm';
+@use './sideNavContainer';
+@use './commentForm';
+@use './shareProjectDialog';
+@use './dataTable';
+@use './messageContainer';
+@use './viewportMessage';
+@use './notifications';
+@use './contextMenu';
+@use './svgStates';
+
+/* Current main breakpoints are on 800px and 500px */
+
+
+:root {
+  --header-height: 2.5rem;
+  --theme-blue: #2a8fb1;
+  --theme-yellow: #ea8c15;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5, p {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+ul, ol {
+  list-style-type: none;
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-left: 0;
+}
+
+button {
+  border-style: none;
+  padding: 0;
+  background-color: unset;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  overflow: hidden;
+  color: #545454;
+  font-family: 'Oswald', sans-serif;
+}
+
+
+/***************************** GENERAL *****************************/
+
+svg.svg-loader {
+  width: 130px;
+  height: 90px;
+}
+
+
+/***************************** BUTTONS *****************************/
+
+.buttonBase {
+  padding: 0.4rem;
+  cursor: pointer;
+  border-width: 1px;
+  border-style: solid;
+  font-family: inherit;
+}
+
+.buttonBase.sides {
+  border-top-style: none;
+  border-bottom-style: none;
+}
+
+.buttonBase.light {
+  color: #373737;
+  border-color: #cfcfcf;
+}
+
+.buttonBase.light:not(.disabled):hover {
+  background-color: #ececec;
+}
+
+.buttonBase.emphasize {
+  border-color: #e0e0e0;
+  background-color: #d1f0ec;
+}
+
+.buttonBase.emphasize:not(.disabled):hover {
+  background-color: #acd3ce;
+}
+
+.buttonBase.danger {
+  color: #f55252;
+  border-color: #fba4a4;
+}
+
+.buttonBase.danger:not(.disabled):hover {
+  background-color: #ffe9e9;
+}
+
+.buttonBase.disabled {
+  cursor: unset;
+  opacity: 0.5;
+}
+
+button.disabled:focus {
+  outline-style: none;
+}
+
+/* Locked is similar to disabled but it doesnt change color of content.*/
+.buttonBase.locked {
+  cursor: unset;
+}
+
+.buttonBase.locked:hover {
+  background-color: unset;
+}
+
+/* Square buttons with one icon */
+.icon-btn {
+  cursor: pointer;
+}
+
+header .icon-btn {
+  padding: calc(((var(--header-height) - 2px) - 24px) / 2); /* Icons should be 24px */
+  height: calc(var(--header-height) - 2px);
+  width: calc(var(--header-height) - 2px);
+}
+
+.icon-btn:not(.disabled):not(.btn-tool-enabled):hover {
+  background-color: #ececec;
+}
+
+.icon-btn > svg {
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+
+.icon-btn.disabled {
+  opacity: 0.1;
+  cursor: auto;
+}
+
+.icon-btn.hidden {
+  display: none;
+}
+
+.btn-tool-enabled {
+  background-color: #96cbdb;
+}
+
+.btn-bg-img {
+  background-repeat: no-repeat;
+  background-position-y: center;
+  background-position-x: 0.8rem;
+}
+
+.google-logo {
+  background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+c3VwZXIgZzwvdGl0bGU+PGcgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNOSAzLjQ4YzEuNjkgMCAyLjgzLjczIDMuNDggMS4zNGwyLjU0LTIuNDhDMTMuNDYuODkgMTEuNDMgMCA5IDAgNS40OCAwIDIuNDQgMi4wMi45NiA0Ljk2bDIuOTEgMi4yNkM0LjYgNS4wNSA2LjYyIDMuNDggOSAzLjQ4eiIgZmlsbD0iI0VBNDMzNSIvPjxwYXRoIGQ9Ik0xNy42NCA5LjJjMC0uNzQtLjA2LTEuMjgtLjE5LTEuODRIOXYzLjM0aDQuOTZjLS4xLjgzLS42NCAyLjA4LTEuODQgMi45MmwyLjg0IDIuMmMxLjctMS41NyAyLjY4LTMuODggMi42OC02LjYyeiIgZmlsbD0iIzQyODVGNCIvPjxwYXRoIGQ9Ik0zLjg4IDEwLjc4QTUuNTQgNS41NCAwIDAgMSAzLjU4IDljMC0uNjIuMTEtMS4yMi4yOS0xLjc4TC45NiA0Ljk2QTkuMDA4IDkuMDA4IDAgMCAwIDAgOWMwIDEuNDUuMzUgMi44Mi45NiA0LjA0bDIuOTItMi4yNnoiIGZpbGw9IiNGQkJDMDUiLz48cGF0aCBkPSJNOSAxOGMyLjQzIDAgNC40Ny0uOCA1Ljk2LTIuMThsLTIuODQtMi4yYy0uNzYuNTMtMS43OC45LTMuMTIuOS0yLjM4IDAtNC40LTEuNTctNS4xMi0zLjc0TC45NyAxMy4wNEMyLjQ1IDE1Ljk4IDUuNDggMTggOSAxOHoiIGZpbGw9IiMzNEE4NTMiLz48cGF0aCBmaWxsPSJub25lIiBkPSJNMCAwaDE4djE4SDB6Ii8+PC9nPjwvc3ZnPg==);
+}
+
+/* place on each component instead */
+#saveBtn.enabled > svg,
+#notificationBtn.enabled > svg {
+  fill: var(--theme-yellow);
+  transform: scale(1.2);
+}
+
+
+/*************************** SAVE BUTTON ***************************/
+
+#saveBtn > svg.progress-icon {
+  display: none;
+}
+
+#saveBtn.progress:hover {
+  cursor: auto;
+  background-color: unset;
+}
+
+#saveBtn.progress > svg.save-icon {
+  display: none;
+}
+
+#saveBtn.progress > svg.progress-icon {
+  display: block;
+}
+
+
+/*************************** HEADER ********************************/
+
+header {
+  /* display: flex;  este actualmente se sobreescribe desde js */
+  height: var(--header-height);
+  padding-right: 8rem;
+  align-items: stretch;
+  z-index: 1;
+  background-color: #f6f6f6;
+  border-bottom: 2px solid var(--theme-blue);
+}
+
+header > span:first-child {
+  width: 4rem;
+}
+
+header > span:first-child > img {
+  height: 100%;
+  padding: 0.3rem;
+  margin: auto;
+  display: block;
+}
+
+header > h1 {
+  position: absolute;
+  right: 100%;
+}
+
+#projectsListBtn {
+  min-width: 10rem;
+  font-size: 1rem;
+  font-weight: normal;
+}
+
+#projectsListBtn > span {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+}
+
+@media (max-width: 500px) {
+  #projectsListBtn {
+    display: unset;
+    min-width: unset;
+    width: 2.5rem;
+    font-size: 0;
+    border-left-style: none;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-image: url(../assets/icons/projectsListIcon.svg); /* Write svg inline? */
+    background-size: 24px;
+  }
+}
+
+#toolbarsContainer {
+  flex-grow: 1;
+  /* display: flex;  Set by JS at start of the app */
+  justify-content: flex-end;
+}
+
+#drawingsBtns {
+  min-width: 8rem;
+  text-align: center;
+}
+
+#drawingsBtns > button {
+  height: calc(var(--header-height) - 2px);
+  width: 100%;
+  border-left-style: none;
+}
+
+#drawingsBtns > ul {
+  font-size: 0.9rem;
+  font-weight: lighter;
+  cursor: pointer;
+  background-color:#f6f6f6;
+  box-shadow: 0px 2px 5px #b6b6b6;
+}
+
+#drawingsBtns > ul > li {
+  padding: 0.4rem;
+}
+
+#drawingsBtns > ul > li.active {
+  background-color: #c2c2c2;
+  cursor: auto;
+}
+
+#drawingsBtns > ul > li:not(.active):hover {
+  background-color: #dfdfdf;
+}
+
+/* Save and hamburger icon */
+.global-nav-btns {
+  display: flex;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1000;
+  border-left: 1px solid #c8c8c8;
+}
+
+@media (max-width: 500px) {
+  header {
+    order: 1;
+    border-top: 2px solid var(--theme-blue);
+    border-bottom: unset;
+  }
+
+  header > span:first-child {
+    display: none;
+  }
+
+  #toolbarsContainer {
+    position: absolute;
+    right: 0;
+  }
+
+  #drawingsBtns > ul {
+    box-shadow: 0px -2px 7px #b6b6b6;
+  }
+}
+
+
+/**************************** DROPDOWNS ****************************/
+
+.dropdown-container {
+  z-index: 1;
+  position: relative;
+}
+
+.dropdown-container > .dropdown-content {
+  display: flex;
+  flex-direction: column;
+  transition: 0.6s;
+  transform: translateY(-100%);
+  opacity: 0;
+  z-index: -1;
+  position: absolute;
+  right: 0;
+  left: 0;
+  top: calc(var(--header-height) - 2px);
+}
+
+.dropdown-container.responsive > .dropdown-content {
+  display: inline;
+  opacity: unset;
+  z-index: unset;
+  position: unset;
+}
+
+@media (max-width: 800px) {
+  .dropdown-container.responsive > .dropdown-content {
+    display: flex;
+    opacity: 0;
+    z-index: -1;
+    position: absolute;
+  }
+}
+
+.dropdown-container.open > .dropdown-content {
+  transform: translateY(0%);
+  opacity: 1;
+}
+
+@media (max-width: 500px) {
+  .dropdown-container > .dropdown-content {
+    transform: unset;
+  }
+
+  .dropdown-container.open > .dropdown-content {
+    transform: translateY(calc(-100% - 2.5rem + 2px))
+  }
+}
+
+
+/************************* MAIN CONTAINER **************************/
+
+main {
+  position: relative;
+  height: calc(100vh - var(--header-height));
+}
+
+
+/*************************** WORKSPACES ****************************/
+
+#workspaces {
+  height: 100%;
+}
+
+.workspace {
+  height: 100%;
+}
+
+
+/*********************** FORM GENERAL STYLES ***********************/
+
+form .top-label {
+  margin-bottom: 0.5rem;
+}
+
+form .base-input {
+  padding: 0.4rem;
+}
+
+form .error-msg {
+  font-size: 0.9rem;
+  font-weight: lighter;
+  color: red;
+}
+
+form .error-msg.hidden {
+  visibility: hidden;
+}
+
+
+/*********************** RENAME PROJECT FORM ************************/
+
+#renameProjectForm .rename-form-content {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+}
+
+
+/************************ DRAWING CONTAINER ************************/
+
+.drawingsContainer {
+  height: 100%;
+}
+
+.drawingsContainer > div {
+  /* display: block; */
+  height: 100%;
+}
+
+.drawingsContainer > div > svg {
+  /* display: block; */
+  height: 100%;
+  width: 100%;
+}
+
+
+/******************* INSTALLED APP CUSTOM STYLES *******************
+*
+* The display is set to standalone on the manifest.json
+*/
+
+@media all and (display-mode: standalone) {
+  header {
+    border-top: 1px solid #dedede;
+  }
+}

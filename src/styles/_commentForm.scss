@@ -1,0 +1,67 @@
+/************************** COMMENT FORM ***************************/
+
+#commentForm > .inputs {
+  margin-bottom: 0.8rem;
+}
+
+#commentForm > .inputs > textarea {
+  width: 100%;
+  min-height: 150px;
+}
+
+#commentForm.horizontal {
+  display: flex;
+}
+
+#commentForm.horizontal > .inputs {
+  flex-grow: 1;
+}
+
+#commentForm.horizontal > .inputs > textarea {
+  min-height: 60px;
+}
+
+#commentForm > .inputs > .members {
+  margin-top: 0.5rem;
+}
+
+#commentForm > .inputs > .members.hidden {
+  display: none;
+}
+
+#commentForm > .inputs > .members > p:first-child {
+  font-weight: lighter;
+  margin-bottom: 0.2rem;
+}
+
+#commentForm > .inputs > .members > select {
+  width: 100%;
+}
+
+#commentForm .info {
+  margin-top: 0.1rem;
+  font-size: 0.7rem;
+  font-weight: lighter;
+}
+
+#commentForm > .formButtonsModes > .buttonsContainer {
+  display: flex;
+  justify-content: space-between;
+}
+
+#commentForm.horizontal > .formButtonsModes {
+  margin-left: 0.5rem;
+}
+
+#commentForm.horizontal > .formButtonsModes > .buttonsContainer {
+  flex-direction: column;
+}
+
+#commentForm.horizontal > .formButtonsModes > .buttonsContainer > button {
+  height: 50px;
+}
+
+#commentForm.horizontal > .formButtonsModes > .buttonsContainer > button:first-child {
+  margin-top: 0.6rem;
+  order: 1;
+}

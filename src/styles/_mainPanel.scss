@@ -1,0 +1,128 @@
+/*************************** MAIN PANEL ****************************/
+/* TODO: Do that by default has docked right style and by adding bottom is the other option? */
+
+.mainPanel {
+  display: flex;
+  position: absolute;
+  /* background-color: #f6f6f6; */
+  background-color: rgba(246, 246, 246, 0.9);
+  transition: right 1s, bottom 1s;
+
+  --width: 250px; /* Used for the panel docked to the right */
+  --height: 200px; /* Used for the panel docked to the bottom */
+}
+
+.mainPanel.right {
+  height: 100%;
+  width: var(--width);
+  top: 0;
+  right: calc(var(--width) * -1); /* Usar variable con scope de este elemento que se modificara con js */
+}
+
+.mainPanel.bottom {
+  flex-direction: column;
+  height: var(--height);
+  width: 100%;
+  bottom: calc(var(--height) * -1);
+}
+
+.mainPanel.right > .panel-content {
+  width: 100%;
+}
+
+.mainPanel.bottom > .panel-content {
+  display: flex;
+  height: 100%;
+}
+
+.mainPanel.right.open {
+  right: 0;
+}
+
+.mainPanel.bottom.open {
+  bottom: 0;
+}
+
+.mainPanel > .panel-grip {
+  background: #2a8fb1;
+}
+
+.mainPanel.right > .panel-grip {
+  display: flex;
+  align-items: center;
+  padding: 0 5px;
+  cursor: col-resize;
+}
+
+.mainPanel.bottom > .panel-grip {
+  padding: 5px 0;
+  cursor: row-resize;
+}
+
+.mainPanel > .panel-grip::before {
+  content: "";
+  display: block;
+}
+
+.mainPanel.right > .panel-grip::before {
+  height: 27px;
+  border-right: 3px double #fff;
+}
+
+.mainPanel.bottom > .panel-grip::before {
+  width: 27px;
+  border-top: 3px double #fff;  
+  margin: auto;
+}
+
+.mainPanel > .panel-content > .panel-header {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  text-align: center;
+}
+
+.mainPanel.bottom > .panel-content > .panel-header {
+  flex-direction: column;
+}
+
+.mainPanel > .panel-content > .panel-header > span {
+  padding: 0.2rem;
+  flex-grow: 1;
+}
+
+.mainPanel.bottom > .panel-content > .panel-header > span {
+  width: 35px;
+  writing-mode: vertical-rl;
+  -webkit-writing-mode: vertical-rl; /* Edge */
+}
+
+.mainPanel > .panel-content > .panel-header > span:not(.active) {
+  cursor: pointer;
+  background-color: #e4e4e4;
+}
+
+.mainPanel.right > .panel-content > .panel-header > span:not(.active) {
+  border-bottom: 1px solid #a6a6a6;
+}
+
+.mainPanel.bottom > .panel-content > .panel-header > span:not(.active) {
+  border-right: 1px solid #a6a6a6;
+}
+
+.mainPanel.right > .panel-content > .panel-header > span:not(:last-child) {
+  border-right: 1px solid #a6a6a6;
+}
+
+.mainPanel.bottom > .panel-content > .panel-header > span:not(:last-child) {
+  border-bottom: 1px solid #a6a6a6;
+}
+
+.mainPanel > .panel-content > .panel-body {
+  flex-grow: 1;
+  padding: 0.5rem;
+}
+
+.mainPanel > .panel-content > .panel-body > .hidden {
+  display: none;
+}

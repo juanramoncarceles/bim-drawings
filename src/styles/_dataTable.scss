@@ -1,0 +1,29 @@
+/*************************** DATA TABLE ****************************/
+
+div#propsTablesContainer {
+  display: flex;
+}
+
+.mainPanel.right div#propsTablesContainer {
+  flex-direction: column;
+}
+
+.data-table {
+  text-align: left;
+  width: 100%;
+}
+
+.data-table > thead th {
+  padding-left: 0.3rem;
+  padding-right: 0.3rem;
+  background-color: #dddddd;
+}
+
+.data-table > tbody th {
+  width: 50%;
+  font-weight: normal;
+}
+
+.data-table td {
+  font-weight: lighter;
+}

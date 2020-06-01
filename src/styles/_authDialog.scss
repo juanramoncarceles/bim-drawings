@@ -1,0 +1,34 @@
+/*********************** AUTHORIZE DIALOG **************************/
+
+#authorizeDialog {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+#authorizeDialog > img {
+  align-self: center;
+}
+
+#authorizeDialog > h2 {
+  font-size: 1.6rem;
+  text-align: center;
+  font-weight: normal;
+  margin-bottom: 1.5rem;
+  margin-top: 1rem;
+}
+
+#authorizeDialog > div:last-child {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: end;
+}
+
+#authorizeDialog > div:last-child > button {
+  font-size: 1.2rem;
+}
+
+#authorizeDialog > div:last-child > button:not(:last-child) {
+  margin-bottom: 0.4rem;
+}

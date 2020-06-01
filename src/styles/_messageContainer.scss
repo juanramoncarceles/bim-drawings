@@ -1,0 +1,32 @@
+/************************ MESSAGE CONTAINER ************************/
+
+#messageContainer {
+  position: absolute;
+  padding: 1rem;
+  max-width: 300px;
+  flex-direction: column;
+  align-items: flex-end;
+  bottom: 2rem;
+  right: 2rem;
+  box-shadow: 2px 2px 6px #b2b2b2;
+}
+
+#messageContainer > button {
+  margin-bottom: 0.5rem;
+}
+
+#messageContainer > button > img {
+  width: 1rem;
+}
+  
+#messageContainer.success {
+  background-color: #aef5ad;
+}
+
+#messageContainer.error {
+  background-color: #dc9393;
+}
+
+#messageContainer.warning {
+  background-color: #ecdaa4;
+}

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+	<path style="fill:#C6C6C6;" d="M14,20.21c0,0.44-0.35,0.79-0.79,0.79H3.79C3.35,21,3,20.65,3,20.21v-9.43C3,10.35,3.35,10,3.79,10 h9.43c0.44,0,0.79,0.35,0.79,0.79V20.21z"/>
+	<rect x="15.09" y="3.08" style="fill:none;" width="7.12" height="12.92"/>
+	<text transform="matrix(1 0 0 1 16.1484 15.0156)" style="font-family:'TimesNewRomanPS-BoldMT'; font-size:18;">i</text>
+</svg>

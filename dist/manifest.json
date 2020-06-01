@@ -1,31 +1,31 @@
 {
-  "name": "VisualARQ Drawings Viewer",
-  "short_name": "VA Viewer",
-  "description": "Review project drawings alone or with a team. View the infomation associated to BIM elements. Add comments and collaborate.",
+  "name": "BIM Drawings",
+  "short_name": "BIM-D",
+  "description": "Review project's drawings with associated BIM information. Add comments and collaborate.",
   "lang": "en-US",
   "icons": [
     {
-      "src": "/src/assets/logos/vadv-logo-128.png",
+      "src": "/logos/vadv-logo-128.png",
       "sizes": "128x128",
       "type": "image/png"
     },
     {
-      "src": "/src/assets/logos/vadv-logo-152.png",
+      "src": "/logos/vadv-logo-152.png",
       "sizes": "152x152",
       "type": "image/png"
     },
     {
-      "src": "/src/assets/logos/vadv-logo-192.png",
+      "src": "/logos/vadv-logo-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/src/assets/logos/vadv-logo-256.png",
+      "src": "/logos/vadv-logo-256.png",
       "sizes": "256x256",
       "type": "image/png"
     },
     {
-      "src": "/src/assets/logos/vadv-logo-512.png",
+      "src": "/logos/vadv-logo-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }

@@ -1,0 +1,136 @@
+/************************** PROJECTS LIST **************************/
+
+#projectsListContainer {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  background-color: #fff;
+}
+
+#projectsListContainer > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+}
+
+#projectsListContainer > div:first-child > span {
+  width: 20%;
+}
+
+@media (max-width: 500px) {
+
+  #closeProjectsListBtn {
+    display: none;
+  } 
+}
+
+#closeProjectsListBtn {
+  float: right;
+}
+
+#projectsListContainer > div:first-child > h4 {
+  overflow-x: hidden;
+  font-weight: normal;
+  font-size: 1.6rem;
+}
+
+#projectsList {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: 1rem;
+  
+  --items-h: 6; /* Read with JS */
+  --item-width: calc((100% / var(--items-h)) - 1rem);
+  --remaining-items: unset; /* Any value it is ok, it will be updated with JS */
+}
+
+/* Values read with JS */
+@media (max-width: 1000px) {
+  #projectsList {--items-h: 5;}
+}
+
+@media (max-width: 800px) {
+  #projectsList {--items-h: 4;}
+}
+
+@media (max-width: 600px) {
+  #projectsList {--items-h: 3;}
+}
+
+@media (max-width: 400px) {
+  #projectsList {--items-h: 2;}
+}
+
+@media (max-width: 280px) {
+  #projectsList {--items-h: 1;}
+}
+
+#projectsList::after {
+  content: "";
+  flex-grow: var(--remaining-items);
+  width: calc((var(--item-width) + 1rem) * var(--remaining-items));
+}
+
+#projectsList > .empty-msg {
+  width: 100%;
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.projectItem {
+  flex-grow: 1;
+  width: var(--item-width);
+  margin-bottom: 1rem;
+  margin-right: 1rem;
+  position: relative;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 2px 2px 7px #b2b2b2;
+}
+
+.projectItem > h4 {
+  background-color: #f9f9f9;
+}
+
+.projectItem.current {
+  cursor: auto;
+  outline: 4px solid #7da5b6;
+  box-shadow: none;
+}
+
+.projectItem.unsync {
+  opacity: 0.5;
+}
+
+.projectItem:not(.current):hover {
+  box-shadow: 2px 2px 7px #6b6b6b;
+}
+
+.projectItem > .sharedIcon {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  right: 6px;
+  top: 6px;
+  background-color: #eee;
+  padding: 5px;
+  border-radius: 50%;
+}
+
+.projectItem > .thumb {
+  display: block;
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+.projectItem > h4 {
+  padding: 0.6rem;
+  font-weight: normal;
+}
+
+#loadMoreProjBtn {
+  display: block;
+  margin: auto;
+}

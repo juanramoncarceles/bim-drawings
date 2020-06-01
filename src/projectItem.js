@@ -16,7 +16,7 @@ export class ProjectItem {
     this.HTMLContainer.classList.add('projectItem');
     let projItemContent = [];
     if (projectData.shared) {
-      projItemContent.push('<img class="sharedIcon" src="src/assets/icons/shareIcon.svg">');
+      projItemContent.push('<svg class="sharedIcon"><use href="#sharedIcon" /></svg>');
     }
     if (projectData.thumbId) {
       projItemContent.push(`<img class="thumb" src="https://drive.google.com/uc?id=${projectData.thumbId}">`);

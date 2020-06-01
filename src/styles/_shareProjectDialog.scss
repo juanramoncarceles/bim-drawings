@@ -1,0 +1,138 @@
+/************************* SHARE PROJECT FORM ************************/
+
+#shareProjectDialog {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  min-height: 350px;
+  min-width: 400px;
+  background-color: #fff;
+}
+
+#shareProjectDialog .table-wrapper {
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  background-color: #f1f1f1;
+}
+
+#shareProjectDialog .table-wrapper.fixed-height {
+  height: 100px;
+  overflow-y: auto;
+}
+
+#shareProjectDialog .table-wrapper > table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #eeeeee;
+}
+
+#shareProjectDialog .table-wrapper > .empty-msg {
+  display: none;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+#shareProjectDialog > .users-container.empty .empty-msg {
+  display: flex;
+}
+
+#shareProjectDialog > .users-container.empty table {
+  display: none;
+}
+
+#shareProjectDialog > .users-container.hidden {
+  visibility: hidden;
+}
+
+#shareProjectDialog td:last-child {
+  width: 40px;
+  text-align: center;    
+
+}
+
+#shareProjectDialog td:last-child > svg {
+  width: 12px;
+  height: 12px;
+}
+
+#shareProjectDialog td.action-btn {
+  cursor: pointer;
+}
+
+#shareProjectDialog td.action-btn:hover {
+  background-color: #dbdbdb;
+}
+
+#shareProjectDialog tr {
+  border-bottom: 2px solid #fff;
+}
+
+#shareProjectDialog tr.to-delete > td:first-child {
+  opacity: 0.4;
+}
+
+#shareProjectDialog td.user-data > img {
+  float: left;
+  height: 64px;
+  width: 64px;
+  margin-right: 0.5rem;
+}
+
+#shareProjectDialog td.user-data > div {
+  display: flex;
+  height: 64px;
+  padding: 0.4rem;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+#shareProjectDialog td.user-data > div > span:nth-child(2) {
+  font-weight: lighter;
+}
+
+#shareProjectDialog > .pending-users td.user-data {
+  padding: 0.4rem;
+}
+
+#shareProjectDialog > form > label {
+  display: block;
+}
+
+#shareProjectDialog > form > div {
+  display: flex;
+}
+
+#shareProjectDialog > form input {
+  flex-grow: 1;
+}
+
+#shareProjectDialog > form button {
+  width: 60px;
+}
+
+#shareProjectDialog > .loader-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+#shareProjectDialog > .loader-container.hidden {
+  display: none;
+}
+
+#shareProjectDialog .share-notification {
+  position: absolute;
+  bottom: 0;
+}
+
+#shareProjectDialog .share-notification.hidden {
+  visibility: hidden;
+}
