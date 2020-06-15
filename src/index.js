@@ -81,6 +81,13 @@ const CLIENT_ID = '344446892746-36ebkcl04viq3poe73mb3dkhr79lspqk.apps.googleuser
 
 // API key for Google Drive.
 const API_KEY = 'AIzaSyBuHx9BXXCRFSKiLzjinZgK_2ys58ynGew';
+let A_K;
+if (process.env.NODE_ENV !== 'production') {
+  console.log('Looks like we are in development mode!');
+  A_K = process.env.API_KEY_DEV;
+} else {
+  A_K = process.env.API_KEY_PROD;
+}
 
 // Array of API discovery doc URLs for APIs used by the app.
 const DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"];
