@@ -77,16 +77,14 @@ sampleProjectBtn.onclick = () => {
 /******************* GOOGLE DRIVE AUTHENTICATION *******************/
 
 // OAuth 2.0 Client ID for Google APIs.
-const CLIENT_ID = '344446892746-36ebkcl04viq3poe73mb3dkhr79lspqk.apps.googleusercontent.com';
+const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 
 // API key for Google Drive.
-const API_KEY = 'AIzaSyBuHx9BXXCRFSKiLzjinZgK_2ys58ynGew';
-let A_K;
-if (process.env.NODE_ENV !== 'production') {
-  console.log('Looks like we are in development mode!');
-  A_K = process.env.API_KEY_DEV;
+let API_KEY;
+if (PROCESS === 'production') {
+  API_KEY = process.env.GOOGLE_API_KEY_PROD;
 } else {
-  A_K = process.env.API_KEY_PROD;
+  API_KEY = process.env.GOOGLE_API_KEY_DEV;
 }
 
 // Array of API discovery doc URLs for APIs used by the app.
