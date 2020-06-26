@@ -4,10 +4,9 @@
   "description": "Viewer for drawings in bimd format.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "copy": "cp -R pwa/. dist/",
-    "build": "webpack && npm run copy",
-    "prod": "webpack -p && npm run copy",
+    "build": "webpack --mode=development && npm run copy",
+    "prod": "PROCESS=production webpack --mode=production && npm run copy",
     "deploy": "git subtree push --prefix dist origin gh-pages"
   },
   "repository": {
