@@ -1,10 +1,41 @@
 import Generics from './generics';
 import { Comment } from './comment';
 import { MainPanel } from './mainPanel';
-import { CommentForm } from './CommentForm';
+import { CommentForm } from './commentForm';
+import type { Drawing } from './drawing';
+import type { Application } from './app';
+import type { ElementSelection } from './appTools/elementSelection';
 
 export class Workspace {
-  constructor(projectData, App) {
+  workspaceContainer: HTMLElement;
+  projectName: string;
+  projectId: string;
+  permissions: gapi.client.drive.Permission[];
+  projectIndex: number;
+  drawings: Drawing[];
+  elementsData: any; // TODO create interface
+  drawingsStylesId: any; // TODO number or string?
+  activeTool: ElementSelection;
+  // toolSettings: any;
+  appendedDrawingsIds: string[] = [];
+  activeDrawing: Drawing;
+  drawingsBtns: HTMLElement;
+  drawingsStylesTag: HTMLStyleElement;
+  saveBtn: HTMLElement;
+  projectsData: any // ProjectData[]
+  propsTablesContainer: HTMLElement;
+  paramsTablesContainer: HTMLElement;
+  commentsChangesUnsaved: boolean;
+  commentsFileId: any; // string or number?
+  comments: Comment[] = [];
+  // Used to store arrays of all the comments that each element has, necessary when an element is clicked.
+  elementsComments: any = {}; // TODO is an object but which type?
+  pendingNotificationsToSend: any; // TODO is an array but of?
+  mainPanel: MainPanel;
+  commentForm: CommentForm;
+  drawingsContainer: HTMLElement;
+
+  constructor(projectData: any, App: Application) { // TODO use projectData instead
     // Create the workspace HTML container.
     this.workspaceContainer = document.createElement('div');
     this.workspaceContainer.classList.add('workspace');
@@ -14,9 +45,9 @@ export class Workspace {
     this.projectName = projectData.name;
     this.projectId = projectData.id;
     this.permissions = projectData.permissions;
-    this.projectIndex = App.projectsData.findIndex(obj => obj.name === projectData.name);
-    if (projectData.id === App.lastUploadedProject.id) {
-      this.drawings = App.lastUploadedProject.drawings;
+    this.projectIndex = App.projectsData.findIndex((obj: any) => obj.name === projectData.name); // TODO use type projectData instead
+    if (App.lastUploadedProject && projectData.id === App.lastUploadedProject.id) {
+      //this.drawings = App.lastUploadedProject.drawings; // TODO when lastUploadedProject interface is avaiable uncomment it
       //this.drawingsStylesId = App.lastUploadedProject.drawingsStylesId;
       this.elementsData = App.lastUploadedProject.elementsData;
     } else {
@@ -26,44 +57,33 @@ export class Workspace {
       // TODO: Elements data could be changed to a similar system like the drawing objects.
       this.elementsData = {};
     }
-    this.activeTool;
-    // this.toolSettings;
-    this.appendedDrawingsIds = [];
-    this.activeDrawing; // Drawing object instance.
     // Set title of the project in the button to list the projects.
     App.projectsListBtn.innerHTML = '<span>' + projectData.name + '</span>';
     this.drawingsBtns = App.drawingsBtns;
-    this.drawingsStylesTag;
     this.saveBtn = App.saveBtn;
     this.createDrawingsBtns(this.drawings);
     // Show drawings and tools buttons.
-    this.drawingsBtns.children[0].innerText = 'Pick a drawing';
+    (this.drawingsBtns.children[0] as HTMLElement).innerText = 'Pick a drawing';
     this.drawingsBtns.style.display = 'unset';
     App.toolbarsContainer.style.display = 'flex';
     this.projectsData = App.projectsData;
     this.propsTablesContainer = document.getElementById('propsTablesContainer');
     this.paramsTablesContainer = document.getElementById('paramsTablesContainer');
-    this.commentsChangesUnsaved;
     if (projectData.commentsFileId) {
       this.commentsFileId = projectData.commentsFileId;
     }
-    // Used to store arrays of all the comments that each element has, necessary when an element is clicked.
-    this.comments = [];
-    this.elementsComments = {};
     if (projectData.comments) {
-      // TODO: Create the comment objects each time a workspace is created or before on the AppData.projectsData object?
-      projectData.comments.forEach(comment => {
-        const commentObj = new Comment(comment.elementsIds, comment.content, comment.mentions);
+      projectData.comments.forEach((commentData: any) => {
+        const commentObj = new Comment(commentData.elementsIds, commentData.content, commentData.mentions);
         this.comments.push(commentObj);
-        for (let i = 0; i < comment.elementsIds.length; i++) {
-          if (!this.elementsComments.hasOwnProperty(comment.elementsIds[i]))
-            this.elementsComments[comment.elementsIds[i]] = [];
-          this.elementsComments[comment.elementsIds[i]].push(commentObj.id);
+        for (let i = 0; i < commentData.elementsIds.length; i++) {
+          if (!this.elementsComments.hasOwnProperty(commentData.elementsIds[i]))
+            this.elementsComments[commentData.elementsIds[i]] = [];
+          this.elementsComments[commentData.elementsIds[i]].push(commentObj.id);
         }
       });
       this.drawings.forEach(drawing => drawing.commentsChanged = true);
     }
-    this.pendingNotificationsToSend = [];
     this.mainPanel = new MainPanel(App.panelsStorage, this);
     this.commentForm = new CommentForm(document.getElementById('commentForm'), this);
     // Create and append the HTML drawings container.
@@ -81,21 +101,18 @@ export class Workspace {
 
   /**
    * Sets the selected tool as active and turns off the previous one if still active.
-   * @param {Event} e
-   * @param {Tool} Tool 
-   * @param {String} name 
    */
-  manageTools(e, Tool, name) {
+  manageTools(e: Event, Tool: typeof ElementSelection, name: string) {
     if (this.activeDrawing === undefined) {
       // TODO: Show a message saying that a drawing must be active.
       console.log('A drawing must be active.');
       return;
     }
     if (this.activeTool === undefined) {
-      this.activeTool = new Tool(name, e.currentTarget, this);
+      this.activeTool = new Tool(name, e.currentTarget as HTMLElement, this);
     } else if (this.activeTool.name !== name) {
       this.activeTool.kill();
-      this.activeTool = new Tool(name, e.currentTarget, this);
+      this.activeTool = new Tool(name, e.currentTarget as HTMLElement, this);
     } else if (this.activeTool.name === name) {
       this.activeTool.kill();
       this.activeTool = undefined;
@@ -115,9 +132,8 @@ export class Workspace {
   /**
    * Manages the drawings visibility. The provided drawing object
    * should have the 'content' property already with value.
-   * @param {Object} drawing 
    */
-  setDrawing(drawing) {
+  setDrawing(drawing: Drawing) {
     // If there is a previous visible drawing hide it.
     if (this.activeDrawing && this.activeDrawing.name !== drawing.name) {
       // If in the drawing to be hidden there are selected elements remove their selection appearance.
@@ -152,9 +168,9 @@ export class Workspace {
       if (drawing.commentsGroup === undefined) {
         let groupCreated = false;
         for (let j = 0; j < this.comments.length; j++) {
-          const elemsForCommentRepresentation = [];
+          const elemsForCommentRepresentation: SVGGElement[] = [];
           for (let i = 0; i < this.comments[j].elementsIds.length; i++) {
-            const element = drawing.content.querySelector('[data-id="' + this.comments[j].elementsIds[i] + '"]');
+            const element = drawing.content.querySelector('[data-id="' + this.comments[j].elementsIds[i] + '"]') as SVGGElement;
             if (element !== null)
               elemsForCommentRepresentation.push(element);
           }
@@ -177,9 +193,9 @@ export class Workspace {
           if (drawing.commentsGroup.querySelector('[data-id="' + this.comments[j].id + '"]') !== null) continue;
           // TODO Do something to avoid checking comments that doesnt have any element in this drawing.
           // If there is no representation for it get all its elements and if at least one is found create the representation.
-          const elemsForCommentRepresentation = [];
+          const elemsForCommentRepresentation: SVGGElement[] = [];
           for (let i = 0; i < this.comments[j].elementsIds.length; i++) {
-            const element = drawing.content.querySelector('[data-id="' + this.comments[j].elementsIds[i] + '"]');
+            const element = drawing.content.querySelector('[data-id="' + this.comments[j].elementsIds[i] + '"]') as SVGGElement;
             if (element !== null)
               elemsForCommentRepresentation.push(element);
           }
@@ -193,10 +209,11 @@ export class Workspace {
       drawing.commentsChanged = false;
     }
 
+    // TODO Could be removed because tool takes the active drawign from the workspace
     // Update the 'activeDrawing' in the 'activeTool'.
-    if (this.activeTool) {
-      this.activeTool.activeDrawing = drawing;
-    }
+    // if (this.activeTool) {
+    //   this.activeTool.activeDrawing = drawing;
+    // }
 
     // If there are selected elements in the new drawing add the selection appearance to them.
     if (this.activeTool && this.activeTool.currentSelection.length > 0) {
@@ -213,8 +230,8 @@ export class Workspace {
    * Creates the buttons for the drawings to be displayed.
    * @param {Array} drawings Array with the drawing objects.
    */
-  createDrawingsBtns(drawings) {
-    let drawingsItems = [];
+  createDrawingsBtns(drawings: Drawing[]) {
+    let drawingsItems: string[] = [];
     drawings.forEach(drawing => {
       // Could be that there is no id if the project was uploaded and it is only local.
       drawingsItems.push(`<li ${drawing.id ? 'data-id=\"' + drawing.id + '\"' : ''}>${drawing.name}</li>`);

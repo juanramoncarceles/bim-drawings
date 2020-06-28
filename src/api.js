@@ -484,7 +484,7 @@ export default class {
 
   /**
    * Creates a new project folder and a subtructure with all the contents of the project on the file.
-   * @param {JSON} file The VisualARQ Drawings file created by the exporter.
+   * @param {File} file The VisualARQ Drawings file created by the exporter.
    * @param {Object} AppData The AppData object that contains info about the app resources.
    * @param {Object} lastUploadedProject Object with the contents of the last uploaded project.
    */
