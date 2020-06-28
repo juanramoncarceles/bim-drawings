@@ -85,7 +85,7 @@ export class Workspace {
       this.drawings.forEach(drawing => drawing.commentsChanged = true);
     }
     this.mainPanel = new MainPanel(App.panelsStorage, this);
-    this.commentForm = new CommentForm(document.getElementById('commentForm'), this);
+    this.commentForm = new CommentForm(document.getElementById('commentForm') as HTMLFormElement, this);
     // Create and append the HTML drawings container.
     this.drawingsContainer = document.createElement('div');
     this.drawingsContainer.classList.add('drawingsContainer');
