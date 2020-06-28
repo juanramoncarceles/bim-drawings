@@ -12,6 +12,7 @@ declare global {
   interface Window {
     thereIsMessaging: boolean;
     getCurrentUser(): gapi.client.drive.User;
+    getMessagingToken(): void;
     saveMessagingDeviceToken(): void;
   }
 }
