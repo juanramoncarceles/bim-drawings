@@ -1,1 +1,9 @@
 Run the production script, commit the changes on the dist folder and run the deploy script.
+
+
+HOW TO DEBUG TYPESCRIPT FROM VSCode
+  1. Install the Debugger for Chrome VSCode extension.
+  2. Close all opened Chrome instances.
+  3. Lunch Chrome from command line with the following command: start chrome --remote-debugging-port=9222
+  4. Run the app from a server at http://localhost:8000
+  5. Run the VSCode debugger with the "Attach to Chrome" configuration.
