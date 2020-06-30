@@ -8,6 +8,7 @@ import "firebase/analytics";
 import "firebase/firestore";
 import "firebase/messaging";
 
+import type { Application } from "./app";
 
 /********************* FIREBASE INITIALIZATION *********************/
 
@@ -30,7 +31,9 @@ firebase.initializeApp(firebaseConfig);
  * Manages the creation of device tokens to receive push notifications.
 */
 export class Messaging {
-  constructor(app) {
+  messaging: firebase.messaging.Messaging;
+
+  constructor(app: Application) {
     // Retrieve the Firebase Messaging object.
     this.messaging = firebase.messaging();
 

@@ -1,19 +1,24 @@
 import API from './api';
 import { Workspace } from './workspace';
-import { ProjectData } from './projectData';
 import Generics from './generics';
 import { AddComment } from './appTools/addComment';
-import { ElementData } from './appTools/elementData';
+import { ShowElementData } from './appTools/elementData';
 import { ShareProject } from './shareProject';
 import { NotificationsManager } from './notificationsManager';
 import { RenameProject } from './renameProject';
 import { ContextMenu } from './contextMenu';
 import { ProjectItem } from './projectItem';
+import { ProjectData, NotificationToSend } from './types';
+
+interface DialogAction {
+  name: string;
+  function: (this: GlobalEventHandlers, e: MouseEvent) => any;
+}
 
 export class Application {
   appMainFolderId: string;
   // Array of objects with data like 'name' and 'id' of the projects.
-  projectsData: any; // TODO array of ?
+  projectsData: ProjectData[];
   appSettingsFolderId: string;
   thumbsFolderId: string;
   // If a user is logged it profile info is stored here.
@@ -24,7 +29,7 @@ export class Application {
   workspacesContainer: HTMLElement;
   lastUploadedProject: ProjectData;
   // Stores the active item in the projects list.
-  previousActiveItem: any; // TODO
+  previousActiveItem: HTMLElement;
   projectsListBtn: HTMLElement;
   drawingsBtns: HTMLElement;
   toolbarsContainer: HTMLElement;
@@ -159,7 +164,7 @@ export class Application {
     window.onresize = this.adjustItems;
     /**************** Tools buttons event listeners ****************/
     // TODO: This would make more sense as part of the workspace ?
-    document.getElementById('tool-4').addEventListener('click', (e) => this.currentWorkspace.manageTools(e, ElementData, 'elementsDataTool'));
+    document.getElementById('tool-4').addEventListener('click', (e) => this.currentWorkspace.manageTools(e, ShowElementData, 'elementsDataTool'));
     document.getElementById('tool-5').addEventListener('click', (e) => this.currentWorkspace.manageTools(e, AddComment, 'commentsTool'));
     /******************** Notifications manager ********************/
     this.notificationsManager = new NotificationsManager();
@@ -232,7 +237,7 @@ export class Application {
       // If savingSuccessful proceed with the notifications if any.
       if (savingSuccessful && this.currentWorkspace.pendingNotificationsToSend.length > 0) {
         const notificationsPromises: Promise<Response>[] = [];
-        this.currentWorkspace.pendingNotificationsToSend.forEach((n: any) => { // TODO change any
+        this.currentWorkspace.pendingNotificationsToSend.forEach((n: NotificationToSend) => { // TODO change any
           const notificationPromise = API.sendNotification(n.emails, n.userName, n.userPhoto, n.textContent, n.projectName, n.projectId);
           notificationsPromises.push(notificationPromise);
         });
@@ -458,11 +463,9 @@ export class Application {
 
   /**
    * Manages the creation of a message on the viewport.
-   * @param type If action an object with a function reference and a name should be provided.
-   * @param message 
-   * @param actions Array of objects with name and function entries.
+   * @param type If 'action' a DialogAction[] with at least one object should be provided.
    */
-  showViewportDialog(type: 'loader' | 'message' | 'action', message: string, actions: any[] = []) { // TODO set the any array type
+  showViewportDialog(type: 'loader' | 'message' | 'action', message: string, actions: DialogAction[] = []) {
     if (this.viewportMessage.querySelector('.btns-container')) {
       this.viewportMessage.querySelectorAll('.btns-container > button').forEach((btn: HTMLElement) => btn.onclick = null);
     }

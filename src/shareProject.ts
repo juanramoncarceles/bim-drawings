@@ -1,7 +1,7 @@
 import API from './api';
 import Generics from './generics';
 import type { Application } from './app';
-import { ProjectData } from './projectData';
+import { ProjectData } from './types';
 
 export class ShareProject {
   htmlContainer: HTMLElement;

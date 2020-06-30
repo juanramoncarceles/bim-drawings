@@ -1,15 +1,37 @@
 import Generics from './generics';
 
+interface NotificationData {
+  author: string;
+  projectName: string;
+  projectId: string;
+  text: string;
+  photoLink: string;
+}
+
+interface NotificationObject {
+  id: string;
+  representation: HTMLElement;
+  state: 'pending' | 'read';
+  data: NotificationData
+}
+
 export class NotificationsManager {
+  notificationsBtn: HTMLElement;
+  notificationsContainer: HTMLElement;
+  notificationsList: HTMLElement;
+  notifications: NotificationObject[] = [];
+
   constructor() {
     this.notificationsBtn = document.getElementById('notificationBtn');
     this.notificationsContainer = document.getElementById('notificationsContainer');
     this.notificationsList = document.querySelector('#notificationsContainer > .notifications-body');
     this.notificationsBtn.onclick = () => this.notificationsContainer.classList.toggle('open');
     this.notificationsList.addEventListener('click', e => {
-      if (e.target.closest('li')) this.viewNotification(e.target.closest('li').dataset.id);
+      const element = (e.target as HTMLElement).closest('li');
+      if (element) {
+        this.viewNotification(element.dataset.id);
+      }
     });
-    this.notifications = [];
   }
 
   // Show notifications panel
@@ -27,21 +49,20 @@ export class NotificationsManager {
    * Creates a notification representation that appears in the UI and adds an object
    * with all the notification data to the notifications array.
    *   src/assets/avatar-placeholder.png
-   * @param {Object} notificationObj It should have author, projectName, projectId, text and photoLink entries.
    */
-  createNotificaction(notificationObj) {
+  createNotificaction(data: NotificationData) {
     const notificationElement = document.createElement('li');
     const notificationId = Generics.uuidv4();
     notificationElement.dataset.id = notificationId;
     notificationElement.classList.add('pending');
     notificationElement.innerHTML = `
-      <img class="notification-thumb" src="${notificationObj.photoLink}">
+      <img class="notification-thumb" src="${data.photoLink}">
       <div class="notification-content">
-        <h4>${notificationObj.author} mentioned you in a comment on the project ${notificationObj.projectName}</h4>
-        <p>${notificationObj.text}</p>
+        <h4>${data.author} mentioned you in a comment on the project ${data.projectName}</h4>
+        <p>${data.text}</p>
       </div>`;
     this.notificationsList.prepend(notificationElement);
-    this.notifications.push({ id: notificationId, representation: notificationElement, state: 'pending', data: notificationObj });
+    this.notifications.push({ id: notificationId, representation: notificationElement, state: 'pending', data: data });
     // Enables the icon to indicate that there are pending notifications.
     // TODO: Dont do it each time.
     this.notificationsBtn.classList.add('enabled');
@@ -55,9 +76,8 @@ export class NotificationsManager {
 
   /**
    * maximum of 10 read notifications or no limit if they are unread
-   * @param {String} notificationId 
    */
-  deleteNotificaction(notificationId) {
+  deleteNotificaction(notificationId: string) {
     const index = this.notifications.findIndex(n => n.id === notificationId);
     this.notifications[index].representation.remove();
     this.notifications.splice(index, 1);
@@ -66,9 +86,8 @@ export class NotificationsManager {
 
   /**
    * TODO: separate goToNotification and markAsRead ?
-   * @param {String} notificationId 
    */
-  viewNotification(notificationId) {
+  viewNotification(notificationId: string) {
     const notification = this.notifications.find(n => n.id === notificationId);
     notification.state = 'read';
     notification.representation.classList.remove('pending');

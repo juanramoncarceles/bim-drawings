@@ -1,7 +1,7 @@
 /************************ PWA installation *************************/
 // This content can be added to index.js
 
-let deferredInstallPrompt = null;
+let deferredInstallPrompt: BeforeInstallPromptEvent = null;
 
 const installButton = document.getElementById('installBtn');
 
@@ -15,9 +15,8 @@ window.addEventListener('beforeinstallprompt', saveBeforeInstallPromptEvent);
 /**
  * Event handler for beforeinstallprompt event.
  * Saves the event and shows install button.
- * @param {Event} e
  */
-function saveBeforeInstallPromptEvent(e) {
+function saveBeforeInstallPromptEvent(e: BeforeInstallPromptEvent) {
   // Prevent from automatically showing the prompt which could happen
   // in some browsers and create a custom one.
   e.preventDefault();
@@ -30,13 +29,12 @@ function saveBeforeInstallPromptEvent(e) {
 
 /**
  * Event handler for the install button.
- * @param {Event} e
  */
-function installApp(e) {
+function installApp(e: Event) {
   // Show install prompt.
   deferredInstallPrompt.prompt();
   // Hide the install button, it cant be called twice.
-  e.srcElement.setAttribute('hidden', true);
+  (e.target as HTMLElement).hidden = true; // TODO use css instead;
   // Log user response to prompt.
   deferredInstallPrompt.userChoice
     .then(choice => {
@@ -56,10 +54,9 @@ window.addEventListener('appinstalled', logAppInstalled);
 
 
 /**
- * The event handler for the appinstalled event.
- * @param {Event} e
+ * The event handler for the appinstalled event, which is deprecated.
  */
-function logAppInstalled(e) {
+function logAppInstalled(e: Event) {
   console.log('VisualARQ Drawings Viewer was installed.', e);
   // TODO: Log the installation for example to an analytics software or save the event somehow.
 }

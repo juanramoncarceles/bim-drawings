@@ -1,7 +1,42 @@
-export class MainPanel {
-  constructor(panelsStorage, Workspace) {
-    this.panelsStorage = panelsStorage;
+import type { Workspace } from "./workspace";
 
+export interface PanelSection {
+  name: string;
+  button?: HTMLElement;
+  body: HTMLElement;
+}
+
+enum PanelPosition {
+  Right,
+  Bottom
+}
+
+export class MainPanel {
+  panelsStorage: HTMLElement;
+  panelContainer: HTMLElement;
+  panelGrip: HTMLElement;
+  panelContent: HTMLElement;
+  panelHeader: HTMLElement;
+  panelBody: HTMLElement;
+  panelFooter: HTMLElement;
+  activeSection: PanelSection;
+  isOpen: boolean;
+  panelSide: PanelPosition;
+  sections: PanelSection[] = [];
+  mediumBreakpoint: MediaQueryList;
+  // Panel dimensions and resizing.
+  panelWidth = 250;
+  panelHeight = 200;
+  resizingWidth = false;
+  resizingHeight = false;
+  startX: number;
+  startWidth: number;
+  startY: number;
+  startHeight: number;
+
+
+  constructor(panelsStorage: HTMLElement, Workspace: Workspace) {
+    this.panelsStorage = panelsStorage;
     // Creation of HTML structure.
     this.panelContainer = document.createElement('div');
     this.panelContainer.classList.add('mainPanel', 'right');
@@ -21,7 +56,6 @@ export class MainPanel {
     this.panelContent.appendChild(this.panelFooter);
     this.panelContainer.appendChild(this.panelContent);
 
-
     // TODO Remove this event listeners when the panel is deleted.
     Workspace.workspaceContainer.addEventListener('mousemove', e => {
       if (this.resizingWidth) {
@@ -35,43 +69,27 @@ export class MainPanel {
       this.resizingHeight = false;
     });
 
-    this.activeSection;
-    this.isOpen;
-    this.panelSide;
-    this.sections = [];
     this.setActive = this.setActive.bind(this);
     this.panelHeader.onclick = e => {
-      const button = e.target.closest('[data-btn]');
+      const button = (e.target as HTMLElement).closest('[data-btn]') as HTMLElement;
       if (button && !button.classList.contains('active'))
         this.setActive(button.innerText);
     };
     // Media breakpoint to determine the panel position.
     this.mediumBreakpoint = window.matchMedia('(max-width: 700px)');
     this.panelPositon = this.panelPositon.bind(this);
-    this.mediumBreakpoint.addListener(this.panelPositon);
-    this.panelSides = {
-      right: 'r',
-      bottom: 'b'
-    }
+    this.mediumBreakpoint.addListener(this.panelPositon as (this: MediaQueryList) => any);
     this.panelPositon(this.mediumBreakpoint);
-    // Panel dimensions and resizing.
-    this.panelWidth = 250;
+    // Panel dimensions and resizing.    
     this.panelContainer.style.setProperty("--width", this.panelWidth + 'px');
-    this.panelHeight = 200;
     this.panelContainer.style.setProperty("--height", this.panelHeight + 'px');
-    this.resizingWidth = false;
-    this.resizingHeight = false;
-    this.startX;
-    this.startWidth;
-    this.startY;
-    this.startHeight;
     this.panelGrip.onmousedown = e => {
-      if (this.panelSide === this.panelSides.right) {
+      if (this.panelSide === PanelPosition.Right) {
         this.resizingWidth = true;
         this.resizingHeight = false;
         this.startX = e.pageX;
         this.startWidth = this.panelWidth;
-      } else if (this.panelSide === this.panelSides.bottom) {
+      } else if (this.panelSide === PanelPosition.Bottom) {
         this.resizingHeight = true;
         this.resizingWidth = false;
         this.startY = e.pageY;
@@ -81,12 +99,12 @@ export class MainPanel {
     Workspace.workspaceContainer.appendChild(this.panelContainer);
   }
 
-  resizeWidth(mouseEvent) {
+  resizeWidth(mouseEvent: MouseEvent) {
     this.panelWidth = this.startWidth - (mouseEvent.pageX - this.startX);
     this.panelContainer.style.setProperty("--width", this.panelWidth + 'px');
   }
 
-  resizeHeight(mouseEvent) {
+  resizeHeight(mouseEvent: MouseEvent) {
     this.panelHeight = this.startHeight - (mouseEvent.pageY - this.startY);
     this.panelContainer.style.setProperty("--height", this.panelHeight + 'px');
   }
@@ -104,22 +122,21 @@ export class MainPanel {
 
   /**
    * Docks the panel on the specified side.
-   * @param {Object field} side Use the MainPanel.panelsSides fields.
    */
-  dockTo(side) {
-    if (side === this.panelSides.right) {
+  dockTo(side: PanelPosition) {
+    if (side === PanelPosition.Right) {
       this.panelSide = side;
       this.panelContainer.classList.remove('bottom');
       this.panelContainer.classList.add('right');
-      this.panelBody.childNodes.forEach(content => {
+      this.panelBody.childNodes.forEach((content: HTMLElement) => {
         content.classList.remove('horizontal');
         content.classList.add('vertical');
       });
-    } else if (side === this.panelSides.bottom) {
+    } else if (side === PanelPosition.Bottom) {
       this.panelSide = side;
       this.panelContainer.classList.remove('right');
       this.panelContainer.classList.add('bottom');
-      this.panelBody.childNodes.forEach(content => {
+      this.panelBody.childNodes.forEach((content: HTMLElement) => {
         content.classList.remove('vertical');
         content.classList.add('horizontal');
       });
@@ -128,9 +145,9 @@ export class MainPanel {
 
   /**
    * Sets a section as active.
-   * @param {String} name The name of the section to activate.
+   * @param name The name of the section to activate.
    */
-  setActive(name) {
+  setActive(name: string) {
     if (this.activeSection)
       this.setInactive(this.activeSection);
     // This means that sections should have unique names.
@@ -142,9 +159,8 @@ export class MainPanel {
   /**
    * Sets a section as inactive, so in the back.
    * If there is only one and it is inactive the body wont be visible.
-   * @param {Object} section Section object {name: string, button: SpanElement, body: HTMLElement }
    */
-  setInactive(section) {
+  setInactive(section: PanelSection) {
     section.button.classList.remove('active');
     section.body.classList.add('hidden');
   }
@@ -152,12 +168,10 @@ export class MainPanel {
   /**
    * Adds a new section to the panel contents and sets it as active.
    * If a section with this name already exists then it is only activated.
-   * @param {String} name
-   * @param {HMLTElement} body
-   * @param {Boolean} activate Set the section as active (the one visible). Default true.
-   * @param {Boolean} first If true sets the section as the first one (left side). Default false.
+   * @param activate Set the section as active (the one visible). Default true.
+   * @param first If true sets the section as the first one (left side). Default false.
    */
-  addSection(name, body, activate = true, first = false) {
+  addSection(name: string, body: HTMLElement, activate = true, first = false) { // TODO use an object destruct for name and body
     let section = this.sections.find(s => s.name === name);
     if (section === undefined) {
       // The section button.
@@ -184,7 +198,7 @@ export class MainPanel {
    * The first one in the array will be set as active.
    * @param {Array} sectionsArray Each object in the array should have a name and a body entry.
    */
-  addSections(sectionsArray) {
+  addSections(sectionsArray: PanelSection[]) {
     for (let i = 0; i < sectionsArray.length; i++) {
       this.addSection(sectionsArray[i].name, sectionsArray[i].body, i === 0 ? true : false)
     }
@@ -193,9 +207,8 @@ export class MainPanel {
   /**
    * Removes a section from the panel contents.
    * If this was the only section the panel will close.
-   * @param {String} name 
    */
-  removeSection(name) {
+  removeSection(name: string) {
     const sectionIndex = this.sections.findIndex(s => s.name === name);
     if (sectionIndex >= 0) {
       const section = this.sections.splice(sectionIndex, 1)[0];
@@ -212,11 +225,11 @@ export class MainPanel {
     }
   }
 
-  panelPositon(breakpoint) {
+  panelPositon(breakpoint: MediaQueryList) {
     if (breakpoint.matches) {
-      this.dockTo(this.panelSides.bottom);
+      this.dockTo(PanelPosition.Bottom);
     } else {
-      this.dockTo(this.panelSides.right);
+      this.dockTo(PanelPosition.Right);
     }
   }
 

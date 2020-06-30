@@ -1,25 +1,30 @@
 import API from '../api';
 import { ElementSelection } from './elementSelection';
-import Generics from '../generics';
+import type { Workspace } from '../workspace';
+import type { PanelSection } from '../mainPanel';
+import { ElementDataEntry, ElementData, ModelElementsData, ProjectData } from '../types';
 
-export class ElementData extends ElementSelection {
-  constructor(name, toolBtn, workspace) {
+export class ShowElementData extends ElementSelection {
+  elementsData: ModelElementsData;
+  projectsData: ProjectData[];
+  projectIndex: number;
+  currentElementData: ElementData;
+  // If a tool requires the panel it is specified here.
+  // This could be a property of the Tool class.
+  hasUsedPanel = false;
+
+  constructor(name: string, toolBtn: HTMLElement, workspace: Workspace) {
     super(name, toolBtn, workspace);
     console.log('Elements data tool enabled.');
     this.elementsData = workspace.elementsData;
     this.projectsData = workspace.projectsData;
     this.projectIndex = workspace.projectIndex;
-    this.currentElementData;
-    // If a tool requires the panel it is specified here.
-    // This could be a property of the Tool class.
-    this.hasUsedPanel = false;
   }
 
   /**
    * Extends the method of the super class to get the selected element.
-   * @param {MouseEvent} e The click event.
    */
-  manageSelection(e) {
+  manageSelection(e: MouseEvent) {
     super.manageSelection(e);
     // Only if an element has been clicked and added, since it could have been removed.
     if (this.selection !== null && this.currentSelection.length > 0) {
@@ -44,10 +49,8 @@ export class ElementData extends ElementSelection {
 
   /**
    * Shows the data associated with the selected element by fetching it if needed.
-   * @param {String} category 
-   * @param {String} id 
    */
-  async showElementData(category, id) {
+  async showElementData(category: string, id: string) {
     let success = true;
     if (this.elementsData[category]) {
       this.currentElementData = this.elementsData[category].instances[id];
@@ -74,7 +77,7 @@ export class ElementData extends ElementSelection {
     if (success) {
       // Sets the contents on the properties and parameters panels.
       this.workspace.propsTablesContainer.innerHTML = this.createDataTable(this.currentElementData.properties);
-      const sections = [{
+      const sections: PanelSection[] = [{
         name: 'Properties',
         body: this.workspace.propsTablesContainer
       }];
@@ -95,15 +98,14 @@ export class ElementData extends ElementSelection {
   /**
    * Creates various HTML tables with the data of the objects array.
    * Each object in the array should contain 'name', 'value' and 'category'.
-   * @param {Array} entriesArray 
    */
-  createDataTable(entriesArray) {
-    const categoriesTitles = [];
-    const dataByCategories = [];
-    for (let i = 0; i < entriesArray.length; i++) {
-      const category = entriesArray[i].category;
+  createDataTable(dataEntries: ElementDataEntry[]) {
+    const categoriesTitles: string[] = [];
+    const dataByCategories: string[][] = [];
+    for (let i = 0; i < dataEntries.length; i++) {
+      const category = dataEntries[i].category;
       const categoryIndex = categoriesTitles.indexOf(category);
-      const tableRow = `<tr><th>${entriesArray[i].name}</th><td>${entriesArray[i].value}</td></tr>`;
+      const tableRow = `<tr><th>${dataEntries[i].name}</th><td>${dataEntries[i].value}</td></tr>`;
       if (categoryIndex !== -1) {
         dataByCategories[categoryIndex].push(tableRow);
       }
@@ -112,7 +114,7 @@ export class ElementData extends ElementSelection {
         categoriesTitles.push(category);
       }
     }
-    const dataTable = [];
+    const dataTable: string[] = [];
     for (let i = 0; i < dataByCategories.length; i++)
       dataTable.push(dataByCategories[i].join('') + '</tbody></table>');
 

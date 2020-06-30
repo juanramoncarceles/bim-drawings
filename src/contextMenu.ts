@@ -1,7 +1,7 @@
 import Generics from './generics';
 
-interface HTMLElementWithContext extends HTMLElement {
-  contextMenuData: ContextMenuData;
+export interface HTMLElementWithContext extends HTMLElement {
+  contextMenuData?: ContextMenuData;
 }
 
 interface ContextMenuItem {

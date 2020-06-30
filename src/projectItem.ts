@@ -1,11 +1,12 @@
 import API from './api';
+import { ProjectData } from './types';
+import type { Application } from './app';
+import type { HTMLElementWithContext } from './contextMenu';
 
 export class ProjectItem {
-  /**
-   * @param {ProjectData} projectData Object with name, id and optional thumbId entries.
-   * @param {Application} app Reference to the app to access some of its properties and methods.
-   */
-  constructor(projectData, app) {
+  HTMLContainer: HTMLElementWithContext;
+
+  constructor(projectData: ProjectData, app: Application) {
     this.HTMLContainer = document.createElement('button');
     // Projects that have been uploaded but not send to the backend have an id of 'temporal'.
     if (projectData.id === 'temporal') {

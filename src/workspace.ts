@@ -5,6 +5,12 @@ import { CommentForm } from './commentForm';
 import type { Drawing } from './drawing';
 import type { Application } from './app';
 import type { ElementSelection } from './appTools/elementSelection';
+import { ModelElementsData, ProjectData, NotificationToSend } from './types';
+
+// Each entry stores an array of ids of comments for that element.
+interface ElementsComments {
+  [elementId: string]: string[];
+}
 
 export class Workspace {
   workspaceContainer: HTMLElement;
@@ -13,8 +19,8 @@ export class Workspace {
   permissions: gapi.client.drive.Permission[];
   projectIndex: number;
   drawings: Drawing[];
-  elementsData: any; // TODO create interface
-  drawingsStylesId: any; // TODO number or string?
+  elementsData: ModelElementsData;
+  drawingsStylesId: string;
   activeTool: ElementSelection;
   // toolSettings: any;
   appendedDrawingsIds: string[] = [];
@@ -22,34 +28,34 @@ export class Workspace {
   drawingsBtns: HTMLElement;
   drawingsStylesTag: HTMLStyleElement;
   saveBtn: HTMLElement;
-  projectsData: any // ProjectData[]
+  projectsData: ProjectData[];
   propsTablesContainer: HTMLElement;
   paramsTablesContainer: HTMLElement;
   commentsChangesUnsaved: boolean;
-  commentsFileId: any; // string or number?
+  commentsFileId: string;
   comments: Comment[] = [];
   // Used to store arrays of all the comments that each element has, necessary when an element is clicked.
-  elementsComments: any = {}; // TODO is an object but which type?
-  pendingNotificationsToSend: any; // TODO is an array but of?
+  elementsComments: ElementsComments = {};
+  pendingNotificationsToSend: NotificationToSend[];
   mainPanel: MainPanel;
   commentForm: CommentForm;
   drawingsContainer: HTMLElement;
 
-  constructor(projectData: any, App: Application) { // TODO use projectData instead
+  constructor(projectData: ProjectData, App: Application) {
     // Create the workspace HTML container.
     this.workspaceContainer = document.createElement('div');
     this.workspaceContainer.classList.add('workspace');
     // TODO create viewport message as component. This element currently has id viewportMessage
-    //this.viewportMessage = new ViewportMessage();    
+    //this.viewportMessage = new ViewportMessage();
 
     this.projectName = projectData.name;
     this.projectId = projectData.id;
     this.permissions = projectData.permissions;
-    this.projectIndex = App.projectsData.findIndex((obj: any) => obj.name === projectData.name); // TODO use type projectData instead
+    this.projectIndex = App.projectsData.findIndex((obj: ProjectData) => obj.name === projectData.name);
     if (App.lastUploadedProject && projectData.id === App.lastUploadedProject.id) {
       //this.drawings = App.lastUploadedProject.drawings; // TODO when lastUploadedProject interface is avaiable uncomment it
       //this.drawingsStylesId = App.lastUploadedProject.drawingsStylesId;
-      this.elementsData = App.lastUploadedProject.elementsData;
+      // this.elementsData = App.lastUploadedProject.elementsData; // TODO check type before uncomment
     } else {
       // Store the content of the drawings as entries name:'content'
       this.drawings = projectData.drawings;
@@ -73,7 +79,7 @@ export class Workspace {
       this.commentsFileId = projectData.commentsFileId;
     }
     if (projectData.comments) {
-      projectData.comments.forEach((commentData: any) => {
+      projectData.comments.forEach((commentData: Comment) => {
         const commentObj = new Comment(commentData.elementsIds, commentData.content, commentData.mentions);
         this.comments.push(commentObj);
         for (let i = 0; i < commentData.elementsIds.length; i++) {

@@ -3,7 +3,6 @@ import { Application } from './app';
 import Generics from './generics';
 import API from './api';
 import { Messaging } from './messaging';
-import { Drawing } from './drawing';
 
 
 /************************ THE GLOBAL OBJECT ************************/
