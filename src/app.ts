@@ -2,7 +2,7 @@ import API from './api';
 import { Workspace } from './workspace';
 import Generics from './generics';
 import { AddComment } from './appTools/addComment';
-import { ShowElementData } from './appTools/elementData';
+import { ShowElementData } from './appTools/showElementData';
 import { ShareProject } from './shareProject';
 import { NotificationsManager } from './notificationsManager';
 import { RenameProject } from './renameProject';
