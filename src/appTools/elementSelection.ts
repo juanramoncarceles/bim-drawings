@@ -137,10 +137,10 @@ export class ElementSelection extends Tool {
    * Gets an array of references of SVGGElements in the drawing that are currently selected.
    * Needed because not all selected elements may appear in a drawing. 
    */
-  getDrawingSelectedElementsRefs(drawing: Drawing) {
-    const selectedElements = [];
+  getDrawingSelectedElementsRefs(drawing: Drawing): SVGGElement[] {
+    const selectedElements: SVGGElement[] = [];
     for (let i = 0; i < this.currentSelection.length; i++) {
-      const element = drawing.content.querySelector('[data-id="' + this.currentSelection[i] + '"]');
+      const element = drawing.content.querySelector('[data-id="' + this.currentSelection[i] + '"]') as SVGGElement;
       if (element) selectedElements.push(element);
     }
     return selectedElements;

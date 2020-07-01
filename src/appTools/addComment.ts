@@ -1,18 +1,21 @@
 import { ElementSelection } from './elementSelection';
 import { Comment } from './../comment';
-import API from './../api';
+import type { Workspace } from '../workspace';
 
 export class AddComment extends ElementSelection {
-  constructor(name, toolBtn, workspace) {
+  multipleSelection = true;
+  boundingBox: any; // TODO
+  waitingForComment = false; // TODO use this instead to avoid changing drawing?
+  // This could be a property of the Tool class.
+  hasUsedPanel = false;
+
+  constructor(name: string, toolBtn: HTMLElement, workspace: Workspace) {
     super(name, toolBtn, workspace);
     console.log('Comment element tool enabled.');
-    this.multipleSelection = true;
-    this.boundingBox;
-    this.waitingForComment = false; // TODO use this instead to avoid changing drawing?
     this.cancelComment = this.cancelComment.bind(this);
     workspace.commentForm.cancelCreateBtn.onclick = this.cancelComment;
     if (workspace.permissions.length > 1) { // There is always at least the owner.
-      const membersEmails = [];
+      const membersEmails: string[] = [];
       const currentUserEmail = window.getCurrentUser().emailAddress;
       workspace.permissions.forEach(member => {
         if (member.emailAddress !== currentUserEmail) {
@@ -29,16 +32,13 @@ export class AddComment extends ElementSelection {
     // It could be disabled and or full if the previous use was view mode.
     workspace.commentForm.enableForm();
     workspace.commentForm.reset();
-    // This could be a property of the Tool class.
-    this.hasUsedPanel = false;
   }
 
 
   /**
    * Extends the method of the super class to get the selected element.
-   * @param {MouseEvent} e The click event.
    */
-  manageSelection(e) {
+  manageSelection(e: MouseEvent) {
     super.manageSelection(e);
     if (this.currentSelection.length > 0) {
       this.waitingForComment = true;
