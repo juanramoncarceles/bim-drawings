@@ -1,11 +1,6 @@
-export class Point2d {
+export interface Point2d {
   x: number;
   y: number;
-
-  constructor(x: number, y: number) {
-    x = x;
-    y = y;
-  }
 }
 
 export class Line {
@@ -76,6 +71,26 @@ export class GeometryCalc {
 
   static arePointsEqual(point1: Point2d, point2: Point2d) {
     return point1.x === point2.x && point1.y === point2.y;
+  }
+
+  /**
+   * Gets the points around a point defined by an offset from the point.
+   * For example for the point 0,0 and offset 1 it will return the 8 points around 0,0.
+   */
+  static getPointsAround(point: Point2d, offset: number): Point2d[] {
+    const pixelsPerSide = offset * 2;
+    let currentX = point.x + offset;
+    let currentY = point.y + offset;
+    const pointsAround = [];
+    for (let i = 0; i < pixelsPerSide; i++)
+      pointsAround.push({ x: currentX, y: currentY -= 1 });
+    for (let i = 0; i < pixelsPerSide; i++)
+      pointsAround.push({ x: currentX -= 1, y: currentY });
+    for (let i = 0; i < pixelsPerSide; i++)
+      pointsAround.push({ x: currentX, y: currentY += 1 });
+    for (let i = 0; i < pixelsPerSide; i++)
+      pointsAround.push({ x: currentX += 1, y: currentY });
+    return pointsAround;
   }
 
 }

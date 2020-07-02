@@ -1,6 +1,8 @@
 import { Tool } from './tool';
 import type { Workspace } from '../workspace';
 import type { Drawing } from '../drawing';
+import { GeometryCalc } from '../geometry';
+import generics from '../generics';
 
 export class ElementSelection extends Tool {
   currentSelection: any = []; // TODO array of what? TODO This could be a property of the workspace?
@@ -9,6 +11,8 @@ export class ElementSelection extends Tool {
    * Override this value to allow multiple selection on a tool. Default false.
    */
   multipleSelection = false;
+  // TODO Set based on the window.devicePixelRatio ?
+  maxPxOffsetToCheck = 3;
 
   constructor(name: string, toolBtn: HTMLElement, workspace: Workspace) {
     super(name, toolBtn, workspace);
@@ -28,6 +32,21 @@ export class ElementSelection extends Tool {
    */
   manageSelection(e: MouseEvent) {
     this.selection = (e.target as SVGElement).closest('[selectable]');
+    // If at first there is no selection start looking around from that point.
+    if (!this.selection) {
+      const coords = generics.getViewportRelativeCoords(e);
+      outloop:
+      for (let i = 1; i <= this.maxPxOffsetToCheck; i++) {
+        const points = GeometryCalc.getPointsAround(coords, i);
+        for (let j = 0; j < points.length; j++) {
+          const el = document.elementFromPoint(points[j].x, points[j].y);
+          if (el)
+            this.selection = el.closest('[selectable]');
+          if (this.selection) break outloop;
+        }
+      }
+    }
+    // If an element has been found.
     if (this.selection !== null) {
       if (this.multipleSelection) {
         const index = this.currentSelection.indexOf(this.selection.dataset.id);

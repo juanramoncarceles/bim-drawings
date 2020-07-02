@@ -1,11 +1,12 @@
 BUGS:
+  ProjectsList:
+    ☐ Currently it cannot be scrolled. Fix by simplify with CSS grid. @high 
   Comments:
     ☐ Impossible to delete a comment. @critical 
     ☐ Avoid changing drawing when an element comment is being created. Block from the moment the add comment tool is activated.
     ☐ When an object has more than one comment their representation overlap and it is confusing.
       If an element already has a comment only one representation will be created. It represents that this element has one or more comments.
   SVG Canvas:
-    ☐ Improve the objects selection. Currently it is difficult because lines are too thin. How can I check surrounding pixels? @high
   Firebase Cloud Functions:
     ☐ Currently Firebase Cloud Functions endpoints can be used by anyone, how to limit to only authenticated users?
       The only way seems to be using the Firebase Auth ID, or sending a custom session token stored as a cookie or local storage.
@@ -62,4 +63,5 @@ CHANGES:
 
 Archive:
   ✔ After saving an error appears in the console even if the file is saved successfuly. It prevents the save icon from becoming default again. @done(20-05-22 19:24)
+  ✔ Improve the objects selection. Currently it is difficult because lines are too thin. How can I check surrounding pixels? @high @done(20-07-02 22:01)
   ✘ Make the maginifying glass of the logo thicker and lighter. @cancelled(20-07-01 20:39)

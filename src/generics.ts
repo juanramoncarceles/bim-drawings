@@ -76,6 +76,7 @@ export default class {
 
   /**
    * Function to get the coordinates of the mouse on the SVG canvas.
+   * TODO Rename as getSVGDocRelativeCoords
    */
   static getRelativeCoords(e: MouseEvent, svgDoc: SVGSVGElement): DOMPoint {
     const originPt = svgDoc.createSVGPoint();
@@ -83,6 +84,10 @@ export default class {
     originPt.y = e.clientY;
     // The cursor point, translated into svg coordinates
     return originPt.matrixTransform(svgDoc.getScreenCTM().inverse());
+  }
+
+  static getViewportRelativeCoords(e: MouseEvent): Point2d {
+    return { x: e.clientX, y: e.clientY };
   }
 
   // https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
