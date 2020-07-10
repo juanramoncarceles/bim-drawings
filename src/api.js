@@ -614,12 +614,16 @@ export default class {
 
   /**
    * Lists the project items.
-   * TODO: Limit the amount of projects to fetch.
+   * TODO: Add a param to limit the amount of projects to fetch.
    * @param {Object} AppData The AppData object that contains info about the app resources.
+   * @param {string} mainFolderId If the id of the main folder with all the projects is already known it can be provided.
+   * TODO Change to extract the first part into another function to get the id of the parent folder and make the second param mandatory?
    */
-  static async listProjectItems(AppData) {
-    // Gets the id of the app folder using its name if it was not already in the appData object.
-    if (!AppData.appMainFolderId) {
+  static async listProjectItems(AppData, mainFolderId = '') {
+    if (mainFolderId !== '') {
+      AppData.appMainFolderId = mainFolderId;
+    } else if (!AppData.appMainFolderId) {
+      // Gets the id of the app folder using its name if it was not already in the appData object.
       const appMainFolderRes = await this.listFiles({ name: 'VAviewerData', onlyFolder: true, trashed: false });
       const appMainFolderData = appMainFolderRes.result.files;
       if (appMainFolderData && appMainFolderData.length > 0) {
