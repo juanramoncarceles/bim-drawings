@@ -97,6 +97,13 @@ export default class {
     );
   }
 
+  static isObjectEmpty(obj: Object) {
+    for(let key in obj) {
+      if(obj.hasOwnProperty(key))
+        return false;
+    }
+    return true;
+  }
 
   static getRectSegments(rect: Rectangle): Line[] {
     const cornerA = { x: rect.x, y: rect.y };
