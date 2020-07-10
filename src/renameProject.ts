@@ -61,15 +61,15 @@ export class RenameProject {
           this.projectListItem.dataset.name = projectRenamedRes.result.name;
           this.setInputValue('');
           this.app.closeModalDialog();
-          this.app.showMessage('success', 'Project renamed successfully.', 5000);
+          this.app.showMessage('success', ['Project renamed successfully.'], 5000);
         } else {
-          this.app.showMessage('error', 'It was not possible to rename the project.');
           this.app.closeModalDialog();
+          this.app.showMessage('error', ['It was not possible to rename the project.']);
           console.error('Something went wrong renaming a project. ', projectRenamedRes);
         }
       } catch (err) {
-        this.app.showMessage('error', 'It was not possible to rename the project.');
         this.app.closeModalDialog();
+        this.app.showMessage('error', ['It was not possible to rename the project.', err.result.error.message]);
         console.error('Something went wrong renaming a project. ', err);
       }
     }

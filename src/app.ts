@@ -139,7 +139,7 @@ export class Application {
       API.createProject(file, this, this.lastUploadedProject).then((res: ProjectData) => {
         this.updateProjectsList(res);
         this.closeModalDialog();
-        this.showMessage('success', 'Project uploaded successfully.');
+        this.showMessage('success', ['Project uploaded successfully.']);
         this.fileInput.value = '';
         // Reset upload form UI.
         document.getElementById('loadingFile').style.display = 'none';
@@ -174,12 +174,16 @@ export class Application {
 
 
   /**
-   * Stores the current logged user info as a property of the app and
-   * populates the UI with the user info.
+   * Stores the current logged user info as a property of the app and populates the UI with the user info.
+   * Optionally a user info can be provided to skip fetching the current logged user
    */
-  async setUserInfo() {
-    const userInfoRes = await API.getUserInfo();
-    this.userInfo = JSON.parse(userInfoRes.body).user;
+  async setUserInfo(userInfo: gapi.client.drive.User = {}) {
+    if (Generics.isObjectEmpty(userInfo)) {
+      const userInfoRes = await API.getUserInfo();
+      this.userInfo = JSON.parse(userInfoRes.body).user;
+    } else {
+      this.userInfo = userInfo;
+    }
     this.userInfoContainer.innerHTML = `
       <img src=${this.userInfo.photoLink}>
       <span>
@@ -257,7 +261,7 @@ export class Application {
         this.commentsChangesUnsaved = true;
         this.saveBtn.classList.remove('progress');
         this.saveBtn.classList.add('enabled');
-        this.showMessage('error', 'Something went wrong and data could not be saved.');
+        this.showMessage('error', ['Something went wrong and data could not be saved.']);
         console.error('Something went wrong trying to save. Retry again.');
       }
     }
@@ -410,10 +414,10 @@ export class Application {
   /**
   * Disaplays feedback message.
   * @param type Use keywords 'success', 'warning' or 'error' to specify the type of message.
-  * @param message The actual message.
+  * @param message The actual message as an array of strings, each item a new line.
   * @param timer Optional. Time (ms) before it autocloses.
   */
-  showMessage(type: string, message: string, timer: number = undefined) {
+  showMessage(type: string, message: string[], timer: number = undefined) {
     // If the data-type attr has value is because the message is still open.
     if (this.messageContainer.dataset.type !== '') {
       this.messageContainer.classList.remove(this.messageContainer.dataset.type);
@@ -425,7 +429,7 @@ export class Application {
       this.messageContainer.style.display = 'flex';
     }
     this.messageContainer.dataset.type = type;
-    this.messageContainer.querySelector('p').innerText = message;
+    this.messageContainer.querySelector('.message-content').innerHTML = message.map(m => `<p>${m}</p>`).join('');
     switch (type) {
       case 'success':
         this.messageContainer.classList.add('success');
@@ -543,8 +547,9 @@ export class Application {
   /**
    * Starts the app, if a project id is provided it will start from that projec view.
    * If no project id is provided it will start from the projects list view.
+   * Two optional named parameters, if projectId is provided the other will be ignored.
    */
-  start(projectId: string = '') {
+  start({projectId = '', mainFolderId = ''} = {}) {
     // Show the app interface.
     document.querySelector('header').style.display = 'flex';
     document.querySelector('main').style.display = 'block';
@@ -588,7 +593,7 @@ export class Application {
       this.projectsListContainer.style.display = 'block';
       this.showViewportDialog('loader', 'Loading projects');
       // TODO: Limit the number of projects to list
-      API.listProjectItems(this).then((res: ProjectData[]) => {
+      API.listProjectItems(this, mainFolderId ? mainFolderId : '').then((res: ProjectData[]) => {
         this.createHTMLProjectsList(res);
         this.hideViewportMessage();
         // Checks if at least one project has collaborators and if so asks for the

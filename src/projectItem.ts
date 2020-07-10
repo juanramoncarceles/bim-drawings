@@ -46,7 +46,10 @@ export class ProjectItem {
                   app.projectsData.splice(projIndex, 1);
                   // TODO check also if it is in the value of currentProject or lastUploadedProject and delete it as well
                   app.hideViewportMessage();
-                  app.showMessage('success', 'Project deleted successfully');
+                  app.showMessage('success', ['Project deleted successfully']);
+                }, err => {
+                  app.hideViewportMessage();
+                  app.showMessage('error', ['It was not possible to delete the project.', err.result.error.message]);
                 });
               }
             },

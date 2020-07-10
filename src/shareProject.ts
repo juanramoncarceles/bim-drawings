@@ -93,7 +93,7 @@ export class ShareProject {
     this.projectData = projectData;
     this.projectItem = this.projectsList.querySelector('button[data-proj-id="' + projectData.id + '"]');
     // Create list of users if any.
-    if (projectData.shared) {
+    if (projectData.shared && projectData.permissions) {
       const users: string[] = [];
       const currentUserEmail = window.getCurrentUser().emailAddress;
       const owner = '<td title="Project owner"><svg><use href="#keyIcon"></use></svg></td>';
@@ -336,9 +336,9 @@ export class ShareProject {
           this.projectItem.insertAdjacentHTML('afterbegin', '<img class="sharedIcon" src="src/assets/icons/shareIcon.svg">');
         }
       }
-      this.app.showMessage('success', 'Project members updated successfully.', 5000);
+      this.app.showMessage('success', ['Project members updated successfully.'], 5000);
     } else {
-      this.app.showMessage('error', 'Something went wrong, member changes could no be saved.');
+      this.app.showMessage('error', ['Something went wrong, member changes could no be saved.']);
     }
     this.waitingAnimation.classList.add('hidden');
     this.app.closeModalDialog();
