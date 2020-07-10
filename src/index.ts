@@ -81,16 +81,20 @@ if (window.BroadcastChannel) {
 }
 
 
-/******************* VIEW SAMPLE PROJECT OPTION ********************/
+/******************* VIEW SAMPLE SESSION OPTION ********************/
 
-const sampleProjectBtn = document.getElementById('sampleProjectBtn');
+const tryItBtn = document.getElementById('tryItBtn');
 
-sampleProjectBtn.onclick = () => {
-  document.getElementById('projectsListBtn').onclick = null;
-  App.saveBtn.style.visibility = 'hidden';
-  App.projectsListBtn.classList.add('locked');
-  // TODO: Change the Sign Out button for the Log In button on the side menu.
-  App.start('1D4ESY97zKvJoZ1BWeLWYq8GxhQNWsXpg');
+tryItBtn.onclick = () => {
+  console.log('Starting demo session.');
+  // Disable messaging.
+  window.thereIsMessaging = false;
+  //App.saveBtn.style.visibility = 'hidden'; // TODO instead of hidden set disabled or locked.
+  // TODO: Remove the Sign Out button from the side menu.
+  // Set a fake user info as logged in user.
+  App.setUserInfo({ displayName: 'Fake User', emailAddress: 'fakeuser@example.com', photoLink: 'avatar-placeholder.png' } as gapi.client.drive.User);
+  App.start({ mainFolderId: '1P9qu9qGmcyiarE-e1anVW4ijYYDWii-F' });
+  loginPage.style.display = 'none';
 }
 
 
@@ -167,17 +171,15 @@ function updateSigninStatus(isSignedIn: boolean) {
     console.log('Authorized.');
     // Get the URL params.
     const projectId = Generics.getUrlParams(window.location.href).id;
-    // Hide the login dialog in case it was visible.
-    if (App.modalDialogContent.firstElementChild) {
-      App.closeModalDialog();
-    }
+    // Hide the login page.
+    loginPage.style.display = 'none';
     // Manage the logged user personal info.
     App.setUserInfo();
     // If a project id is provided to start() method the app will start from the project view.
     App.start(projectId);
   } else {
     console.log('Not authorized');
-    showLoginDialog();
+    showLoginPage();
   }
 }
 
@@ -198,16 +200,18 @@ function handleSignoutClick() {
 }
 
 
-/************************** LOGIN DIALOG ***************************/
+/************************** LOGIN PAGE ***************************/
 
 
-const authorizeDialog = document.getElementById('authorizeDialog');
+const loginPage = document.getElementById('loginPage');
 
 /**
  * Shows the login dialog and hides and clears anything else.
  */
-function showLoginDialog() {
-  App.showModalDialog(authorizeDialog, 'opaque', false);
+function showLoginPage() {
+  loginPage.style.display = 'flex';
+
+  //App.showModalDialog(authorizeDialog, 'opaque', false);
   // Hide anything else.
   document.querySelector('header').style.display = 'none';
   document.querySelector('main').style.display = 'none';

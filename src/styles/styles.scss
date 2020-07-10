@@ -1,7 +1,7 @@
 @use './mainPanel';
 @use './projectsList';
 @use './modalDialog';
-@use './authDialog';
+@use './authPage';
 @use './uploadFileForm';
 @use './sideNavContainer';
 @use './commentForm';
@@ -159,6 +159,7 @@ header .icon-btn {
 }
 
 .btn-bg-img {
+  padding-left: 2.4rem;
   background-repeat: no-repeat;
   background-position-y: center;
   background-position-x: 0.8rem;

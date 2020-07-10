@@ -129,7 +129,7 @@
         </span>
       </div>
       <div id="projectsList"></div>
-      <button id="loadMoreProjBtn" class="buttonBase disabled">Load more projects</button>
+      <!-- <button id="loadMoreProjBtn" class="buttonBase disabled">Load more projects</button> -->
     </div>
 
     <div id="viewportMessage"></div>
@@ -155,7 +155,7 @@
         <use href="#crossIcon" />
       </svg>
     </button>
-    <p></p>
+    <div class="message-content" style="text-align:left;"></div>
   </div>
 
   <div id="notificationsContainer" class="empty">
@@ -259,17 +259,15 @@
         </div>
       </form>
     </div>
+  </div>
 
-    <div id="authorizeDialog">
-      <img src="src/assets/vadv-logo.png" alt="VisualARQ Drawings Viewer Logo">
-      <h2>VisualARQ Drawings Viewer</h2>
-      <div>
-        <button id="" class="buttonBase light disabled">Log in</button>
-        <button id="authorizeBtn" class="buttonBase light btn-bg-img google-logo">Log in with Google</button>
-        <button id="sampleProjectBtn" class="buttonBase light">View sample project</button>
-        <button id="uploadProjectBtn" class="buttonBase light disabled">Upload project</button>
-      </div>
+  <div id="loginPage" style="display:none;">
+    <div class="login-buttons">
+      <button id="authorizeBtn" class="buttonBase light btn-bg-img google-logo">Log in with Google</button>
     </div>
+    <img src="src/assets/bim-drawings-logo-128.png" alt="BIM Drawings logo">
+    <h2 class="main-title">BIM Drawings</h2>
+    <button id="tryItBtn" class="buttonBase emphasize">Try the demo!</button>
   </div>
 
   <div style="position:absolute;left:-200%;">
