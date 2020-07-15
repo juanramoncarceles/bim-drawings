@@ -16,14 +16,6 @@ declare global {
   }
 }
 
-// declare global {
-//   namespace NodeJS {
-//     interface ProcessEnv {
-//       // PROCESS: string;
-//     }
-//   }
-// }
-
 
 /****************** THE ONLY INSTANCE OF THE APP *******************/
 
@@ -100,15 +92,22 @@ tryItBtn.onclick = () => {
 
 /******************* GOOGLE DRIVE AUTHENTICATION *******************/
 
+// Values will be assigned from an environment variable through Webpack.
+declare let PROCESS: string;
+declare let G_CLIENT_ID: string;
+declare let G_API_KEY_PROD: string;
+declare let G_API_KEY_DEV: string;
+
 // OAuth 2.0 Client ID for Google APIs.
-const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const CLIENT_ID = G_CLIENT_ID;
 
 // API key for Google Drive.
 let API_KEY: string;
-if (process.env.PROCESS === 'production') { // TODO work ? or leave just PROCESS ?
-  API_KEY = process.env.GOOGLE_API_KEY_PROD;
+
+if (PROCESS === 'production') {
+  API_KEY = G_API_KEY_PROD;
 } else {
-  API_KEY = process.env.GOOGLE_API_KEY_DEV;
+  API_KEY = G_API_KEY_DEV;
 }
 
 // Array of API discovery doc URLs for APIs used by the app.

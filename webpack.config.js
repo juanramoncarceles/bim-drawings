@@ -59,11 +59,9 @@ module.exports = {
     }),
     new webpack.DefinePlugin({
       PROCESS: JSON.stringify(process.env.PROCESS),
-      "process.env": {
-        GOOGLE_CLIENT_ID: JSON.stringify(process.env.GOOGLE_CLIENT_ID),
-        GOOGLE_API_KEY_DEV: JSON.stringify(process.env.GOOGLE_API_KEY_DEV),
-        GOOGLE_API_KEY_PROD: JSON.stringify(process.env.GOOGLE_API_KEY_PROD)
-      }
+      G_CLIENT_ID: JSON.stringify(process.env.GOOGLE_CLIENT_ID),
+      G_API_KEY_DEV: JSON.stringify(process.env.GOOGLE_API_KEY_DEV),
+      G_API_KEY_PROD: JSON.stringify(process.env.GOOGLE_API_KEY_PROD)
     })
   ]
 };
